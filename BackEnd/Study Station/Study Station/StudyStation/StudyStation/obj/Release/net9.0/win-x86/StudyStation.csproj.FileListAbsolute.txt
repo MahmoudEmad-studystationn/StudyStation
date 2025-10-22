@@ -1,0 +1,1363 @@
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.Development.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.runtime.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.endpoints.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.exe
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.deps.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.runtimeconfig.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.pdb
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Core.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Identity.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Humanizer.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Http.Formatting.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Web.Http.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.UI.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Razor.Language.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Framework.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Locator.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.AnalyzerUtilities.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Features.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Elfie.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Features.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Razor.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.Sqlite.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DiaSymReader.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DotNet.Scaffolding.Shared.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Sqlite.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyModel.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Embedded.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Core.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Options.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Primitives.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Logging.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Tokens.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.NET.StringTools.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.OpenApi.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.SqlServer.Server.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\dotnet-aspnet-codegenerator-design.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Mono.TextTemplating.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.Bson.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Common.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Configuration.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.DependencyResolver.Core.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Frameworks.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.LibraryModel.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Packaging.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.ProjectModel.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Protocol.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Versioning.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.batteries_v2.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.core.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ClientModel.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.CodeDom.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.AttributedModel.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Convention.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Hosting.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Runtime.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.TypedParts.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Configuration.ConfigurationManager.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Memory.Data.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.MetadataLoadContext.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Caching.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.ProtectedData.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\af\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ar\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\az\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bg\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bn-BD\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\da\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\el\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fa\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fi-FI\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr-BE\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\he\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hr\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hu\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hy\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\id\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\is\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko-KR\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ku\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\lv\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ms-MY\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mt\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb-NO\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nl\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ro\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sk\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sl\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr-Latn\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sv\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\th-TH\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uk\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Cyrl-UZ\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Latn-UZ\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\vi\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-CN\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Humanizer.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Features.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\e_sqlite3.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.AssemblyReference.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rpswa.dswa.cache.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfoInputs.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfo.cs
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.CoreCompileInputs.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjimswa.dswa.cache.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmrazor.dswa.cache.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmcshtml.dswa.cache.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\scopedcss\bundle\StudyStation.styles.css
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ofa40bqe71-b9sayid5wm.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j9swiz3yzq-90yqlj465b.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vltxs1u3vm-xtxxf3hu2r.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\14ipv7q33s-bqjiyaj88i.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rh65p086id-c2jlpeoesf.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\eb27mqwgz2-erw9l3u2r3.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9glsckmvxo-aexeepp0ev.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\hh8ihyobdx-d7shbmvgxk.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bww8ud00yd-ausgxo2sd3.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\edcrak57d7-k8d9w2qqmf.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\sf8kf2lula-cosvhxvwiu.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\3tzsqhslk9-ub07r2b239.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\oxk5o6czdw-fvhpjtyr6v.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\k8b25g0zwc-b7pk76d08c.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8axix7wldr-fsbi9cje9m.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\d5z9sfpxbi-rzd6atqjts.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\u8428c4e9i-ee0r1s7dh0.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tg53r17ghy-dxx9fxp4il.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nlrl0f3xs3-jd9uben2k1.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\1fc4q00scq-khv3u5hwcm.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8xykfy6qmd-r4e9w2rdcm.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vsrbd71spn-lcd1t2u6c8.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\cynp17w084-c2oey78nd0.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\7o8oyvng68-tdbxkamptv.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\h9vwtoirpy-j5mq2jizvt.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\o5k23vqhrk-06098lyss8.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\iznc766avz-nvvlpmu67g.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ns4583i71s-s35ty4nyc5.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\47012z8l2l-pj5nd1wqec.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\4vzefxwp2m-46ein0sx1k.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bh4v3mdph9-v0zj4ognzu.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\l186vlgaag-37tfw0ft22.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rsc7qacj1u-hrwsygsryq.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\z408qb6q7a-pk9g2wxc8p.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\qfr28sqcy1-ft3s53vfgj.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\0k1i85ntyh-6cfz1n2cew.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\xa379ftczi-6pdc2jztkx.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\lr5hmrr0j7-493y06b0oq.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ivy2s9gwh5-iovd86k7lj.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\higufxz8op-vr1egmr9el.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\s3tglgz8hr-kbrnm935zg.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vw9sls9bhj-jj8uyg4cgr.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ym8tkpcl2i-y7v9cxd14o.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zzna4nrm5w-notf2xhcfb.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\igscs4x0yk-h1s4sie4z3.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zap00c0tb5-63fj8s7r0e.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\pogzkicjpz-0j3bgjxly4.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j3hwsq15kh-47otxtyo56.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\q3naettu8c-4v8eqarkd7.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ldxy2n3w6q-356vix0kms.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ypthv7q62w-83jwlth58m.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t6e3b82hrf-mrlpezrjn3.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\uocis9wxbx-lzl9nlhx6b.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\2tikzqlmtu-ag7o75518u.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9muusbdg0a-x0q3zqp4vz.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tpsq5dibur-0i3buxo5is.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t0qo7o574p-o1o13a6vjx.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\b9lhb08218-ttgo8qnofa.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\a3ygkwa5zy-2z0ns9nrw6.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nezrqnk58p-muycvpuwrr.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\v0zgfp0y55-87fc7y1x7t.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\yfc7ypekbg-mlv21k5csn.gz
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.development.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.endpoints.json
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.upToDateCheck.txt
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudySta.314868FF.Up2Date
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\refint\StudyStation.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.pdb
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.genruntimeconfig.cache
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\ref\StudyStation.dll
+C:\Users\El-Wattaneya\OneDrive\Desktop\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\BCrypt.Net-Next.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.Development.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.endpoints.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.runtime.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.exe
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.deps.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.runtimeconfig.json
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.pdb
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Identity.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\BCrypt.Net-Next.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Humanizer.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNet.Identity.Core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Http.Formatting.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Web.Http.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.UI.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.OpenApi.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Razor.Language.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Bcl.AsyncInterfaces.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Framework.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Locator.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.AnalyzerUtilities.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Features.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Elfie.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Features.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Razor.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Scripting.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.Sqlite.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DiaSymReader.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DotNet.Scaffolding.Shared.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Design.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Relational.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Sqlite.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Memory.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyModel.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Embedded.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Stores.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Options.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Primitives.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Abstractions.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Logging.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Tokens.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.NET.StringTools.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.OpenApi.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.SqlServer.Server.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\dotnet-aspnet-codegenerator-design.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Mono.TextTemplating.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.Bson.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Common.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Configuration.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.DependencyResolver.Core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Frameworks.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.LibraryModel.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Packaging.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.ProjectModel.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Protocol.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Versioning.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.batteries_v2.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.core.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.Swagger.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ClientModel.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.CodeDom.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.AttributedModel.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Convention.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Hosting.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Runtime.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.TypedParts.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Configuration.ConfigurationManager.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Formats.Asn1.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IdentityModel.Tokens.Jwt.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Memory.Data.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.MetadataLoadContext.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Caching.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.ProtectedData.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Json.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\af\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ar\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\az\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bg\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bn-BD\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\da\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\el\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fa\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fi-FI\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr-BE\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\he\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hr\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hu\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hy\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\id\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\is\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko-KR\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ku\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\lv\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ms-MY\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mt\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb-NO\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nl\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ro\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sk\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sl\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr-Latn\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sv\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\th-TH\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uk\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Cyrl-UZ\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Latn-UZ\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\vi\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-CN\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Humanizer.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.SNI.dll
+D:\G\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\e_sqlite3.dll
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.AssemblyReference.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rpswa.dswa.cache.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.GeneratedMSBuildEditorConfig.editorconfig
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfoInputs.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfo.cs
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.CoreCompileInputs.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cs
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjimswa.dswa.cache.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmrazor.dswa.cache.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmcshtml.dswa.cache.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\scopedcss\bundle\StudyStation.styles.css
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ofa40bqe71-b9sayid5wm.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j9swiz3yzq-90yqlj465b.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vltxs1u3vm-xtxxf3hu2r.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\14ipv7q33s-bqjiyaj88i.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rh65p086id-c2jlpeoesf.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\eb27mqwgz2-erw9l3u2r3.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9glsckmvxo-aexeepp0ev.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\hh8ihyobdx-d7shbmvgxk.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bww8ud00yd-ausgxo2sd3.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\edcrak57d7-k8d9w2qqmf.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\sf8kf2lula-cosvhxvwiu.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\3tzsqhslk9-ub07r2b239.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\oxk5o6czdw-fvhpjtyr6v.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\k8b25g0zwc-b7pk76d08c.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8axix7wldr-fsbi9cje9m.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\d5z9sfpxbi-rzd6atqjts.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\u8428c4e9i-ee0r1s7dh0.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tg53r17ghy-dxx9fxp4il.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nlrl0f3xs3-jd9uben2k1.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\1fc4q00scq-khv3u5hwcm.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8xykfy6qmd-r4e9w2rdcm.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vsrbd71spn-lcd1t2u6c8.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\cynp17w084-c2oey78nd0.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\7o8oyvng68-tdbxkamptv.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\h9vwtoirpy-j5mq2jizvt.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\o5k23vqhrk-06098lyss8.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\iznc766avz-nvvlpmu67g.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ns4583i71s-s35ty4nyc5.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\47012z8l2l-pj5nd1wqec.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\4vzefxwp2m-46ein0sx1k.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bh4v3mdph9-v0zj4ognzu.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\l186vlgaag-37tfw0ft22.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rsc7qacj1u-hrwsygsryq.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\z408qb6q7a-pk9g2wxc8p.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\qfr28sqcy1-ft3s53vfgj.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\0k1i85ntyh-6cfz1n2cew.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\xa379ftczi-6pdc2jztkx.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\lr5hmrr0j7-493y06b0oq.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ivy2s9gwh5-iovd86k7lj.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\higufxz8op-vr1egmr9el.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\s3tglgz8hr-kbrnm935zg.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vw9sls9bhj-jj8uyg4cgr.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ym8tkpcl2i-y7v9cxd14o.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zzna4nrm5w-notf2xhcfb.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\igscs4x0yk-h1s4sie4z3.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zap00c0tb5-63fj8s7r0e.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\pogzkicjpz-0j3bgjxly4.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j3hwsq15kh-47otxtyo56.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\q3naettu8c-4v8eqarkd7.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ldxy2n3w6q-356vix0kms.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ypthv7q62w-83jwlth58m.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t6e3b82hrf-mrlpezrjn3.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\uocis9wxbx-lzl9nlhx6b.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\2tikzqlmtu-ag7o75518u.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9muusbdg0a-x0q3zqp4vz.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tpsq5dibur-0i3buxo5is.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t0qo7o574p-o1o13a6vjx.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\b9lhb08218-ttgo8qnofa.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\a3ygkwa5zy-2z0ns9nrw6.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nezrqnk58p-muycvpuwrr.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\v0zgfp0y55-87fc7y1x7t.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\yfc7ypekbg-mlv21k5csn.gz
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.development.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.endpoints.json
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.upToDateCheck.txt
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudySta.314868FF.Up2Date
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.dll
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\refint\StudyStation.dll
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.pdb
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.genruntimeconfig.cache
+D:\G\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\ref\StudyStation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.Development.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.endpoints.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\appsettings.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.staticwebassets.runtime.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.exe
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.deps.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.runtimeconfig.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\StudyStation.pdb
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Azure.Identity.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\BCrypt.Net-Next.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Humanizer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNet.Identity.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Http.Formatting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Web.Http.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.UI.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.OpenApi.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Razor.Language.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Bcl.AsyncInterfaces.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Framework.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Build.Locator.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.AnalyzerUtilities.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Features.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Elfie.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Features.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Razor.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Scripting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.Sqlite.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DiaSymReader.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DotNet.Scaffolding.Shared.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Design.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Relational.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.Sqlite.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Logging.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.IdentityModel.Tokens.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.NET.StringTools.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.OpenApi.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.SqlServer.Server.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\dotnet-aspnet-codegenerator-design.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Mono.TextTemplating.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Newtonsoft.Json.Bson.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Common.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Configuration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.DependencyResolver.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Frameworks.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.LibraryModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Packaging.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.ProjectModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Protocol.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\NuGet.Versioning.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.batteries_v2.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\SQLitePCLRaw.provider.e_sqlite3.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.Swagger.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ClientModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.CodeDom.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.AttributedModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Convention.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Hosting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.Runtime.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Composition.TypedParts.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Configuration.ConfigurationManager.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IdentityModel.Tokens.Jwt.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Memory.Data.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.MetadataLoadContext.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Caching.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.ProtectedData.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\af\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ar\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\az\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bg\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\bn-BD\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\da\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\el\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fa\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fi-FI\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr-BE\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\he\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hr\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hu\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hy\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\id\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\is\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko-KR\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ku\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\lv\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ms-MY\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mt\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nb-NO\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\nl\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ro\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sk\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sl\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sr-Latn\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\sv\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\th-TH\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uk\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Cyrl-UZ\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\uz-Latn-UZ\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\vi\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-CN\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Humanizer.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Features.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\cs\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\de\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\es\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\fr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\it\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ja\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ko\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pl\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\pt-BR\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\ru\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Data.SqlClient.SNI.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\e_sqlite3.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Caching.Memory.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.DependencyInjection.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Embedded.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Identity.Stores.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Options.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.AssemblyReference.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rpswa.dswa.cache.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.GeneratedMSBuildEditorConfig.editorconfig
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfoInputs.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.AssemblyInfo.cs
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.csproj.CoreCompileInputs.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cs
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.MvcApplicationPartsAssemblyInfo.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjimswa.dswa.cache.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmrazor.dswa.cache.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\rjsmcshtml.dswa.cache.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\scopedcss\bundle\StudyStation.styles.css
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ofa40bqe71-b9sayid5wm.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j9swiz3yzq-90yqlj465b.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vltxs1u3vm-xtxxf3hu2r.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\14ipv7q33s-bqjiyaj88i.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rh65p086id-c2jlpeoesf.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\eb27mqwgz2-erw9l3u2r3.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9glsckmvxo-aexeepp0ev.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\hh8ihyobdx-d7shbmvgxk.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bww8ud00yd-ausgxo2sd3.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\edcrak57d7-k8d9w2qqmf.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\sf8kf2lula-cosvhxvwiu.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\3tzsqhslk9-ub07r2b239.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\oxk5o6czdw-fvhpjtyr6v.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\k8b25g0zwc-b7pk76d08c.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8axix7wldr-fsbi9cje9m.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\d5z9sfpxbi-rzd6atqjts.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\u8428c4e9i-ee0r1s7dh0.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tg53r17ghy-dxx9fxp4il.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nlrl0f3xs3-jd9uben2k1.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\1fc4q00scq-khv3u5hwcm.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\8xykfy6qmd-r4e9w2rdcm.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vsrbd71spn-lcd1t2u6c8.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\cynp17w084-c2oey78nd0.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\7o8oyvng68-tdbxkamptv.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\h9vwtoirpy-j5mq2jizvt.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\o5k23vqhrk-06098lyss8.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\iznc766avz-nvvlpmu67g.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ns4583i71s-s35ty4nyc5.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\47012z8l2l-pj5nd1wqec.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\4vzefxwp2m-46ein0sx1k.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\bh4v3mdph9-v0zj4ognzu.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\l186vlgaag-37tfw0ft22.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\rsc7qacj1u-hrwsygsryq.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\z408qb6q7a-pk9g2wxc8p.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\qfr28sqcy1-ft3s53vfgj.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\0k1i85ntyh-6cfz1n2cew.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\xa379ftczi-6pdc2jztkx.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\lr5hmrr0j7-493y06b0oq.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ivy2s9gwh5-iovd86k7lj.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\higufxz8op-vr1egmr9el.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\s3tglgz8hr-kbrnm935zg.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\vw9sls9bhj-jj8uyg4cgr.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ym8tkpcl2i-y7v9cxd14o.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zzna4nrm5w-notf2xhcfb.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\igscs4x0yk-h1s4sie4z3.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\zap00c0tb5-63fj8s7r0e.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\pogzkicjpz-0j3bgjxly4.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\j3hwsq15kh-47otxtyo56.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\q3naettu8c-4v8eqarkd7.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ldxy2n3w6q-356vix0kms.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\ypthv7q62w-83jwlth58m.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t6e3b82hrf-mrlpezrjn3.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\uocis9wxbx-lzl9nlhx6b.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\2tikzqlmtu-ag7o75518u.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\9muusbdg0a-x0q3zqp4vz.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\tpsq5dibur-0i3buxo5is.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\t0qo7o574p-o1o13a6vjx.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\b9lhb08218-ttgo8qnofa.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\a3ygkwa5zy-2z0ns9nrw6.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\nezrqnk58p-muycvpuwrr.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\v0zgfp0y55-87fc7y1x7t.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\compressed\yfc7ypekbg-mlv21k5csn.gz
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.json.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.development.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.build.endpoints.json
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\staticwebassets.upToDateCheck.txt
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudySta.314868FF.Up2Date
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\refint\StudyStation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.pdb
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\StudyStation.genruntimeconfig.cache
+D:\G\Study Station\Study Station\StudyStation\StudyStation\obj\Release\net9.0\win-x86\ref\StudyStation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.CSharp.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualBasic.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.VisualBasic.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Win32.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Win32.Registry.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.AppContext.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Buffers.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Collections.Concurrent.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Collections.Immutable.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Collections.NonGeneric.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Collections.Specialized.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Collections.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.Annotations.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.DataAnnotations.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.EventBasedAsync.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.TypeConverter.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ComponentModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Configuration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Console.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Data.Common.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Data.DataSetExtensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Data.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.Contracts.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.Debug.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.DiagnosticSource.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.FileVersionInfo.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.Process.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.StackTrace.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.TextWriterTraceListener.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.Tools.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.TraceSource.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.Tracing.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Drawing.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Drawing.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Dynamic.Runtime.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Formats.Asn1.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Formats.Tar.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Globalization.Calendars.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Globalization.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Globalization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Compression.Brotli.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Compression.FileSystem.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Compression.ZipFile.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Compression.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.FileSystem.AccessControl.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.FileSystem.DriveInfo.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.FileSystem.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.FileSystem.Watcher.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.FileSystem.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.IsolatedStorage.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.MemoryMappedFiles.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Pipelines.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Pipes.AccessControl.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Pipes.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.UnmanagedMemoryStream.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Linq.Expressions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Linq.Parallel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Linq.Queryable.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Linq.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Memory.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Http.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Http.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.HttpListener.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Mail.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.NameResolution.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.NetworkInformation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Ping.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Quic.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Requests.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Security.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.ServicePoint.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.Sockets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.WebClient.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.WebHeaderCollection.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.WebProxy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.WebSockets.Client.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.WebSockets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Net.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Numerics.Vectors.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Numerics.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ObjectModel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Private.CoreLib.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Private.DataContractSerialization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Private.Uri.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Private.Xml.Linq.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Private.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.DispatchProxy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Emit.ILGeneration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Emit.Lightweight.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Emit.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Metadata.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.TypeExtensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Reflection.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Resources.Reader.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Resources.ResourceManager.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Resources.Writer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.CompilerServices.Unsafe.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.CompilerServices.VisualC.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Handles.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.InteropServices.JavaScript.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.InteropServices.RuntimeInformation.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.InteropServices.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Intrinsics.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Loader.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Numerics.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Serialization.Formatters.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Serialization.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Serialization.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Serialization.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.Serialization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Runtime.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.AccessControl.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Claims.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Algorithms.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Cng.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Csp.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Encoding.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.OpenSsl.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Primitives.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.X509Certificates.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Principal.Windows.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Principal.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.SecureString.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ServiceModel.Web.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ServiceProcess.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Encoding.CodePages.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Encoding.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Encoding.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Encodings.Web.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Text.RegularExpressions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Channels.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Overlapped.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Tasks.Dataflow.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Tasks.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Tasks.Parallel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Tasks.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Thread.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.ThreadPool.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.Timer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Transactions.Local.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Transactions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.ValueTuple.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Web.HttpUtility.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Web.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Windows.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.Linq.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.ReaderWriter.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.Serialization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.XDocument.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.XPath.XDocument.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.XPath.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.XmlDocument.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.XmlSerializer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\WindowsBase.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mscorlib.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\netstandard.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Antiforgery.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.BearerToken.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.Cookies.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.OAuth.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authentication.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authorization.Policy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Authorization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.Authorization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.Endpoints.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.Forms.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.Server.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.Web.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Components.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Connections.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.CookiePolicy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Cors.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.DataProtection.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.DataProtection.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.DataProtection.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Diagnostics.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Diagnostics.HealthChecks.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Diagnostics.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.HostFiltering.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Hosting.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Hosting.Server.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Hosting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Html.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Connections.Common.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Connections.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Extensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Features.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.Results.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Http.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.HttpLogging.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.HttpOverrides.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.HttpsPolicy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Identity.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Localization.Routing.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Localization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Metadata.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.ApiExplorer.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Cors.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.DataAnnotations.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Formatters.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Formatters.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Localization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.Razor.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.RazorPages.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.TagHelpers.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.ViewFeatures.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Mvc.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.OutputCaching.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.RateLimiting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Razor.Runtime.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Razor.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.RequestDecompression.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.ResponseCaching.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.ResponseCaching.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.ResponseCompression.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Rewrite.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Routing.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Routing.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.HttpSys.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.IIS.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.IISIntegration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.Kestrel.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.Kestrel.Transport.Quic.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Server.Kestrel.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.Session.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.SignalR.Common.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.SignalR.Core.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.SignalR.Protocols.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.SignalR.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.StaticAssets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.StaticFiles.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.WebSockets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.WebUtilities.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.AspNetCore.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Binder.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.CommandLine.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Ini.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Json.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.KeyPerFile.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.UserSecrets.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Configuration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Diagnostics.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Diagnostics.HealthChecks.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Diagnostics.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Features.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Composite.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileProviders.Physical.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.FileSystemGlobbing.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Hosting.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Hosting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Http.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Localization.Abstractions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Localization.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Configuration.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Console.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.Debug.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.EventLog.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.EventSource.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Logging.TraceSource.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.ObjectPool.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.Options.DataAnnotations.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Extensions.WebEncoders.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.JSInterop.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.Net.Http.Headers.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.EventLog.Messages.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Diagnostics.EventLog.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Pkcs.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Security.Cryptography.Xml.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.Threading.RateLimiting.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\Microsoft.DiaSymReader.Native.x86.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\System.IO.Compression.Native.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\clretwrc.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\clrgc.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\clrjit.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\coreclr.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\createdump.exe
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hostfxr.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\hostpolicy.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mscordaccore.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mscordaccore_x86_x86_9.0.925.41916.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mscordbi.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\mscorrc.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\msquic.dll
+D:\G\Study Station\Study Station\StudyStation\StudyStation\bin\Release\net9.0\win-x86\aspnetcorev2_inprocess.dll
