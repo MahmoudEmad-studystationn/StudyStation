@@ -11,6 +11,7 @@
 
 import { Link } from "react-router-dom";
 import { Button, Stack } from "@mui/material";
+import DarkModeToggle from "../Theme/DarkModeToggle";
 
 export default function AuthButtons() {
     const commonSx = {
@@ -43,16 +44,7 @@ export default function AuthButtons() {
 
     return (
         <Stack direction="row" spacing={{ xs: 0.5, sm: 1.5, md: 2 }} alignItems="center" sx={{ justifyContent: "flex-end" }}>
-            {/* <Button
-                component={Link}
-                to="/auth?mode=signup"
-                variant="contained"
-                disableElevation
-                sx={commonSx}
-            >
-                Sign up
-            </Button> */}
-
+            <DarkModeToggle />
             <Button
                 component={Link}
                 to="/auth?mode=login"
