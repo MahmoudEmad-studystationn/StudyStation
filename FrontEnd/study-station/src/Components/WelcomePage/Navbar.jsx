@@ -29,6 +29,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AuthButtons from "./NavbarBtns";
 import { Link } from "react-router-dom";
+import { useTheme } from "@mui/material";
 
 
 const pages = [
@@ -42,10 +43,9 @@ function ResponsiveAppBar() {
     const [scrolled, setScrolled] = React.useState(false);
     const [visible, setVisible] = React.useState(true);
     const lastScrollY = React.useRef(0);
-    // 💡 حالة تتبع القسم النشط
     const [activeSection, setActiveSection] = React.useState('home');
+    const theme = useTheme();
 
-    // 🚀 useEffect لـ Scroll and Visibility
     React.useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -61,25 +61,22 @@ function ResponsiveAppBar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // 🚀 useEffect لـ Intersection Observer لتحديد القسم النشط
     React.useEffect(() => {
         const sectionIds = pages.map(page => page.id);
         const observerOptions = {
             root: null,
-            rootMargin: '0px 0px -50% 0px', // عندما يصل القسم لمنتصف الشاشة تقريباً
+            rootMargin: '0px 0px -50% 0px',
             threshold: 0,
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // إذا كان القسم في مجال الرؤية
                 if (entry.isIntersecting) {
                     setActiveSection(entry.target.id);
                 }
             });
         }, observerOptions);
 
-        // بدء المراقبة
         sectionIds.forEach(id => {
             const section = document.getElementById(id);
             if (section) {
@@ -107,13 +104,11 @@ function ResponsiveAppBar() {
     const scrollToSection = (id) => {
         const element = document.getElementById(id);
         if (element) {
-            // استخدام scrollIntoView مع خاصية smooth للانتقال السلس
             element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     };
 
     const handlePageClick = (id) => {
-        // عند الضغط، قم بالتحديث الفوري
         setActiveSection(id);
         handleCloseNavMenu();
         scrollToSection(id);
@@ -123,7 +118,7 @@ function ResponsiveAppBar() {
         fontFamily: '"Open Sans", sans-serif',
         fontWeight: 600,
         fontSize: { xs: "0.9rem", sm: "0.95rem", md: "1rem" },
-        color: "#5a5a5a",
+        color: theme.palette.mode === "dark" ? "#b0b0b0" : "#5a5a5a",
         textTransform: "none",
         my: 2,
         mx: 1,
@@ -144,8 +139,8 @@ function ResponsiveAppBar() {
             transform: "translateX(-50%)",
         },
         "&:hover": {
-            backgroundColor: "rgba(143, 183, 204, 0.08)",
-            color: "#4a4a4a",
+            backgroundColor: theme.palette.mode === "dark" ? "rgba(143, 183, 204, 0.1)" : "rgba(143, 183, 204, 0.08)",
+            color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a",
             "&:before": {
                 width: "80%",
             },
@@ -165,8 +160,14 @@ function ResponsiveAppBar() {
     return (
         <AppBar
             sx={{
-                backgroundColor: scrolled ? "rgba(255, 255, 255, 0.9)" : "transparent",
-                boxShadow: scrolled ? "0 4px 12px rgba(0, 0, 0, 0.15)" : "none",
+                backgroundColor:
+                    theme.palette.mode === "dark"
+                        ? scrolled
+                            ? "#171717" 
+                            : "transparent"        
+                        : scrolled
+                            ? "rgba(255, 255, 255, 0.9)" 
+                            : "transparent", boxShadow: scrolled ? "0 4px 12px rgba(0, 0, 0, 0.15)" : "none",
                 backdropFilter: scrolled ? "blur(8px)" : "none",
                 WebkitBackdropFilter: scrolled ? "blur(8px)" : "none",
                 borderBottom: scrolled ? "1px solid rgba(0, 0, 0, 0.08)" : "none",
@@ -177,18 +178,15 @@ function ResponsiveAppBar() {
         >
             <Container maxWidth="xl">
                 <Toolbar disableGutters sx={{ minHeight: "60px" }}>
-                    {/* Logo Large Screen */}
-                    {/* ... (Logo Code) ... */}
                     <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
-                        <Typography variant="h6" sx={{ ...logoSx, color: "#6a6a6a" }}>
+                        <Typography variant="h6" sx={{ ...logoSx, color: theme.palette.mode === "dark" ? "#b0b0b0" : "#6a6a6a" }}>
                             Study
                         </Typography>
-                        <Typography variant="h6" sx={{ ...logoSx, color: "#8fb7cc" }}>
+                        <Typography variant="h6" sx={{ ...logoSx, color: theme.palette.mode === "dark" ? "#8fb7cc" : "#8fb7cc" }}>
                             Station
                         </Typography>
                     </Box>
 
-                    {/* Menu Icon Small Screen */}
                     <Box sx={{ display: { xs: "flex", md: "none" } }}>
                         <IconButton
                             size="large"
@@ -197,12 +195,12 @@ function ResponsiveAppBar() {
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
                             sx={{
-                                color: "#6a6a6a",
+                                color: theme.palette.mode === "dark" ? "#b0b0b0" : "#6a6a6a",
                                 padding: "10px",
                                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                                 "&:hover": {
                                     transform: "translateY(-2px)",
-                                    color: "#4a4a4a",
+                                    color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a",
                                 },
                             }}
                         >
@@ -218,7 +216,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseNavMenu}
                             sx={{
                                 display: { xs: "block", md: "none" },
-                                "& .MuiPaper-root": { borderRadius: "12px", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)", mt: 1 },
+                                "& .MuiPaper-root": { borderRadius: "12px", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)", mt: 1, backgroundColor: theme.palette.mode === "dark" ? "#2d2d2d" : "#fff" },
                             }}
                         >
                             {pages.map((page) => (
@@ -228,9 +226,8 @@ function ResponsiveAppBar() {
                                     selected={page.id === activeSection}
                                     sx={{
                                         transition: "all 0.3s ease",
-                                        "&:hover": { backgroundColor: "rgba(143, 183, 204, 0.1)" },
-                                        // يمكن تعديل هذا النمط للتمييز إذا كان activeSection
-                                        ...(page.id === activeSection && { backgroundColor: "rgba(143, 183, 204, 0.2)", color: "#4a4a4a" })
+                                        "&:hover": { backgroundColor: theme.palette.mode === "dark" ? "rgba(143, 183, 204, 0.2)" : "rgba(143, 183, 204, 0.1)" },
+                                        ...(page.id === activeSection && { backgroundColor: theme.palette.mode === "dark" ? "rgba(143, 183, 204, 0.3)" : "rgba(143, 183, 204, 0.2)", color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a" })
                                     }}
                                 >
                                     <Typography
@@ -239,7 +236,7 @@ function ResponsiveAppBar() {
                                             fontFamily: '"Open Sans", sans-serif',
                                             fontWeight: 600,
                                             fontSize: "1rem",
-                                            color: "#5a5a5a",
+                                            color: theme.palette.mode === "dark" ? "#b0b0b0" : "#5a5a5a",
                                             textDecoration: "none",
                                         }}
                                     >
@@ -250,18 +247,15 @@ function ResponsiveAppBar() {
                         </Menu>
                     </Box>
 
-                    {/* Logo Small Screen */}
-                    {/* ... (Small Logo Code) ... */}
                     <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", flexGrow: 1 }}>
-                        <Typography variant="h6" sx={{ fontFamily: '"Open Sans", sans-serif', fontWeight: 700, color: "#6a6a6a", textDecoration: "none", fontSize: "1.1rem" }}>
+                        <Typography variant="h6" sx={{ fontFamily: '"Open Sans", sans-serif', fontWeight: 700, color: theme.palette.mode === "dark" ? "#b0b0b0" : "#6a6a6a", textDecoration: "none", fontSize: "1.1rem" }}>
                             Study
                         </Typography>
-                        <Typography variant="h6" sx={{ fontFamily: '"Open Sans", sans-serif', fontWeight: 700, color: "#8fb7cc", textDecoration: "none", fontSize: "1.1rem" }}>
+                        <Typography variant="h6" sx={{ fontFamily: '"Open Sans", sans-serif', fontWeight: 700, color: theme.palette.mode === "dark" ? "#8fb7cc" : "#8fb7cc", textDecoration: "none", fontSize: "1.1rem" }}>
                             Station
                         </Typography>
                     </Box>
 
-                    {/* Center Pages Large Screen */}
                     <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center", gap: 0.5 }}>
                         {pages.map((page) => {
                             const isActive = page.id === activeSection;
@@ -269,7 +263,7 @@ function ResponsiveAppBar() {
                                 ...buttonSx,
                                 position: "relative",
                                 ...(isActive && {
-                                    color: "#4a4a4a",
+                                    color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a",
                                     "&::after": {
                                         content: '""',
                                         position: "absolute",
@@ -283,13 +277,13 @@ function ResponsiveAppBar() {
                                     },
                                     "&:hover": {
                                         backgroundColor: "transparent",
-                                        color: "#4a4a4a",
+                                        color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a",
                                         "&:before": { width: "0%" },
                                         "&::after": { width: "80%" },
                                     }
                                 }),
                                 ...(!isActive && {
-                                    color: "#5a5a5a",
+                                    color: theme.palette.mode === "dark" ? "#b0b0b0" : "#5a5a5a",
                                     "&::after": {
                                         content: '""',
                                         position: "absolute",
@@ -303,7 +297,7 @@ function ResponsiveAppBar() {
                                     },
                                     "&:hover": {
                                         backgroundColor: "transparent",
-                                        color: "#4a4a4a",
+                                        color: theme.palette.mode === "dark" ? "#d0d0d0" : "#4a4a4a",
                                         "&::after": {
                                             width: "80%",
                                         },
@@ -323,7 +317,6 @@ function ResponsiveAppBar() {
                         })}
                     </Box>
 
-                    {/* Auth Buttons */}
                     <Box sx={{ display: "flex" }}>
                         <AuthButtons />
                     </Box>

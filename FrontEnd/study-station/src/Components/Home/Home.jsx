@@ -16,7 +16,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import postsImage from "./posts.jpg";
 
-function App() {
+
+function Home() {
   return (
     <div className="max-w-[1200px] mx-auto px-4">
       {/* Main */}
@@ -224,6 +225,8 @@ function App() {
       </main>
     </div>
   );
+
+
 }
 
-export default App;
+export default Home;
