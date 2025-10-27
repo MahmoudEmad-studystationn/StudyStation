@@ -6,7 +6,7 @@ import Login from "./Components/Auth/Login";
 import ForgotPassword from "./Components/Auth/ForgotPassword";
 import AuthPage from './Components/Auth/AuthPage';
 import LoadingScreen from "./Pages/LoadingScreen";
-import Home from "./Components/Home/Home";
+import Home from "./Components/Home/Home.jsx";
 import ResetPassword from "./Components/Auth/ResetPassword";
 
 function App() {
