@@ -1,0 +1,6 @@
+@StudyStation.API_HostAddress = http://localhost:5015
+
+GET {{StudyStation.API_HostAddress}}/api/register/
+Accept: application/json
+
+###
