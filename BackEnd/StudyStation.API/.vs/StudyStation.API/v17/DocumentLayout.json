@@ -1,0 +1,982 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\G\\NEW Patch\\StudyStation.API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\studystation.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\studystation.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\studystation.api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\studystation.api.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\comments\\addcomment\\addcommenthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\comments\\addcomment\\addcommenthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\comments\\addcomment\\addcommentcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\comments\\addcomment\\addcommentcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\models\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\models\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\resendcode\\resendcodehandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\resendcode\\resendcodehandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\controllers\\resendcodecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\controllers\\resendcodecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\resendcode\\resendcodecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\resendcode\\resendcodecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\resetpassword\\resetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\resetpassword\\resetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\resetpassword\\resetpasswordcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\resetpassword\\resetpasswordcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\controllers\\resetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\controllers\\resetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\resetpassword\\resetpasswordhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\resetpassword\\resetpasswordhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\verifyemail\\verifyemailhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\verifyemail\\verifyemailhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\verifyemail\\verifyemailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\verifyemail\\verifyemailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\verifyemail\\verifyemailcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\verifyemail\\verifyemailcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\controllers\\postscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\controllers\\postscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\reactions\\addreaction\\addreactionhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\reactions\\addreaction\\addreactionhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\reactions\\addreaction\\addreactionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\reactions\\addreaction\\addreactionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\reactions\\addreaction\\addreactioncommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\reactions\\addreaction\\addreactioncommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\comments\\addcomment\\addcommentresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\comments\\addcomment\\addcommentresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\deletepost\\deleteposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\deletepost\\deleteposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\deletepost\\deletepostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\deletepost\\deletepostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\updatepost\\updateposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\updatepost\\updateposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\updatepost\\updatepostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\updatepost\\updatepostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\updatepost\\updatepostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\updatepost\\updatepostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\getallposts\\getallpostshandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\getallposts\\getallpostshandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\getallposts\\postdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\getallposts\\postdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\getallposts\\getallpostsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\getallposts\\getallpostsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\migrations\\20251124215457_addpostuserforeignkey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\migrations\\20251124215457_addpostuserforeignkey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\models\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\models\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\services\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\services\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\createpost\\createposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\createpost\\createposthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\login\\loginhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\login\\loginhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\login\\loginresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\login\\loginresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\login\\logincommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\login\\logincommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\createpost\\createpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\createpost\\createpostresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\posts\\createpost\\createpostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\posts\\createpost\\createpostcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\forgotpassword\\forgotpasswordhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\forgotpassword\\forgotpasswordhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\forgotpassword\\forgotpasswordresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\forgotpassword\\forgotpasswordresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\forgotpassword\\forgotpasswordcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\forgotpassword\\forgotpasswordcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\register\\registerhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\register\\registerhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\register\\registerresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\register\\registerresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\features\\users\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\features\\users\\register\\registercommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\services\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\services\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\hubs\\notificationhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\hubs\\notificationhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\models\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\models\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\models\\reaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\models\\reaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\migrations\\20251125174842_addnestedcomments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\migrations\\20251125174842_addnestedcomments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|d:\\g\\new patch\\studystation.api\\studystation.api\\migrations\\20251125162509_addotpfieldstouser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEE55962-690B-4297-867A-D2EE113F4D85}|StudyStation.API\\StudyStation.API.csproj|solutionrelative:studystation.api\\migrations\\20251125162509_addotpfieldstouser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 352,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Program.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Program.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Program.cs",
+              "RelativeToolTip": "StudyStation.API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:41:59.698Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "StudyStation.API.csproj",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\StudyStation.API.csproj",
+              "RelativeDocumentMoniker": "StudyStation.API\\StudyStation.API.csproj",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\StudyStation.API.csproj",
+              "RelativeToolTip": "StudyStation.API\\StudyStation.API.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-24T19:35:28.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "20251125174842_AddNestedComments.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251125174842_AddNestedComments.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251125174842_AddNestedComments.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251125174842_AddNestedComments.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251125174842_AddNestedComments.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T17:48:43.121Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Comment.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Comment.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Models\\Comment.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Comment.cs",
+              "RelativeToolTip": "StudyStation.API\\Models\\Comment.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAxwBwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:39:45.118Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\appsettings.json",
+              "RelativeDocumentMoniker": "StudyStation.API\\appsettings.json",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\appsettings.json",
+              "RelativeToolTip": "StudyStation.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAADFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T19:41:49.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EmailService.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\EmailService.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Services\\EmailService.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\EmailService.cs",
+              "RelativeToolTip": "StudyStation.API\\Services\\EmailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:41:02.244Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "StudyStation.API.http",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\StudyStation.API.http",
+              "RelativeDocumentMoniker": "StudyStation.API\\StudyStation.API.http",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\StudyStation.API.http",
+              "RelativeToolTip": "StudyStation.API\\StudyStation.API.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-11-24T20:36:47.456Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AddCommentCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentCommand.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:35:50.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AddCommentHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentHandler.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAIwD4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:36:23.161Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ResendCodeHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeHandler.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAYwBYAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:35:31.376Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ResendCodeController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\ResendCodeController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Controllers\\ResendCodeController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\ResendCodeController.cs",
+              "RelativeToolTip": "StudyStation.API\\Controllers\\ResendCodeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:37:04.346Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Data\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Data\\DatabaseContext.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Data\\DatabaseContext.cs",
+              "RelativeToolTip": "StudyStation.API\\Data\\DatabaseContext.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAYwCYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:38:05.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ResendCodeCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ResendCode\\ResendCodeCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:34:30.009Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "20251125162509_AddOtpFieldsToUser.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251125162509_AddOtpFieldsToUser.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251125162509_AddOtpFieldsToUser.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251125162509_AddOtpFieldsToUser.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251125162509_AddOtpFieldsToUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:25:09.965Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ResetPasswordController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordController.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:15:58.66Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ResetPasswordCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordCommand.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAgwBMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:15:12.691Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ResetPasswordController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\ResetPasswordController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Controllers\\ResetPasswordController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\ResetPasswordController.cs",
+              "RelativeToolTip": "StudyStation.API\\Controllers\\ResetPasswordController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:16:34.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ResetPasswordHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ResetPassword\\ResetPasswordHandler.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAgwDYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:15:35.75Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "VerifyEmailHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailHandler.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAYwDsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:07:52.936Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Models\\ApplicationUser.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\ApplicationUser.cs",
+              "RelativeToolTip": "StudyStation.API\\Models\\ApplicationUser.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAQwCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:39:19.95Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "VerifyEmailController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailController.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailController.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAgwCcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:08:52.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "VerifyEmailCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\VerifyEmail\\VerifyEmailCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:07:25.469Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "CommentsController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\CommentsController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Controllers\\CommentsController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\CommentsController.cs",
+              "RelativeToolTip": "StudyStation.API\\Controllers\\CommentsController.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAmwD0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:36:51.849Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "AddCommentResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Comments\\AddComment\\AddCommentResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Comments\\AddComment\\AddCommentResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:36:05.935Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "PostsController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\PostsController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Controllers\\PostsController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\PostsController.cs",
+              "RelativeToolTip": "StudyStation.API\\Controllers\\PostsController.cs",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAqwHEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:56:11.362Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "UsersController.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\UsersController.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Controllers\\UsersController.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Controllers\\UsersController.cs",
+              "RelativeToolTip": "StudyStation.API\\Controllers\\UsersController.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAYwCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:59:16.533Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "AddReactionResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:45:07.989Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "AddReactionCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:44:50.532Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "AddReactionHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Reactions\\AddReaction\\AddReactionHandler.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAqwEQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:45:22.309Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "DeletePostHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostHandler.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAqwDEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:29:47.297Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "DeletePostCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\DeletePost\\DeletePostCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:29:29.927Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "UpdatePostCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:22:04.395Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "PostDto.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\PostDto.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\GetAllPosts\\PostDto.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\PostDto.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\GetAllPosts\\PostDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:16:25.973Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "GetAllPostsQuery.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsQuery.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsQuery.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsQuery.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:15:59.042Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "UpdatePostResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:22:23.202Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "UpdatePostHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\UpdatePost\\UpdatePostHandler.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAqwDUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:22:39.206Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "CreatePostResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:52:43.547Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "GetAllPostsHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\GetAllPosts\\GetAllPostsHandler.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAgwDIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T22:16:46.35Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "CreatePostCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:52:23.76Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "20251124215457_AddPostUserForeignKey.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124215457_AddPostUserForeignKey.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251124215457_AddPostUserForeignKey.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124215457_AddPostUserForeignKey.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251124215457_AddPostUserForeignKey.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T21:54:58.359Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "JwtService.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\JwtService.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Services\\JwtService.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\JwtService.cs",
+              "RelativeToolTip": "StudyStation.API\\Services\\JwtService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAowB4AAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:41:39.974Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "CreatePostHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Posts\\CreatePost\\CreatePostHandler.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAA7wCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:53:06.924Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Post.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Post.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Models\\Post.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Post.cs",
+              "RelativeToolTip": "StudyStation.API\\Models\\Post.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwAQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:40:03.633Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "LoginCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Login\\LoginCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Login\\LoginCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T21:02:41.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "LoginHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Login\\LoginHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Login\\LoginHandler.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAswCoAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T21:03:23.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "LoginResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Login\\LoginResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Login\\LoginResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Login\\LoginResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T21:03:03.707Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "ForgotPasswordHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordHandler.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAYwCsAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:40:33.384Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "ForgotPasswordCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:39:46.032Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "ForgotPasswordResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\ForgotPassword\\ForgotPasswordResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T20:40:10.048Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "20251124195138_InitialSchema.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251124195138_InitialSchema.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:51:38.712Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "20251124195406_SimplifiedSchema.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251124195406_SimplifiedSchema.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:54:07.126Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "RegisterCommand.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterCommand.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Register\\RegisterCommand.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterCommand.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Register\\RegisterCommand.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAADwvxoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:57:30.095Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "RegisterHandler.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterHandler.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Register\\RegisterHandler.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterHandler.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Register\\RegisterHandler.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAAAkwE0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:58:29.817Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "RegisterResponse.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterResponse.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Features\\Users\\Register\\RegisterResponse.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Features\\Users\\Register\\RegisterResponse.cs",
+              "RelativeToolTip": "StudyStation.API\\Features\\Users\\Register\\RegisterResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:58:01.676Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "20251124195121_InitialSchema.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs",
+              "RelativeToolTip": "StudyStation.API\\Migrations\\20251124195121_InitialSchema.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:51:21.371Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "NotificationHub.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Hubs\\NotificationHub.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Hubs\\NotificationHub.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Hubs\\NotificationHub.cs",
+              "RelativeToolTip": "StudyStation.API\\Hubs\\NotificationHub.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:38:50.71Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "RefreshToken.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\RefreshToken.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Models\\RefreshToken.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\RefreshToken.cs",
+              "RelativeToolTip": "StudyStation.API\\Models\\RefreshToken.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:40:38.248Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "IEmailService.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\IEmailService.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Services\\IEmailService.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Services\\IEmailService.cs",
+              "RelativeToolTip": "StudyStation.API\\Services\\IEmailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:41:21.45Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "Reaction.cs",
+              "DocumentMoniker": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Reaction.cs",
+              "RelativeDocumentMoniker": "StudyStation.API\\Models\\Reaction.cs",
+              "ToolTip": "D:\\G\\NEW Patch\\StudyStation.API\\StudyStation.API\\Models\\Reaction.cs",
+              "RelativeToolTip": "StudyStation.API\\Models\\Reaction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:40:20.972Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 119,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
