@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { resetPasswordApi } from "../Services/authServices";
+import { useTheme } from "@mui/material";
 
 const UnlockIcon = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -58,48 +59,89 @@ const getActiveButtonStyle = () => ({
 });
 
 export default function ResetPassword() {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+
     const [buttonStyle, setButtonStyle] = useState(getBaseButtonStyle());
     const [passwordFocused, setPasswordFocused] = useState(false);
-    const [confirmFocused, setConfirmFocused] = useState(false);
     const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    const code = searchParams.get("code");
+    const email = searchParams.get("email");
+
+    // Debug: اطبع الـ code والـ email
+    useEffect(() => {
+        console.log("Code from URL:", code);
+        console.log("Email from URL:", email);
+        
+        if (!code || !email) {
+            console.warn("Missing code or email in URL parameters");
+        } else {
+            console.log("Code and email are present - ready to reset");
+        }
+    }, [code, email]);
 
     const handleSubmit = async () => {
+        if (!code || !email) {
+            toast.error("Missing reset information. Please use the link from your email.");
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            toast.error("Password must be at least 8 characters");
+            return;
+        }
+
         setIsLoading(true);
 
-        const result = await resetPasswordApi(newPassword, confirmPassword);
+        const result = await resetPasswordApi({
+            email: decodeURIComponent(email),
+            token: code,
+            password: newPassword
+        });
+
         setIsLoading(false);
 
         if (result.success) {
-            toast.success(result.message, { position: "top-center", autoClose: 3000 });
-            console.log("Redirecting to /login...");
-            setTimeout(() => navigate("/login"), 2000);
+            toast.success("Password changed successfully!");
+            setTimeout(() => navigate("/login"), 2500);
         } else {
-            toast.error(result.message, { position: "top-center", autoClose: 3000 });
+            // اعرض الـ error فقط، بدون أي redirect
+            toast.error(result.message || "Failed to reset password");
         }
         setButtonStyle(getBaseButtonStyle());
     };
 
     return (
-        <div className="min-h-screen flex flex-col font-sans bg-white">
+        <div className={`min-h-screen flex flex-col ${isDark ? "bg-[#171717]" : "bg-white"}`}>
             <ToastContainer position="top-center" autoClose={3000} />
+
             <div className="flex-grow flex justify-center items-center p-4 sm:p-6 lg:p-8">
-                <div className="w-full max-w-md shadow-lg rounded-2xl bg-white p-6 sm:p-8">
+                <div className={`w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-lg ${isDark ? "bg-[#171717]" : "bg-white"}`}>
+
                     <div className="flex justify-center mb-6">
-                        <UnlockIcon className="w-16 h-16" style={{ color: COLOR_PRIMARY }} />
+                        <div className={`p-4 rounded-full ${isDark ? "bg-[#222]" : "bg-[#f0f4f7]"}`}>
+                            <UnlockIcon className="w-16 h-16" style={{ color: COLOR_PRIMARY }} />
+                        </div>
                     </div>
+
                     <div className="mb-6 text-center">
                         <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: COLOR_PRIMARY }}>
                             Reset Password
                         </h1>
-                        <p className="text-sm sm:text-base" style={{ color: COLOR_TEXT }}>
-                            Enter your new password below.
+                        <p className="text-sm sm:text-base" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
+                            Enter your new password 
                         </p>
                     </div>
-                    <div className="relative mb-4 w-full">
-                        <LockIcon className="absolute top-1/2 transform -translate-y-1/2 left-4 w-5 h-5" style={{ color: COLOR_TEXT }} />
+
+                    <div className="relative mb-4">
+                        <LockIcon
+                            className="absolute top-1/2 left-4 -translate-y-1/2 w-5 h-5"
+                            style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}
+                        />
                         <input
                             type="password"
                             placeholder="New Password"
@@ -109,29 +151,14 @@ export default function ResetPassword() {
                             style={{
                                 borderColor: passwordFocused ? COLOR_HOVER : "#8686865b",
                                 boxShadow: passwordFocused ? `0 0 0 3px rgba(143, 183, 204, 0.3)` : "none",
-                                backgroundColor: "transparent",
+                                backgroundColor: isDark ? "#222222" : "transparent",
+                                color: isDark ? "#ffffff" : "#000000",
                             }}
                             onFocus={() => setPasswordFocused(true)}
                             onBlur={() => setPasswordFocused(false)}
                         />
                     </div>
-                    <div className="relative mb-4 w-full">
-                        <LockIcon className="absolute top-1/2 transform -translate-y-1/2 left-4 w-5 h-5" style={{ color: COLOR_TEXT }} />
-                        <input
-                            type="password"
-                            placeholder="Confirm Password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full border-2 rounded-xl py-3 pl-12 pr-4 text-sm sm:text-base focus:outline-none transition-all duration-300"
-                            style={{
-                                borderColor: confirmFocused ? COLOR_HOVER : "#8686865b",
-                                boxShadow: confirmFocused ? `0 0 0 3px rgba(143, 183, 204, 0.3)` : "none",
-                                backgroundColor: "transparent",
-                            }}
-                            onFocus={() => setConfirmFocused(true)}
-                            onBlur={() => setConfirmFocused(false)}
-                        />
-                    </div>
+
                     <button
                         style={buttonStyle}
                         onMouseEnter={() => setButtonStyle(getHoverButtonStyle())}
@@ -139,22 +166,48 @@ export default function ResetPassword() {
                         onMouseDown={() => setButtonStyle(getActiveButtonStyle())}
                         onMouseUp={() => setButtonStyle(getHoverButtonStyle())}
                         onClick={handleSubmit}
-                        type="button"
                         className="w-full"
                         disabled={isLoading}
                     >
                         {isLoading ? "Submitting..." : "Submit"}
                     </button>
+
                     <div className="mt-4 text-center">
-                        <a href="/login" className="text-sm sm:text-base flex items-center justify-center gap-2" style={{ color: COLOR_PRIMARY, textDecoration: "none" }}>
-                            <RightArrowIcon className="w-4 h-4" style={{ color: COLOR_PRIMARY }} />
+                        <p className="text-xs mb-2" style={{ color: isDark ? "#999" : COLOR_TEXT }}>
+                            Code expired or not working?
+                        </p>
+                        <span
+                            onClick={() => navigate("/forgot-password")}
+                            className="text-sm cursor-pointer hover:underline"
+                            style={{ color: COLOR_PRIMARY }}
+                        >
+                            Request a new reset code
+                        </span>
+                    </div>
+
+                    <div className="mt-4 text-center">
+                        <span
+                            onClick={() => navigate("/login")}
+                            className="text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer hover:underline"
+                            style={{ color: COLOR_PRIMARY }}
+                        >
+                            <RightArrowIcon className="w-4 h-4 rotate-180" style={{ color: COLOR_PRIMARY }} />
                             Back to Login
-                        </a>
+                        </span>
                     </div>
                 </div>
             </div>
-            <footer className="text-center p-4 text-sm border-t" style={{ color: COLOR_TEXT, borderColor: "#eee" }}>
-                <p className="m-0">© 2025 <span className="font-semibold">Study Station</span>. All rights reserved.</p>
+
+            <footer
+                className="text-center p-4 text-sm border-t"
+                style={{
+                    color: isDark ? "#ffffff" : COLOR_TEXT,
+                    borderColor: isDark ? "#2d2d2d" : "#eee",
+                }}
+            >
+                <p className="m-0">
+                    © 2025 <span className="font-semibold">Study Station</span>. All rights reserved.
+                </p>
             </footer>
         </div>
     );

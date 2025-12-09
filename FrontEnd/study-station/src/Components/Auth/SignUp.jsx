@@ -6,7 +6,8 @@ import "tippy.js/dist/tippy.css";
 import { signUpApi } from '../Services/authServices';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material";
 
 const tippyStyles = `
 .tippy-box[data-theme~='custom'] {
@@ -71,7 +72,7 @@ const getBaseButtonStyle = () => ({
     fontSize: "16px",
     cursor: "pointer",
     outline: "none",
-    transition: "background-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease",
+    transition: "background-color .2s ease, box-shadow .2s ease, transform .12s ease",
     transform: "scale(1)",
 });
 
@@ -89,10 +90,11 @@ const getActiveButtonStyle = () => ({
     transform: "scale(0.98)",
 });
 
-const getInputStyle = (isFocused, hasError) => ({
+const getInputStyle = (isFocused, hasError, theme) => ({
     borderColor: hasError ? "#f1b0b0ff" : isFocused ? COLOR_HOVER : "#8686865b",
     boxShadow: isFocused ? `0 0 0 6px rgba(143,183,204,0.08)` : "none",
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.mode === "dark" ? "#222222" : "transparent",
+    color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
 });
 
 export default function SignUp({ switchToLogin }) {
@@ -101,8 +103,9 @@ export default function SignUp({ switchToLogin }) {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate(); 
-
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -125,18 +128,17 @@ export default function SignUp({ switchToLogin }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        const singleFieldData = { [name]: value };
         const result = signupSchema.safeParse({ ...formData, [name]: value });
 
         if (!result.success) {
             const fieldError = result.error.issues.find((issue) => issue.path[0] === name);
             if (fieldError && focusedInput === name) {
-                setErrors({ [name]: fieldError.message });
+                setErrors({ ...errors, [name]: fieldError.message });
             } else {
-                setErrors((prev) => ({ ...prev, [name]: "" }));
+                setErrors({ ...errors, [name]: "" });
             }
         } else {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
+            setErrors({ ...errors, [name]: "" });
         }
     };
 
@@ -144,9 +146,9 @@ export default function SignUp({ switchToLogin }) {
         setFocusedInput(field);
         const result = signupSchema.safeParse({ ...formData, [field]: formData[field] });
         if (!result.success) {
-            const fieldError = result.error.issues.find((issue) => issue.path[0] === name);
+            const fieldError = result.error.issues.find((issue) => issue.path[0] === field);
             if (fieldError) {
-                setErrors({ [field]: fieldError.message });
+                setErrors({ ...errors, [field]: fieldError.message });
             }
         }
     };
@@ -161,35 +163,28 @@ export default function SignUp({ switchToLogin }) {
         setLoading(true);
 
         const result = signupSchema.safeParse(formData);
-
         if (!result.success) {
             const validationErrors = result.error.issues.reduce((acc, issue) => {
                 acc[issue.path[0]] = issue.message;
                 return acc;
             }, {});
             setErrors(validationErrors);
-            const firstError = result.error.issues[0];
-            toast.error(firstError.message);
-
+            toast.error(result.error.issues[0].message);
             setLoading(false);
             return;
         }
+
         const apiResponse = await signUpApi(formData);
 
         if (apiResponse.success) {
             toast.success("Account created successfully! Welcome to Study Station!");
-            setMessage("Account created successfully!"); // Consistent message
+            setMessage("Account created successfully!");
             setFormData({
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                dateOfBirth: "",
-                gender: "",
+                firstName: "", lastName: "", email: "", password: "",
+                confirmPassword: "", dateOfBirth: "", gender: ""
             });
             setErrors({});
-            navigate("/login");
+            setTimeout(() => navigate(`/verification-code?email=${formData.email}`), 1500);
         } else {
             toast.error(apiResponse.message);
             setMessage(`${apiResponse.message}`);
@@ -199,32 +194,37 @@ export default function SignUp({ switchToLogin }) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-white">
+        <div className={`min-h-screen flex flex-col ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"}`}>
+            <nav className="flex justify-between items-center px-6 py-4">
+                <div onClick={() => navigate("/")} className="flex items-center cursor-pointer select-none">
+                    <h4 className={`text-xl font-bold tracking-wide transition-colors duration-300 ${isDark ? "text-[#b0b0b0]" : "text-[#6a6a6a]"}`}>Study</h4>
+                    <h4 className={`text-xl font-bold tracking-wide ml-1 transition-colors duration-300 ${isDark ? "text-[#8fb7cc]" : "text-[#8fb7cc]"}`}>Station</h4>
+                </div>
+            </nav>
             <div className="flex-grow flex items-center justify-center p-4">
-                <div className="w-full max-w-6xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-                    <div className="w-full md:w-1/2 p-6 sm:p-10 flex items-center">
+                <div className={`w-full max-w-6xl rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"}`}>
+                    <div className={`w-full md:w-1/2 p-6 sm:p-10 flex items-center ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"}`}>
                         <div className="w-full max-w-lg mx-auto">
                             <div className="mb-6 text-center">
                                 <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: COLOR_PRIMARY }}>
                                     Create your Study Station account
                                 </h2>
-                                <p className="mt-2 text-sm sm:text-base" style={{ color: COLOR_TEXT }}>
+                                <p className="mt-2 text-sm sm:text-base" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }}>
                                     Join your focus zone and start tracking your study journey
                                 </p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-3">
-                                {/* First Name */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <Tippy content={errors.firstName} visible={!!errors.firstName && focusedInput === "firstName"} placement="bottom" arrow={true} theme="custom">
                                         <div className="relative w-full">
-                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
                                             <input
                                                 type="text"
                                                 name="firstName"
                                                 placeholder="First Name"
                                                 className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                                style={getInputStyle(focusedInput === "firstName", !!errors.firstName)}
+                                                style={getInputStyle(focusedInput === "firstName", !!errors.firstName, theme)}
                                                 onFocus={() => handleFocus("firstName")}
                                                 onBlur={handleBlur}
                                                 value={formData.firstName}
@@ -238,16 +238,15 @@ export default function SignUp({ switchToLogin }) {
                                         </div>
                                     </Tippy>
 
-                                    {/* Last Name */}
                                     <Tippy content={errors.lastName} visible={!!errors.lastName && focusedInput === "lastName"} placement="bottom" arrow={true} theme="custom">
                                         <div className="relative w-full">
-                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
                                             <input
                                                 type="text"
                                                 name="lastName"
                                                 placeholder="Last Name"
                                                 className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                                style={getInputStyle(focusedInput === "lastName", !!errors.lastName)}
+                                                style={getInputStyle(focusedInput === "lastName", !!errors.lastName, theme)}
                                                 onFocus={() => handleFocus("lastName")}
                                                 onBlur={handleBlur}
                                                 value={formData.lastName}
@@ -262,16 +261,15 @@ export default function SignUp({ switchToLogin }) {
                                     </Tippy>
                                 </div>
 
-                                {/* Email */}
                                 <Tippy content={errors.email} visible={!!errors.email && focusedInput === "email"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="email"
                                             name="email"
                                             placeholder="Email"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                            style={getInputStyle(focusedInput === "email", !!errors.email)}
+                                            style={getInputStyle(focusedInput === "email", !!errors.email, theme)}
                                             onFocus={() => handleFocus("email")}
                                             onBlur={handleBlur}
                                             value={formData.email}
@@ -285,16 +283,15 @@ export default function SignUp({ switchToLogin }) {
                                     </div>
                                 </Tippy>
 
-                                {/* Password */}
                                 <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="password"
                                             name="password"
                                             placeholder="Password"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                            style={getInputStyle(focusedInput === "password", !!errors.password)}
+                                            style={getInputStyle(focusedInput === "password", !!errors.password, theme)}
                                             onFocus={() => handleFocus("password")}
                                             onBlur={handleBlur}
                                             value={formData.password}
@@ -311,13 +308,13 @@ export default function SignUp({ switchToLogin }) {
                                 {/* Confirm Password */}
                                 <Tippy content={errors.confirmPassword} visible={!!errors.confirmPassword && focusedInput === "confirmPassword"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="password"
                                             name="confirmPassword"
                                             placeholder="Confirm Password"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                            style={getInputStyle(focusedInput === "confirmPassword", !!errors.confirmPassword)}
+                                            style={getInputStyle(focusedInput === "confirmPassword", !!errors.confirmPassword, theme)}
                                             onFocus={() => handleFocus("confirmPassword")}
                                             onBlur={handleBlur}
                                             value={formData.confirmPassword}
@@ -339,7 +336,7 @@ export default function SignUp({ switchToLogin }) {
                                                 type="date"
                                                 name="dateOfBirth"
                                                 className="w-full border-2 rounded-xl py-3 pl-4 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                                style={getInputStyle(focusedInput === "dateOfBirth", !!errors.dateOfBirth)}
+                                                style={getInputStyle(focusedInput === "dateOfBirth", !!errors.dateOfBirth, theme)}
                                                 onFocus={() => handleFocus("dateOfBirth")}
                                                 onBlur={handleBlur}
                                                 value={formData.dateOfBirth}
@@ -361,7 +358,7 @@ export default function SignUp({ switchToLogin }) {
                                                 value={formData.gender}
                                                 onChange={handleChange}
                                                 className="appearance-none w-full border-2 rounded-xl py-3 pl-4 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                                style={getInputStyle(focusedInput === "gender", !!errors.gender)}
+                                                style={getInputStyle(focusedInput === "gender", !!errors.gender, theme)}
                                                 onFocus={() => handleFocus("gender")}
                                                 onBlur={handleBlur}
                                             >
@@ -380,7 +377,7 @@ export default function SignUp({ switchToLogin }) {
                                                 strokeWidth="2"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                style={{ color: COLOR_TEXT }}
+                                                style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }}
                                             >
                                                 <path d="M6 9l6 6 6-6"></path>
                                             </svg>
@@ -413,7 +410,7 @@ export default function SignUp({ switchToLogin }) {
                             </form>
                             {/* Switch to Login */}
                             <div className="mt-4 text-center text-sm">
-                                <p className="m-0" style={{ color: COLOR_TEXT }}>
+                                <p className="m-0" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }}>
                                     Already have an account?{" "}
                                     <span className="font-semibold cursor-pointer" style={{ color: COLOR_PRIMARY }} onClick={switchToLogin}>
                                         Log In
@@ -424,14 +421,14 @@ export default function SignUp({ switchToLogin }) {
                     </div>
 
                     {/* Right Side Image */}
-                    <div className="hidden md:flex md:w-1/2 items-center justify-center p-6 bg-gray-50">
+                    <div className={`hidden md:flex md:w-1/2 items-center justify-center p-6 ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-gray-50"}`}>
                         <img src={SignUpImg} alt="Student Desk Illustration" className="max-w-full h-auto object-contain rounded-xl" style={{ minHeight: 320 }} />
                     </div>
                 </div>
             </div>
 
             {/* Footer */}
-            <footer className="text-center p-4 text-sm border-t" style={{ color: COLOR_TEXT, borderColor: "#eee" }}>
+            <footer className="text-center p-4 text-sm border-t" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT, borderColor: theme.palette.mode === "dark" ? "#2d2d2d" : "#eee" }}>
                 <p className="m-0">
                     © 2025 <span className="font-semibold">Study Station</span>. All rights reserved.
                 </p>

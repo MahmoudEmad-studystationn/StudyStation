@@ -7,6 +7,9 @@ import { loginApi } from '../Services/authServices';
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTheme } from "@mui/material";
+import { Link } from "react-router-dom";
+
 
 const tippyStyles = `
   .tippy-box[data-theme~='custom'] {
@@ -82,10 +85,11 @@ const getActiveButtonStyle = () => ({
     transform: "scale(0.98)",
 });
 
-const getInputStyle = (isFocused, hasError) => ({
+const getInputStyle = (isFocused, hasError, theme) => ({
     borderColor: hasError ? "#f1b0b0ff" : isFocused ? COLOR_HOVER : "#8686865b",
     boxShadow: isFocused ? `0 0 0 6px rgba(143,183,204,0.08)` : "none",
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.mode === "dark" ? "#222222" : "transparent",
+    color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
 });
 
 export default function LoginPage({ switchToSignUp }) {
@@ -93,12 +97,12 @@ export default function LoginPage({ switchToSignUp }) {
     const [focusedInput, setFocusedInput] = useState("");
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
-    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
 
     useEffect(() => {
-        setButtonStyle(getBaseButtonStyle());
         const styleSheet = document.createElement("style");
         styleSheet.type = "text/css";
         styleSheet.innerText = tippyStyles;
@@ -109,17 +113,17 @@ export default function LoginPage({ switchToSignUp }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        const result = loginSchema.safeParse({ ...formData, [name]: value });
 
+        const result = loginSchema.safeParse({ ...formData, [name]: value });
         if (!result.success) {
             const fieldError = result.error.issues.find((issue) => issue.path[0] === name);
             if (fieldError && focusedInput === name) {
-                setErrors({ [name]: fieldError.message });
+                setErrors({ ...errors, [name]: fieldError.message });
             } else {
-                setErrors((prev) => ({ ...prev, [name]: "" }));
+                setErrors({ ...errors, [name]: "" });
             }
         } else {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
+            setErrors({ ...errors, [name]: "" });
         }
     };
 
@@ -129,7 +133,7 @@ export default function LoginPage({ switchToSignUp }) {
         if (!result.success) {
             const fieldError = result.error.issues.find((issue) => issue.path[0] === field);
             if (fieldError) {
-                setErrors({ [field]: fieldError.message });
+                setErrors({ ...errors, [field]: fieldError.message });
             }
         }
     };
@@ -142,19 +146,15 @@ export default function LoginPage({ switchToSignUp }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const result = loginSchema.safeParse(formData);
 
+        const result = loginSchema.safeParse(formData);
         if (!result.success) {
             const validationErrors = result.error.issues.reduce((acc, issue) => {
                 acc[issue.path[0]] = issue.message;
                 return acc;
             }, {});
-
             setErrors(validationErrors);
-
-            const firstError = result.error.issues[0];
-            toast.error(firstError.message);
-
+            toast.error(result.error.issues[0].message);
             setLoading(false);
             return;
         }
@@ -163,62 +163,73 @@ export default function LoginPage({ switchToSignUp }) {
             const response = await loginApi(formData);
 
             if (response.success) {
-                const token = response.data.token;
-                if (token) {
-                    localStorage.setItem("token", token);
-                    toast.success("Logged in successfully!");
-                    setMessage("Logged in successfully!");
-                    navigate("/home");
+                const accessToken = response.data.accessToken;
+                const refreshToken = response.data.refreshToken;
+
+                if (accessToken) {
+                    localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("refreshToken", refreshToken || "");
+
+                    toast.success("Logged in successfully! Welcome back!");
+                    setTimeout(() => navigate("/home"), 1000);
                 } else {
-                    toast.error("Login succeeded, but no token received");
-                    setMessage("Login succeeded, but no token received");
+                    toast.error("Login failed: No token received");
                 }
             } else {
-                toast.error(response.message || "Login failed!");
-                setMessage(`${response.message || "Login failed!"}`);
+                toast.error(response.message || "Invalid email or password");
             }
         } catch (err) {
-            const errorMessage = err.response?.data?.error || "Server not responding";
+            const errorMessage =
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                "Server error. Please try again later.";
             toast.error(errorMessage);
-            setMessage(`${errorMessage}`);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-white">
+        <div className={`min-h-screen flex flex-col ${isDark ? "bg-[#171717]" : "bg-white"}`}>
+            {/* Navbar */}
+            <nav className="flex justify-between items-center px-6 py-4">
+                <div onClick={() => navigate("/")} className="flex items-center cursor-pointer select-none">
+                    <h4 className={`text-xl font-bold tracking-wide ${isDark ? "text-[#b0b0b0]" : "text-[#6a6a6a]"}`}>Study</h4>
+                    <h4 className={`text-xl font-bold tracking-wide ml-1 ${isDark ? "text-[#8fb7cc]" : "text-[#8fb7cc]"}`}>Station</h4>
+                </div>
+            </nav>
+
+            {/* Main Content */}
             <div className="flex-grow flex items-center justify-center p-4">
-                <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-                    <div className="hidden md:block md:w-1/2">
-                        <img src={LoginImg} alt="Login Illustration" className="w-full h-full object-cover" style={{ minHeight: 420, maxHeight: 720 }} />
+                <div className={`w-full max-w-5xl rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row ${isDark ? "bg-[#171717]" : "bg-white"}`}>
+                    {/* Image */}
+                    <div className={`hidden md:block md:w-1/2 ${isDark ? "bg-[#171717]" : "bg-white"}`}>
+                        <img src={LoginImg} alt="Login Illustration" className="w-full h-full object-cover" style={{ minHeight: 420 }} />
                     </div>
-                    <div className="w-full md:w-1/2 flex items-center justify-center p-6 sm:p-10">
+
+                    {/* Form */}
+                    <div className={`w-full md:w-1/2 flex items-center justify-center p-6 sm:p-10 ${isDark ? "bg-[#171717]" : "bg-white"}`}>
                         <div className="w-full max-w-md">
                             <div className="mb-6 text-center">
-                                <h1
-                                    className="text-xl sm:text-3xl font-bold"
-                                    style={{ color: COLOR_PRIMARY, whiteSpace: "nowrap" }}
-                                >
+                                <h1 className="text-xl sm:text-3xl font-bold" style={{ color: COLOR_PRIMARY }}>
                                     Welcome back to Study Station
                                 </h1>
-
-                                <p className="mt-2 text-sm sm:text-base" style={{ color: COLOR_TEXT }}>
+                                <p className="mt-2 text-sm sm:text-base" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
                                     Stay focused and continue your progress.
                                 </p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Email */}
-                                <Tippy content={errors.email} visible={!!errors.email && focusedInput === "email"} placement="bottom" arrow={true} theme="custom">
+                                <Tippy content={errors.email} visible={!!errors.email && focusedInput === "email"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
-                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="email"
                                             name="email"
                                             placeholder="Email"
-                                            className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                            style={getInputStyle(focusedInput === "email", !!errors.email)}
+                                            className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none"
+                                            style={getInputStyle(focusedInput === "email", !!errors.email, theme)}
                                             onFocus={() => handleFocus("email")}
                                             onBlur={handleBlur}
                                             value={formData.email}
@@ -233,15 +244,15 @@ export default function LoginPage({ switchToSignUp }) {
                                 </Tippy>
 
                                 {/* Password */}
-                                <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow={true} theme="custom">
+                                <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
-                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: COLOR_TEXT }} />
+                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="password"
                                             name="password"
                                             placeholder="Password"
-                                            className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
-                                            style={getInputStyle(focusedInput === "password", !!errors.password)}
+                                            className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none"
+                                            style={getInputStyle(focusedInput === "password", !!errors.password, theme)}
                                             onFocus={() => handleFocus("password")}
                                             onBlur={handleBlur}
                                             value={formData.password}
@@ -256,33 +267,34 @@ export default function LoginPage({ switchToSignUp }) {
                                 </Tippy>
 
                                 {/* Submit Button */}
-                                <div>
-                                    <button
-                                        style={buttonStyle}
-                                        onMouseEnter={() => setButtonStyle(getHoverButtonStyle())}
-                                        onMouseLeave={() => setButtonStyle(getBaseButtonStyle())}
-                                        onMouseDown={() => setButtonStyle(getActiveButtonStyle())}
-                                        onMouseUp={() => setButtonStyle(getHoverButtonStyle())}
-                                        type="submit"
-                                        className="py-3"
-                                        disabled={loading}
-                                    >
-                                        <span className="text-sm sm:text-base font-semibold">
-                                            {loading ? "Logging in..." : "Log In & Focus"}
-                                        </span>
-                                    </button>
-                                </div>
+                                <button
+                                    style={buttonStyle}
+                                    onMouseEnter={() => setButtonStyle(getHoverButtonStyle())}
+                                    onMouseLeave={() => setButtonStyle(getBaseButtonStyle())}
+                                    onMouseDown={() => setButtonStyle(getActiveButtonStyle())}
+                                    onMouseUp={() => setButtonStyle(getHoverButtonStyle())}
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full py-3"
+                                >
+                                    <span className="text-sm sm:text-base font-semibold">
+                                        {loading ? "Logging in..." : "Log In & Focus"}
+                                    </span>
+                                </button>
                             </form>
-                            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-sm w-full gap-3">
-                                <p className="m-0 text-center sm:text-left" style={{ color: COLOR_TEXT }}>
-                                    Don't have an account yet?{" "}
+
+                            {/* Links */}
+                            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-sm gap-3">
+                                <p className="m-0 text-center sm:text-left" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
+                                    Don't have an account?{" "}
                                     <span className="font-semibold cursor-pointer" style={{ color: COLOR_PRIMARY }} onClick={switchToSignUp}>
                                         Sign up
                                     </span>
                                 </p>
-                                <a className="cursor-pointer text-center sm:text-right text-decoration-none" style={{ color: COLOR_TEXT }} href="/forgot-password">
+
+                                <Link to="/forgot-password" className="text-center sm:text-right text-decoration-none" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
                                     Forgot password?
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -290,11 +302,12 @@ export default function LoginPage({ switchToSignUp }) {
             </div>
 
             {/* Footer */}
-            <footer className="text-center p-4 text-sm border-t" style={{ color: COLOR_TEXT, borderColor: "#eee" }}>
+            <footer className="text-center p-4 text-sm border-t" style={{ color: isDark ? "#ffffff" : COLOR_TEXT, borderColor: isDark ? "#2d2d2d" : "#eee" }}>
                 <p className="m-0">
                     © 2025 <span className="font-semibold">Study Station</span>. All rights reserved.
                 </p>
             </footer>
+
             <ToastContainer position="top-center" autoClose={3000} />
         </div>
     );

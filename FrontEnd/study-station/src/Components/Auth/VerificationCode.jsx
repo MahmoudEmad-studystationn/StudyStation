@@ -178,7 +178,7 @@ export default function VerificationCode() {
             <ToastContainer position="top-center" autoClose={3000} />
 
             <div className="flex-grow flex justify-center items-center p-4 sm:p-6 lg:p-8">
-                <div className={`w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-lg ${isDark ? "bg-[#1f1f1f]" : "bg-white"}`}>
+                <div className={`w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-lg ${isDark ? "bg-[#171717]" : "bg-white"}`}>
                     <div className="flex justify-center mb-6">
                         <div className={`p-4 rounded-full ${isDark ? "bg-[#171717]" : "bg-white"}`}>
                             <MailIcon className="w-16 h-16" style={{ color: COLOR_PRIMARY }} />

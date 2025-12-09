@@ -8,13 +8,11 @@ export default function AuthPage() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // نقرأ قيمة mode من الـ query string
     const params = new URLSearchParams(location.search);
-    const mode = params.get("mode") || "login"; // default login
+    const mode = params.get("mode") || "login";
 
     const [isLogin, setIsLogin] = useState(mode === "login");
 
-    // لو المستخدم غيّر الزرار جوه الصفحة (switchToSignUp أو switchToLogin)
     const handleSwitchToLogin = () => {
         setIsLogin(true);
         navigate("/auth?mode=login");
@@ -25,7 +23,6 @@ export default function AuthPage() {
         navigate("/auth?mode=signup");
     };
 
-    // لو الـ URL اتغير من برة (زي من الـ Navbar)
     useEffect(() => {
         setIsLogin(mode === "login");
     }, [mode]);
@@ -40,7 +37,8 @@ export default function AuthPage() {
                         animate={{ rotateY: 0, opacity: 1 }}
                         exit={{ rotateY: 90, opacity: 0 }}
                         transition={{ duration: 0.6, ease: "easeInOut" }}
-                        style={{ backfaceVisibility: "hidden" }}
+                        style={{ backfaceVisibility: "hidden", width: "100%" }}
+                        className="w-full"
                     >
                         <Login switchToSignUp={handleSwitchToSignUp} />
                     </motion.div>
@@ -51,7 +49,8 @@ export default function AuthPage() {
                         animate={{ rotateY: 0, opacity: 1 }}
                         exit={{ rotateY: -90, opacity: 0 }}
                         transition={{ duration: 0.6, ease: "easeInOut" }}
-                        style={{ backfaceVisibility: "hidden" }}
+                        style={{ backfaceVisibility: "hidden", width: "100%" }}
+                        className="w-full"
                     >
                         <SignUp switchToLogin={handleSwitchToLogin} />
                     </motion.div>

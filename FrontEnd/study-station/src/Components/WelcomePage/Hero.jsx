@@ -1,12 +1,17 @@
 import React from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import { Box, Typography, Button, Grid, useTheme } from "@mui/material";
 import deskImage from "../../assets/images/Hero.png";
-import mobileImage from "../../assets/images/hero2.png"; // أضيفي مسار الصورة الجديدة
+import mobileImage from "../../assets/images/hero2.png";
+import mobileImageDark from "../../assets/images/Hero2Dark.png";
+import deskImageDark from "../../assets/images/HeroDark.png";
 import { useNavigate } from "react-router-dom";
 
-export default function StudyStation() {
-    const navigate = useNavigate();
 
+export default function Hero() {
+    const navigate = useNavigate();
+    const theme = useTheme();
+
+    const isDarkMode = theme.palette.mode === "dark";
     return (
         <div id="home">
             <Box
@@ -19,12 +24,13 @@ export default function StudyStation() {
                     px: { xs: 2, sm: 3, md: 6, lg: 8, xl: 10 },
                     py: { xs: 3, sm: 4, md: 5, lg: 6 },
                     overflow: "hidden",
+                    textAlign: { xs: "center", sm: "left" },
+                    backgroundColor: "transparent",
                 }}
             >
-                {/* صورة للشاشات المتوسطة فقط */}
                 <Box
                     component="img"
-                    src={mobileImage}
+                    src={isDarkMode? mobileImageDark:mobileImage}
                     alt="Study Station Mobile Background"
                     sx={{
                         position: "absolute",
@@ -41,10 +47,10 @@ export default function StudyStation() {
                     }}
                 />
 
-                {/* الصورة الخلفية للشاشات الكبيرة */}
                 <Box
+                    key={isDarkMode ? "dark" : "light"}
                     component="img"
-                    src={deskImage}
+                    src={isDarkMode ? deskImageDark : deskImage}
                     alt="Study Station Background"
                     sx={{
                         position: "absolute",
@@ -61,49 +67,27 @@ export default function StudyStation() {
                     }}
                 />
 
-                {/* Overlay للشاشات الكبيرة فقط */}
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        zIndex: -1,
-                        display: { xs: "none", sm: "none", md: "block" },
-                    }}
-                />
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "#ffffff",
-                        zIndex: -1,
-                        display: { xs: "block", sm: "none", md: "none" },
-                    }}
-                />
+
+                {/* Content */}
                 <Grid
                     container
                     spacing={{ xs: 2, sm: 3, md: 4 }}
                     alignItems="center"
+                    justifyContent="flex-start"
                     sx={{ width: "100%", maxWidth: "1200px" }}
                 >
-                    <Grid item xs={12} md={7} lg={6}>
+                    <Grid item xs={12} md={isDarkMode ? 7 : 7} lg={isDarkMode ? 6 : 6}>
                         <Box
                             sx={{
                                 textAlign: { xs: "center", sm: "left" },
-                                maxWidth: { xs: "100%", sm: "90%", md: "100%" },
-                                mx: { xs: "auto", sm: 0 },
+                                maxWidth: "100%",
+                                mx: "auto",
                             }}
                         >
                             <Typography
                                 component="h1"
                                 sx={{
-                                    color: "#6a6a6a",
+                                    color: isDarkMode ? "#f5f5f5" : "#6a6a6a",
                                     fontWeight: "bold",
                                     fontFamily: "'Nunito', sans-serif",
                                     fontSize: {
@@ -111,11 +95,9 @@ export default function StudyStation() {
                                         sm: "2rem",
                                         md: "2.25rem",
                                         lg: "2.5rem",
-                                        xl: "2.75rem"
+                                        xl: "2.75rem",
                                     },
-                                    lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
                                     mb: { xs: 2, sm: 2.5, md: 3 },
-                                    textShadow: { xs: "none", md: "0 1px 2px rgba(255,255,255,0.8)" },
                                 }}
                             >
                                 Welcome to Study Station
@@ -124,21 +106,21 @@ export default function StudyStation() {
                             <Typography
                                 component="p"
                                 sx={{
-                                    color: "#868686",
+                                    color: isDarkMode ? "#cfcfcf" : "#868686",
                                     fontFamily: "'Open Sans', sans-serif",
                                     fontSize: {
                                         xs: "0.9rem",
                                         sm: "1rem",
                                         md: "1.1rem",
-                                        lg: "1.125rem"
+                                        lg: "1.125rem",
                                     },
-                                    lineHeight: { xs: 1.5, sm: 1.6, md: 1.7 },
                                     mb: { xs: 3, sm: 3.5, md: 4 },
-                                    maxWidth: { xs: "90%", sm: "80%", md: "70%" },
-                                    textShadow: { xs: "none", md: "0 1px 1px rgba(255,255,255,0.8)" },
+                                    maxWidth: "600px",
+                                    mx: "auto",
                                 }}
                             >
-                                Your personal focus zone. Organize your study time, track your progress, and stay motivated all in one place.
+                                Your personal focus zone. Organize your study time, track your progress,
+                                and stay motivated all in one place.
                             </Typography>
 
                             <Button
@@ -175,13 +157,6 @@ export default function StudyStation() {
                             </Button>
                         </Box>
                     </Grid>
-                    <Grid
-                        item
-                        xs={0}
-                        md={5}
-                        lg={6}
-                        sx={{ display: { xs: "none", md: "block" } }}
-                    />
                 </Grid>
             </Box>
         </div>
