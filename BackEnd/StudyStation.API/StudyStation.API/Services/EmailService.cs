@@ -30,6 +30,7 @@ namespace StudyStation.API.Services
 
             using var client = new SmtpClient(smtpServer, port)
             {
+               // UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromEmail, password),
                 EnableSsl = true
             };
