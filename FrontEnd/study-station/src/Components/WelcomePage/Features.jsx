@@ -35,11 +35,12 @@ export default function Features() {
 
     return (
         <div id="features" key={themeKey} style={{ backgroundColor: theme.palette.mode === "dark" ? "#171717" : "#F8F9FA" }}>
-            <div className="container py-4">
+            <div className="container mx-auto py-16 px-4 sm:px-6">
                 <h2
-                    key={themeKey} 
-                    className="text-center py-3 fw-bolder py-5 fs-1"
+                    key={themeKey}
+                    className="text-center font-bold py-5"
                     style={{
+                        fontSize: "clamp(1.6rem, 5vw, 3rem)", // ✅ صغرت بس على موبايل، الديسكتوب زي ما هو
                         background: `linear-gradient(135deg, ${theme.palette.mode === "dark" ? "#B0D9FF" : "#A4D1F2"
                             }, ${theme.palette.mode === "dark" ? "#8AB6D6" : "#7AA5C4"})`,
                         WebkitBackgroundClip: "text",
@@ -50,7 +51,7 @@ export default function Features() {
                 >
                     What You Can Do
                 </h2>
-                <div className="row justify-content-center">
+                <div className="flex flex-wrap justify-center">
                     {featuresData.map((feature, index) => (
                         <FeatureCard key={index} feature={feature} index={index} themeKey={themeKey} />
                     ))}
@@ -77,7 +78,7 @@ const FeatureCard = ({ feature, index, themeKey }) => {
     };
 
     const cardStyle = {
-        minHeight: "320px",
+        minHeight: "320px", // ✅ الديسكتوب زي ما هو
         transition: "all 0.4s ease-in-out",
         cursor: "pointer",
         border: theme.palette.mode === "dark" ? "1px solid #2A2A2A" : "1px solid #E9ECEF",
@@ -96,21 +97,39 @@ const FeatureCard = ({ feature, index, themeKey }) => {
     };
 
     return (
-        <div className="col-12 col-sm-6 col-lg-3 d-flex pb-5">
+        <div className="w-1/2 sm:w-1/2 lg:w-1/4 flex pb-4">
             <div ref={ref} style={cardContainerStyle}>
                 <div
-                    className="card shadow border-0 rounded-5 m-2 flex-fill"
+                    className="shadow border-0 rounded-[1.25rem] m-2 flex-1 flex"
                     style={cardStyle}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                     key={themeKey}
                 >
-                    <div className="card-body text-center d-flex flex-column justify-content-center align-items-center">
-                        <i className={`${feature.icon} fs-1 py-3`} style={iconStyle} />
-                        <h4 style={{ color: theme.palette.mode === "dark" ? "#c1c0c0ff" : "#555555" }}>
+                    <div className="p-3 sm:p-6 text-center flex flex-col justify-center items-center w-full">
+                        <i
+                            className={`${feature.icon} py-3`}
+                            style={{
+                                ...iconStyle,
+                                fontSize: "clamp(1.5rem, 4vw, 3rem)",
+                            }}
+                        />
+                        <h4
+                            className="font-semibold mt-2 mb-3"
+                            style={{
+                                color: theme.palette.mode === "dark" ? "#c1c0c0ff" : "#555555",
+                                fontSize: "clamp(0.85rem, 2.5vw, 1.25rem)", // ✅ عنوان الكارت أصغر على موبايل بس
+                            }}
+                        >
                             {feature.title}
                         </h4>
-                        <p className="px-4" style={{ color: theme.palette.mode === "dark" ? "#c1c0c0ff" : "#555555" }}>
+                        <p
+                            className="px-1 sm:px-4 leading-relaxed"
+                            style={{
+                                color: theme.palette.mode === "dark" ? "#c1c0c0ff" : "#555555",
+                                fontSize: "clamp(0.75rem, 2vw, 1rem)", // ✅ النص أصغر على موبايل بس
+                            }}
+                        >
                             {feature.description}
                         </p>
                     </div>

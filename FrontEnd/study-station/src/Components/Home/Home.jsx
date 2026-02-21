@@ -5,17 +5,17 @@ import {
   faUserGroup,
   faPenToSquare,
   faFloppyDisk,
-  faBell,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import postsImage from "./posts.jpg";
-import DarkModeToggle from "../Theme/DarkModeToggle";
 import { useTheme } from "@mui/material/styles";
 import { useThemeContext } from "../Theme/ThemeContext";
+import { useNavigate } from "react-router-dom";
+import HeaderIcons from "../Header/Headericons";
 
 function Home() {
   const theme = useTheme();
   const { isDarkMode } = useThemeContext();
+  const navigate = useNavigate();
 
   const bgColor = isDarkMode ? "#171717" : "#F3F4F6";
   const cardBg = isDarkMode ? "#2A2A2A" : "white";
@@ -34,7 +34,6 @@ function Home() {
       style={{ backgroundColor: bgColor }}
     >
       <div className="max-w-[1200px] mx-auto px-4 py-6">
-        {/* Header */}
         <header className="flex justify-between items-start mb-6 flex-wrap gap-4">
           <div>
             <h1 className="m-0 text-[28px] font-semibold" style={{ color: textPrimary }}>
@@ -44,40 +43,10 @@ function Home() {
               Your goals are waiting for you.
             </p>
           </div>
-          <div className="flex items-center gap-2.5">
-            <DarkModeToggle />
-            <button
-              className="rounded-xl p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center shadow-lg cursor-pointer transition-all"
-              style={{
-                backgroundColor: cardBg,
-                color: textPrimary,
-                borderColor: borderColor,
-                boxShadow: isDarkMode ? "0 10px 16px rgba(0,0,0,0.3)" : "0 10px 16px rgba(0,0,0,0.08)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDarkMode ? "#404040" : "#f5f6f7")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cardBg)}
-            >
-              <FontAwesomeIcon icon={faBell} />
-            </button>
-            <button
-              className="rounded-xl p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center shadow-lg cursor-pointer transition-all"
-              style={{
-                backgroundColor: cardBg,
-                color: textPrimary,
-                borderColor: borderColor,
-                boxShadow: isDarkMode ? "0 10px 16px rgba(0,0,0,0.3)" : "0 10px 16px rgba(0,0,0,0.08)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDarkMode ? "#404040" : "#f5f6f7")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cardBg)}
-            >
-              <FontAwesomeIcon icon={faUser} />
-            </button>
-          </div>
+          <HeaderIcons />
         </header>
 
-        {/* Top Cards */}
         <section className="grid gap-8 grid-cols-1 md:grid-cols-2 mb-10">
-          {/* Solo Study Card */}
           <div
             className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
             style={{
@@ -101,6 +70,7 @@ function Home() {
               Start a focused solo session with built-in timers and sounds.
             </p>
             <button
+              onClick={() => navigate("/solo-study")}
               className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
               style={{
                 backgroundColor: buttonBg,
@@ -114,7 +84,6 @@ function Home() {
             </button>
           </div>
 
-          {/* Study with Friends Card */}
           <div
             className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
             style={{
@@ -138,6 +107,7 @@ function Home() {
               Join or create a group study room and stay productive together.
             </p>
             <button
+              onClick={() => navigate("/study-with-friends")}
               className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
               style={{
                 backgroundColor: buttonBg,
@@ -152,7 +122,6 @@ function Home() {
           </div>
         </section>
 
-        {/* Library Wide Card */}
         <section id="library" className="mb-10">
           <div
             className="rounded-2xl p-4 shadow-lg border-b relative flex flex-row justify-between items-start flex-nowrap gap-4 transition-all duration-300"
@@ -171,6 +140,7 @@ function Home() {
               </p>
               <div style={{ marginTop: "20px" }}>
                 <button
+                  onClick={() => navigate("/library")}
                   className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
                   style={{
                     backgroundColor: buttonBg,
@@ -186,7 +156,6 @@ function Home() {
             </div>
 
             <div className="flex flex-row flex-nowrap items-start gap-2.5 min-w-[290px] flex-0-0-auto">
-              {/* Badge 1: Playlists & Courses */}
               <div>
                 <span
                   className="py-2 px-3 rounded-lg text-[14px] leading-[1.3] font-medium inline-block flex-shrink-0 shadow-md text-center"
@@ -253,7 +222,6 @@ function Home() {
           </div>
         </section>
 
-        {/* Bottom Cards */}
         <section className="grid gap-8 grid-cols-1 md:grid-cols-3">
           <div
             className="rounded-2xl p-3 shadow-lg border-b relative flex items-start justify-between gap-4 overflow-hidden transition-all duration-300 md:col-span-2"
@@ -280,6 +248,7 @@ function Home() {
                 Explore study tips, quick resources, and interactive posts to join live study rooms and share your progress.
               </p>
               <button
+                onClick={() => navigate("/posts")}
                 className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
                 style={{
                   backgroundColor: buttonBg,

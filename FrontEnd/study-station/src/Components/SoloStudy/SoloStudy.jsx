@@ -3,57 +3,121 @@ import Timer from './Timer';
 import Quotes from './Quotes';
 import BackgroundWidget, { BackgroundProvider, BackgroundImage } from './Background';
 import Sound from './Sound';
-import TodoList from "./ToDoList";
 import MaximizeButton from "./MaximizeButton";
+import ToDoList from './ToDoList';
+import { useThemeContext } from "../Theme/ThemeContext";
 
-const SoloStudy = () => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
+/* ─── شاشة "قلب الموبايل" ─── */
+function RotatePrompt() {
+  const { isDarkMode } = useThemeContext();
+  return (
+    <div
+      className="fixed inset-0 flex flex-col items-center justify-center gap-6 z-[9999]"
+      style={{ backgroundColor: isDarkMode ? "#171717" : "#f3f4f6" }}
+    >
+      <div style={{ animation: "rotateHint 2s ease-in-out infinite", fontSize: "64px" }}>
+        📱
+      </div>
+      <div className="text-center px-8">
+        <p className="text-lg font-semibold mb-1" style={{ color: isDarkMode ? "#E0E0E0" : "#2f3b48" }}>
+          Rotate your device
+        </p>
+        <p className="text-sm" style={{ color: isDarkMode ? "#B0B0B0" : "#6b6f76" }}>
+          Solo Study works best in landscape mode
+        </p>
+      </div>
+      <style>{`
+        @keyframes rotateHint {
+          0%, 100% { transform: rotate(0deg); }
+          40%       { transform: rotate(90deg); }
+          60%       { transform: rotate(90deg); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ─── Hook بيحس بالـ orientation ─── */
+function useOrientation() {
+  const getState = () => ({
+    isMobile: window.innerWidth < 1024,
+    isLandscape: window.innerWidth > window.innerHeight,
+  });
+
+  const [state, setState] = useState(getState);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+    const update = () => setState(getState());
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
     };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  return state;
+}
+
+/* ─── الصفحة الرئيسية ─── */
+const SoloStudy = () => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const { isMobile, isLandscape } = useOrientation();
+
+  useEffect(() => {
+    const handleFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  /* موبايل بالطول → اعرض رسالة الدوران */
+  if (isMobile && !isLandscape) {
+    return (
+      <BackgroundProvider>
+        <BackgroundImage />
+        <RotatePrompt />
+      </BackgroundProvider>
+    );
+  }
+
+  /* ─── Layout يشتغل على landscape موبايل + تابلت + ديسكتوب ─── */
   return (
     <BackgroundProvider>
-      <div className="min-h-screen w-full relative" style={{ backgroundColor: 'transparent' }}>
+      <div className="min-h-screen w-full relative" style={{ backgroundColor: "transparent" }}>
         <BackgroundImage />
-        
-        <div className="relative p-4 md:p-6 lg:p-8 min-h-screen" style={{ zIndex: 10 }}>
-          <div className="w-full h-full flex flex-col lg:flex-row gap-4 md:gap-6 justify-between">
-            
-            <div className="flex flex-col gap-4 md:gap-6 w-full lg:w-auto order-1">
-              <div className="flex justify-start">
-                <Timer />
-              </div>
-              
-              <div className="flex justify-start">
-                <TodoList />
-              </div>
-            </div>
 
-            <div className="flex flex-col gap-4 md:gap-6 w-full lg:w-auto items-end order-2">
-              
-              <div className="flex justify-end">
-                <MaximizeButton />
-              </div>
-              
-              <div className="flex flex-row gap-4 md:gap-6 justify-end items-start flex-wrap">
+        <div
+          className="relative min-h-screen flex flex-row gap-3 justify-between items-start"
+          style={{ zIndex: 10, padding: isMobile ? "12px" : "24px 32px" }}
+        >
+          {/* ── Left Column ── */}
+          <div className="flex flex-col gap-3 w-auto">
+            <div style={isMobile ? { transform: "scale(0.82)", transformOrigin: "top left" } : {}}>
+              <Timer />
+            </div>
+            <div style={isMobile ? { transform: "scale(0.82)", transformOrigin: "top left" } : {}}>
+              <ToDoList />
+            </div>
+          </div>
+
+          {/* ── Right Column ── */}
+          <div className="flex flex-col gap-3 w-auto items-end">
+            <MaximizeButton />
+
+            <div className="flex flex-row gap-3 justify-end items-start flex-wrap">
+              <div style={isMobile ? { transform: "scale(0.82)", transformOrigin: "top right" } : {}}>
                 <Quotes />
-                {!isFullscreen && (
+              </div>
+              {!isFullscreen && (
+                <div style={isMobile ? { transform: "scale(0.82)", transformOrigin: "top right" } : {}}>
                   <BackgroundWidget />
-                )}
-              </div>
-              
-              <div className="flex justify-end">
-                <Sound isFullscreen={isFullscreen} />
-              </div>
+                </div>
+              )}
             </div>
 
+            <div style={isMobile ? { transform: "scale(0.82)", transformOrigin: "top right" } : {}}>
+              <Sound isFullscreen={isFullscreen} />
+            </div>
           </div>
         </div>
       </div>

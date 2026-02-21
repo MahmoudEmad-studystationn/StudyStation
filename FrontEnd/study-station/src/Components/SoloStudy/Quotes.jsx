@@ -96,7 +96,7 @@ export default function Quotes() {
             <div
                 className="quote-bubble w-full max-w-[240px] md:max-w-[260px] lg:max-w-[280px] rounded-xl p-4 md:p-4 lg:p-5 shadow-md backdrop-blur-md"
                 style={{
-                    backgroundColor: isDarkMode ? "#2a2a2a36" : "transparent",
+                    backgroundColor: isDarkMode ? "#2a2a2a36" : "rgba(255, 255, 255, 0.7)",
                     boxShadow: isDarkMode
                         ? "0 10px 10px rgba(0, 0, 0, 0.3)"
                         : "0 10px 10px rgba(0, 0, 0, 0.08)",

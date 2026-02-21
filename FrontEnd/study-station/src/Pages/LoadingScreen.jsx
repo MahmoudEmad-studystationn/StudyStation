@@ -1,12 +1,8 @@
-import React from 'react';
-import { MDBSpinner } from 'mdb-react-ui-kit';
-
-export default function App() {
+export default function Loading() {
   return (
-    <div className='vh-100 d-flex align-items-center justify-content-center'>
-      <MDBSpinner role='status' style={{ color: '#b5b5b5ff' }}>
-        <span className='visually-hidden'>Loading...</span>
-      </MDBSpinner>
+    <div className="flex flex-col items-center justify-center h-screen gap-4">
+      <div className="w-14 h-14 border-4 border-[#8FB7CC] border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-sm text-gray-500 tracking-wide">Loading...</p>
     </div>
   );
 }

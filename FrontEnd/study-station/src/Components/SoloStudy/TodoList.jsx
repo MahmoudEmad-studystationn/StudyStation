@@ -1,21 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Check, Trash2 } from "lucide-react";
 import { useThemeContext } from "../Theme/ThemeContext";
 
 const TodoList = () => {
     const { isDarkMode } = useThemeContext();
-    const [tasks, setTasks] = useState([]);
+
+    // تحميل التاسكات من localStorage
+    const [tasks, setTasks] = useState(() => {
+        const saved = localStorage.getItem('todoTasks');
+        return saved ? JSON.parse(saved) : [];
+    });
+
     const [input, setInput] = useState("");
 
     const textPrimary = isDarkMode ? "#E5E7EB" : "#394f65ff";
     const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-    const cardBg = isDarkMode ? "#2a2a2a36" : "transparent";
+    const cardBg = isDarkMode ? "#2a2a2a36" : "rgba(255, 255, 255, 0.7)";
     const inputBg = isDarkMode ? "#1a1a1a" : "#ffffff";
     const inputBorder = isDarkMode ? "#2C3E50" : "#E5E7EB";
     const inputText = isDarkMode ? "#E5E7EB" : "#394f65ff";
     const buttonBg = "#2C3E50";
     const taskItemBg = isDarkMode ? "#1a1a1a50" : "#f9fafb";
     const taskItemHoverBg = isDarkMode ? "#2a2a2a80" : "#f3f4f6";
+
+    // حفظ التاسكات في localStorage كل ما يتغيروا
+    useEffect(() => {
+        localStorage.setItem('todoTasks', JSON.stringify(tasks));
+    }, [tasks]);
 
     const addTask = () => {
         const trimmedInput = input.trim();
@@ -42,7 +53,7 @@ const TodoList = () => {
     };
 
     return (
-        <div 
+        <div
             className="w-full max-w-[280px] md:max-w-[300px] lg:max-w-[320px] rounded-xl p-4 md:p-5 lg:p-6 flex flex-col shadow-md backdrop-blur-md"
             style={{
                 backgroundColor: cardBg,
@@ -61,7 +72,7 @@ const TodoList = () => {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     maxLength={100}
-                    className="flex-1 px-3 md:px-4 py-2 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 transition text-sm md:text-base placeholder:opacity-60"
+                    className="min-w-0 flex-1 px-3 py-2 rounded-lg md:rounded-xl focus:outline-none focus:ring-2 transition text-sm placeholder:opacity-60"
                     style={{
                         backgroundColor: inputBg,
                         borderWidth: '1px',
@@ -73,7 +84,7 @@ const TodoList = () => {
                 />
                 <button
                     onClick={addTask}
-                    className="text-white px-4 md:px-5 py-2 rounded-lg md:rounded-xl font-bold transition hover:opacity-90 active:scale-95 text-lg md:text-xl"
+                    className="text-white flex-shrink-0 w-9 h-9 rounded-lg md:rounded-xl font-bold transition hover:opacity-90 active:scale-95 text-lg flex items-center justify-center"
                     style={{
                         backgroundColor: buttonBg,
                         boxShadow: "0 4px 10px rgba(44, 62, 80, 0.4)",
@@ -112,8 +123,8 @@ const TodoList = () => {
                                 </button>
                                 <span
                                     className={`text-xs md:text-sm font-medium truncate ${task.done
-                                            ? "line-through"
-                                            : ""
+                                        ? "line-through"
+                                        : ""
                                         }`}
                                     style={{ color: task.done ? textSecondary : textPrimary }}
                                 >

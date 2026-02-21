@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaHome,
@@ -9,11 +9,14 @@ import {
 } from "react-icons/fa";
 import { FaFilePen } from "react-icons/fa6";
 import { IoBookSharp } from "react-icons/io5";
+import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -144,8 +147,9 @@ export default function Sidebar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    navigate("/login", { replace: true });
+    logout();
+    toast.success("Logged out successfully!");
+    navigate("/", { replace: true });
   };
 
   return (

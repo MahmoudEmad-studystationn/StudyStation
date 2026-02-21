@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { HeroUIProvider } from "@heroui/react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { ThemeProvider as CustomThemeProvider, useThemeContext } from "./Components/Theme/ThemeContext"; 
+import { ThemeProvider as CustomThemeProvider, useThemeContext } from "./Components/Theme/ThemeContext";
 import WelcomePage from "./Pages/WelcomePage";
 import SignUp from "./Components/Auth/SignUp";
 import Login from "./Components/Auth/Login";
@@ -16,6 +17,11 @@ import Posts from "./Components/Posts/Posts";
 import DashboardLayout from "./Components/DashboardLayout/DashboardLayout";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import VerificationCode from "./Components/Auth/VerificationCode";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import AuthProtectedRoute from "./Components/ProtectedRoute/AuthProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AuthContextProvider from "./context/AuthContext";
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
@@ -37,31 +43,131 @@ function AppContent() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={isDarkMode ? "dark" : "light"}>
-        <Routes>
-          <Route path="/" element={<WelcomePage />} />
-          <Route path="/signup" element={<SignUp switchToLogin={() => navigate("/login")} />} />
-          <Route path="/login" element={<Login switchToSignUp={() => navigate("/signup")} />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verification-code" element={<VerificationCode/>}/>
-          <Route path="/home" element={<DashboardLayout><Home /></DashboardLayout>} />
-          <Route path="/solo-study" element={<DashboardLayout><SoloStudy /></DashboardLayout>} />
-          <Route path="/study-with-friends" element={<DashboardLayout><StudyWithFriends /></DashboardLayout>} />
-          <Route path="/library" element={<DashboardLayout><Library /></DashboardLayout>} />
-          <Route path="/posts" element={<DashboardLayout><Posts /></DashboardLayout>} />
-        </Routes>
-      </div>
-    </ThemeProvider>
+    <HeroUIProvider>
+      <ThemeProvider theme={theme}>
+        <div className={isDarkMode ? "dark" : "light"}>
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+          <Routes>
+            <Route path="/" element={
+              <AuthProtectedRoute>
+                <WelcomePage />
+              </AuthProtectedRoute>
+            } />
+
+            <Route
+              path="/signup"
+              element={
+                <AuthProtectedRoute>
+                  <SignUp switchToLogin={() => navigate("/login")} />
+                </AuthProtectedRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <AuthProtectedRoute>
+                  <Login switchToSignUp={() => navigate("/signup")} />
+                </AuthProtectedRoute>
+              }
+            />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route
+              path="/forgot-password"
+              element={
+                <AuthProtectedRoute>
+                  <ForgotPassword />
+                </AuthProtectedRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <AuthProtectedRoute>
+                  <ResetPassword />
+                </AuthProtectedRoute>
+              }
+            />
+            <Route
+              path="/verification-code"
+              element={
+                <AuthProtectedRoute>
+                  <VerificationCode />
+                </AuthProtectedRoute>
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Home />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/solo-study"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <SoloStudy />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/study-with-friends"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <StudyWithFriends />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Library />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Posts />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </div>
+      </ThemeProvider>
+    </HeroUIProvider>
   );
 }
 
 function App() {
   return (
     <CustomThemeProvider>
-      <AppContent />
+      <AuthContextProvider>
+        <AppContent />
+      </AuthContextProvider>
     </CustomThemeProvider>
   );
 }

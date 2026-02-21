@@ -28,7 +28,7 @@ const Timer = () => {
 
     const textPrimary = isDarkMode ? "#E5E7EB" : "#394f65ff";
     const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-    const cardBg = isDarkMode ? "#2a2a2a36" : "transparent";
+    const cardBg = isDarkMode ? "#2a2a2a36" : "rgba(255, 255, 255, 0.7)";
     const timerBorder = isDarkMode ? "#2C3E50" : "#E5E7EB";
     const buttonGradientFrom = isDarkMode ? "#2C3E50" : "#394f65ff";
     const buttonGradientTo = isDarkMode ? "#435363" : "#495d70ff";
@@ -41,7 +41,6 @@ const Timer = () => {
         longBreak: 15 * 60,
     };
 
-    // حفظ البيانات في localStorage كل ما تتغير
     useEffect(() => {
         localStorage.setItem('timerTimeLeft', timeLeft.toString());
     }, [timeLeft]);

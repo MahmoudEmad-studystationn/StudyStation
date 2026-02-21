@@ -4,7 +4,6 @@ import { useTheme } from "@mui/material";
 import AboutImage from "../../assets/images/About.jpg";
 import AboutImage2 from "../../assets/images/About2.jpg";
 
-// FadeInComponent remains unchanged as it's a utility
 const FadeInComponent = ({ children, delay = 0, className = "" }) => {
     const { ref, inView } = useInView({
         triggerOnce: true,
@@ -32,7 +31,6 @@ function About() {
     const themeKey = theme.palette.mode;
 
     useEffect(() => {
-        // لضمان إعادة تطبيق الأنماط عند تغيير الـ Theme
         document.getElementById("about").className = `w-full flex flex-col md:flex-row items-center justify-center px-6 py-16 md:py-24 lg:px-20 ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"
             }`;
     }, [theme.palette.mode]);
@@ -65,7 +63,6 @@ function About() {
             className={`w-full flex flex-col md:flex-row items-center justify-center px-6 py-16 md:py-24 lg:px-20 ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"
                 }`}
         >
-            {/* Image Column */}
             <FadeInComponent
                 className="w-full md:w-1/2 flex justify-center mb-10 md:mb-0"
                 delay={0}
@@ -88,25 +85,24 @@ function About() {
                 </div>
             </FadeInComponent>
 
-            {/* Text Column: تم تقليل الهوامش هنا */}
             <div className="w-full md:w-1/2 flex flex-col md:pl-16">
-                <FadeInComponent className="mb-5" delay={100}>
+                <FadeInComponent className="mb-4" delay={100}>
                     <h1
                         key={themeKey}
-                        className="font-extrabold text-3xl md:text-4xl lg:text-4xl text-left **mb-6** leading-normal pb-2"
+                        className="font-extrabold text-3xl md:text-4xl lg:text-4xl text-left mb-4 leading-normal pb-2"
                         style={gradientTextStyle}
                     >
                         Why Study Station?
                     </h1>
                 </FadeInComponent>
 
-                <FadeInComponent className="**mb-6**" delay={300}>
+                <FadeInComponent className="mb-5" delay={300}>
                     <p className={`${textBaseClasses} ${bodyTextColor}`}>
                         Study Station is built to make studying easier and more fun. We provide all the tools you need to stay on track, connect with peers, and achieve your academic goals.
                     </p>
                 </FadeInComponent>
 
-                <div className="**space-y-4**">
+                <div className="space-y-3">
                     {features.map((feature, index) => (
                         <FadeInComponent key={index} delay={500 + index * 200}>
                             <div className="flex items-start space-x-4">
@@ -120,7 +116,7 @@ function About() {
                                     <p className={`text-lg font-bold mb-1 leading-snug ${featureTitleColor}`}>
                                         {feature.title}:
                                     </p>
-                                    <p className={`**text-sm** leading-snug ${bodyTextColor}`}>
+                                    <p className={`text-sm leading-snug ${bodyTextColor}`}>
                                         {feature.description}
                                     </p>
                                 </div>

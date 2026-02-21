@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import LoginImg from "../../assets/images/Login.png";
 import { loginSchema } from "../Schema/loginSchema";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { loginApi } from '../Services/authServices';
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-
+import { AuthContext } from "../../context/AuthContext";
 
 const tippyStyles = `
   .tippy-box[data-theme~='custom'] {
@@ -101,6 +100,7 @@ export default function LoginPage({ switchToSignUp }) {
     const navigate = useNavigate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
+    const { setIsLoggedIn } = useContext(AuthContext);
 
     useEffect(() => {
         const styleSheet = document.createElement("style");
@@ -169,6 +169,8 @@ export default function LoginPage({ switchToSignUp }) {
                 if (accessToken) {
                     localStorage.setItem("accessToken", accessToken);
                     localStorage.setItem("refreshToken", refreshToken || "");
+                    
+                    setIsLoggedIn(true);
 
                     toast.success("Logged in successfully! Welcome back!");
                     setTimeout(() => navigate("/home"), 1000);
@@ -191,7 +193,6 @@ export default function LoginPage({ switchToSignUp }) {
 
     return (
         <div className={`min-h-screen flex flex-col ${isDark ? "bg-[#171717]" : "bg-white"}`}>
-            {/* Navbar */}
             <nav className="flex justify-between items-center px-6 py-4">
                 <div onClick={() => navigate("/")} className="flex items-center cursor-pointer select-none">
                     <h4 className={`text-xl font-bold tracking-wide ${isDark ? "text-[#b0b0b0]" : "text-[#6a6a6a]"}`}>Study</h4>
@@ -199,15 +200,12 @@ export default function LoginPage({ switchToSignUp }) {
                 </div>
             </nav>
 
-            {/* Main Content */}
             <div className="flex-grow flex items-center justify-center p-4">
                 <div className={`w-full max-w-5xl rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row ${isDark ? "bg-[#171717]" : "bg-white"}`}>
-                    {/* Image */}
                     <div className={`hidden md:block md:w-1/2 ${isDark ? "bg-[#171717]" : "bg-white"}`}>
                         <img src={LoginImg} alt="Login Illustration" className="w-full h-full object-cover" style={{ minHeight: 420 }} />
                     </div>
 
-                    {/* Form */}
                     <div className={`w-full md:w-1/2 flex items-center justify-center p-6 sm:p-10 ${isDark ? "bg-[#171717]" : "bg-white"}`}>
                         <div className="w-full max-w-md">
                             <div className="mb-6 text-center">
@@ -220,7 +218,6 @@ export default function LoginPage({ switchToSignUp }) {
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Email */}
                                 <Tippy content={errors.email} visible={!!errors.email && focusedInput === "email"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
                                         <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
@@ -243,7 +240,6 @@ export default function LoginPage({ switchToSignUp }) {
                                     </div>
                                 </Tippy>
 
-                                {/* Password */}
                                 <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
                                         <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
@@ -266,7 +262,6 @@ export default function LoginPage({ switchToSignUp }) {
                                     </div>
                                 </Tippy>
 
-                                {/* Submit Button */}
                                 <button
                                     style={buttonStyle}
                                     onMouseEnter={() => setButtonStyle(getHoverButtonStyle())}
@@ -283,7 +278,6 @@ export default function LoginPage({ switchToSignUp }) {
                                 </button>
                             </form>
 
-                            {/* Links */}
                             <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-sm gap-3">
                                 <p className="m-0 text-center sm:text-left" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
                                     Don't have an account?{" "}
@@ -301,14 +295,11 @@ export default function LoginPage({ switchToSignUp }) {
                 </div>
             </div>
 
-            {/* Footer */}
             <footer className="text-center p-4 text-sm border-t" style={{ color: isDark ? "#ffffff" : COLOR_TEXT, borderColor: isDark ? "#2d2d2d" : "#eee" }}>
                 <p className="m-0">
                     © 2025 <span className="font-semibold">Study Station</span>. All rights reserved.
                 </p>
             </footer>
-
-            <ToastContainer position="top-center" autoClose={3000} />
         </div>
     );
 }
