@@ -1,15 +1,12 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
+import { Upload, Image } from 'lucide-react';
 import { useThemeContext } from "../Theme/ThemeContext";
 import img1 from '../../assets/images/solo1.mp4';
 import img2 from '../../assets/images/solo2.jpg';
-import img3 from '../../assets/images/solo3.jpg';
-import img4 from '../../assets/images/solo4.jpg';
 
 const backgrounds = [
     { id: 1, src: img1, alt: 'Clouds', isVideo: true },
     { id: 2, src: img2, alt: 'Ocean', isVideo: false },
-    { id: 3, src: img3, alt: 'Nature', isVideo: false },
-    { id: 4, src: img4, alt: 'Room', isVideo: false },
 ];
 
 const BackgroundContext = createContext();
@@ -52,20 +49,23 @@ export function BackgroundImage() {
 
     if (isVideo) {
         return (
-            <div className="absolute inset-0" style={{ zIndex: 0 }}>
-                <video key={backgroundImage} autoPlay loop muted playsInline className="w-full h-full object-cover">
+            // ✅ fixed عشان تغطي كل الشاشة بما فيها السايدبار
+            <div style={{ position: 'fixed', inset: 0, zIndex: 1 }}>
+                <video key={backgroundImage} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }}>
                     <source src={backgroundImage} type="video/mp4" />
                 </video>
             </div>
         );
     }
     return (
-        <div className="absolute inset-0" style={{
+        <div style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1,
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            zIndex: 0
         }} />
     );
 }
@@ -73,6 +73,14 @@ export function BackgroundImage() {
 export default function BackgroundWidget() {
     const { isDarkMode } = useThemeContext();
     const { selectedBg, setSelectedBg, customBg, setCustomBg, setIsVideo } = useContext(BackgroundContext);
+
+    const textPrimary   = isDarkMode ? "#E5E7EB" : "#394f65ff";
+    const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
+    const cardBg        = isDarkMode ? "#2a2a2a36" : "rgba(255, 255, 255, 0.7)";
+    const itemBg        = isDarkMode ? "#1a1a1a50" : "#f9fafb";
+    const itemHoverBg   = isDarkMode ? "#2a2a2a80" : "#f3f4f6";
+    const borderColor   = isDarkMode ? "#2C3E50" : "#E5E7EB";
+    const selectedRing  = "#2C3E50";
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -92,182 +100,83 @@ export default function BackgroundWidget() {
         setIsVideo(backgrounds.find(b => b.id === bgId)?.isVideo || false);
     };
 
-    const glass = isDarkMode
-        ? 'rgba(15, 25, 40, 0.55)'
-        : 'rgba(255, 255, 255, 0.45)';
-    const border = isDarkMode
-        ? 'rgba(255,255,255,0.08)'
-        : 'rgba(255,255,255,0.6)';
-    const labelColor = isDarkMode ? 'rgba(255,255,255,0.85)' : 'rgba(30,45,60,0.9)';
-    const subColor = isDarkMode ? 'rgba(255,255,255,0.4)' : 'rgba(30,45,60,0.45)';
+    const allItems = [
+        ...backgrounds,
+        ...(customBg ? [{ id: 'custom', src: customBg, alt: 'Custom', isVideo: false }] : [])
+    ];
 
     return (
-        <>
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
-
-                .bg-widget {
-                    font-family: 'DM Sans', sans-serif;
-                    width: 220px;
-                    background: ${glass};
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    border: 1px solid ${border};
-                    border-radius: 20px;
-                    padding: 16px;
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-                    position: relative;
-                    z-index: 10;
-                }
-
-                .bg-widget-title {
-                    font-size: 11px;
-                    font-weight: 600;
-                    letter-spacing: 0.1em;
-                    text-transform: uppercase;
-                    color: ${subColor};
-                    margin-bottom: 12px;
-                }
-
-                .bg-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 8px;
-                    margin-bottom: 10px;
-                }
-
-                .bg-thumb {
-                    position: relative;
-                    border-radius: 12px;
-                    overflow: hidden;
-                    cursor: pointer;
-                    aspect-ratio: 16/10;
-                    border: 2px solid transparent;
-                    transition: all 0.2s ease;
-                }
-
-                .bg-thumb:hover {
-                    transform: scale(1.04);
-                    border-color: rgba(255,255,255,0.5);
-                }
-
-                .bg-thumb.active {
-                    border-color: #38bdf8;
-                    box-shadow: 0 0 0 1px #38bdf8, 0 4px 12px rgba(56,189,248,0.3);
-                }
-
-                .bg-thumb img,
-                .bg-thumb video {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
-                }
-
-                .bg-thumb-label {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    padding: 4px 6px;
-                    font-size: 9px;
-                    font-weight: 600;
-                    letter-spacing: 0.05em;
-                    text-transform: uppercase;
-                    color: white;
-                    background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
-                    opacity: 0;
-                    transition: opacity 0.2s ease;
-                }
-
-                .bg-thumb:hover .bg-thumb-label {
-                    opacity: 1;
-                }
-
-                .bg-thumb.active .bg-thumb-label {
-                    opacity: 1;
-                }
-
-                .bg-upload-btn {
-                    width: 100%;
-                    padding: 9px;
-                    border-radius: 12px;
-                    border: 1.5px dashed ${isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'};
-                    background: ${isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'};
-                    color: ${subColor};
-                    font-family: 'DM Sans', sans-serif;
-                    font-size: 12px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 7px;
-                    transition: all 0.2s ease;
-                }
-
-                .bg-upload-btn:hover {
-                    border-color: #38bdf8;
-                    color: #38bdf8;
-                    background: rgba(56,189,248,0.06);
-                }
-
-                .bg-upload-btn svg {
-                    width: 14px;
-                    height: 14px;
-                    flex-shrink: 0;
-                }
-
-                .bg-divider {
-                    height: 1px;
-                    background: ${isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'};
-                    margin: 10px 0;
-                }
-            `}</style>
-
-            <div className="bg-widget">
-                <div className="bg-widget-title">Scene</div>
-
-                <div className="bg-grid">
-                    {backgrounds.map((bg) => (
-                        <div
-                            key={bg.id}
-                            className={`bg-thumb ${selectedBg === bg.id ? 'active' : ''}`}
-                            onClick={() => handleSelect(bg.id)}
-                        >
-                            {bg.isVideo ? (
-                                <video src={bg.src} muted loop autoPlay playsInline />
-                            ) : (
-                                <img src={bg.src} alt={bg.alt} />
-                            )}
-                            <div className="bg-thumb-label">{bg.alt}</div>
-                        </div>
-                    ))}
-
-                    {/* Custom thumbnail if uploaded */}
-                    {customBg && (
-                        <div
-                            className={`bg-thumb ${selectedBg === 'custom' ? 'active' : ''}`}
-                            onClick={() => { setSelectedBg('custom'); }}
-                        >
-                            <img src={customBg} alt="Custom" />
-                            <div className="bg-thumb-label">Custom</div>
-                        </div>
-                    )}
-                </div>
-
-                <div className="bg-divider" />
-
-                <label className="bg-upload-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                    </svg>
-                    Upload your own
-                    <input type="file" accept="image/*,video/*" onChange={handleFileUpload} style={{ display: 'none' }} />
-                </label>
+        <div
+            className="w-full max-w-[280px] md:max-w-[300px] lg:max-w-[320px] rounded-xl p-4 md:p-5 lg:p-6 shadow-md backdrop-blur-md"
+            style={{
+                backgroundColor: cardBg,
+                boxShadow: isDarkMode
+                    ? "0 10px 10px rgba(0, 0, 0, 0.3)"
+                    : "0 10px 10px rgba(0, 0, 0, 0.08)",
+            }}
+        >
+            <div className="flex items-center justify-between mb-3 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                <h2 className="text-base md:text-lg font-semibold" style={{ color: textPrimary }}>Background</h2>
+                <Image className="w-4 h-4 md:w-5 md:h-5" style={{ color: textSecondary }} />
             </div>
-        </>
+
+            <div className="space-y-2 mb-4">
+                {allItems.map((bg) => (
+                    <div
+                        key={bg.id}
+                        onClick={() => handleSelect(bg.id)}
+                        className="flex items-center justify-between p-2 md:p-2.5 rounded-lg transition-colors cursor-pointer"
+                        style={{
+                            backgroundColor: selectedBg === bg.id ? (isDarkMode ? "#1e3a4f" : "#e8f4fd") : itemBg,
+                            boxShadow: isDarkMode ? "0 2px 6px rgba(0, 0, 0, 0.2)" : "0 2px 6px rgba(0, 0, 0, 0.05)",
+                            border: selectedBg === bg.id ? `1.5px solid ${selectedRing}` : '1.5px solid transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (selectedBg !== bg.id) e.currentTarget.style.backgroundColor = itemHoverBg;
+                        }}
+                        onMouseLeave={(e) => {
+                            if (selectedBg !== bg.id) e.currentTarget.style.backgroundColor = itemBg;
+                        }}
+                    >
+                        <div className="flex items-center gap-2.5">
+                            <div style={{
+                                width: 44, height: 30, borderRadius: 7,
+                                overflow: 'hidden', flexShrink: 0,
+                                border: `1px solid ${borderColor}`,
+                            }}>
+                                {bg.isVideo ? (
+                                    <video src={bg.src} muted loop autoPlay playsInline
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <img src={bg.src} alt={bg.alt}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                )}
+                            </div>
+                            <span className="text-xs md:text-sm font-medium" style={{ color: textPrimary }}>
+                                {bg.alt}
+                            </span>
+                        </div>
+
+                        <div style={{
+                            width: 16, height: 16, borderRadius: '50%',
+                            border: `2px solid ${selectedBg === bg.id ? selectedRing : borderColor}`,
+                            backgroundColor: selectedBg === bg.id ? selectedRing : 'transparent',
+                            flexShrink: 0,
+                            transition: 'all 0.2s ease',
+                        }} />
+                    </div>
+                ))}
+            </div>
+
+            <label
+                htmlFor="bgUpload"
+                className="w-full px-3 py-2 border-2 border-dashed rounded-lg cursor-pointer hover:opacity-80 transition-all flex items-center justify-center gap-2"
+                style={{ borderColor: borderColor, backgroundColor: itemBg }}
+            >
+                <Upload className="w-3.5 h-3.5 md:w-4 md:h-4" style={{ color: textSecondary }} />
+                <span className="text-xs md:text-sm font-medium" style={{ color: textSecondary }}>Upload Background</span>
+                <input id="bgUpload" type="file" accept="image/*,video/*" onChange={handleFileUpload} className="hidden" />
+            </label>
+        </div>
     );
 }
