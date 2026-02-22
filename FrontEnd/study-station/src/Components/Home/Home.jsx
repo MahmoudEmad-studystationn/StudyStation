@@ -7,307 +7,238 @@ import {
   faFloppyDisk,
 } from "@fortawesome/free-solid-svg-icons";
 import postsImage from "./posts.jpg";
-import { useTheme } from "@mui/material/styles";
 import { useThemeContext } from "../Theme/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import HeaderIcons from "../Header/Headericons";
 
 function Home() {
-  const theme = useTheme();
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
 
-  const bgColor = isDarkMode ? "#171717" : "#F3F4F6";
-  const cardBg = isDarkMode ? "#2A2A2A" : "white";
-  const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
+  const bgColor       = isDarkMode ? "#171717" : "#F3F4F6";
+  const cardBg        = isDarkMode ? "#2A2A2A" : "white";
+  const textPrimary   = isDarkMode ? "#E0E0E0" : "#2f3b48";
   const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-  const textAccent = isDarkMode ? "#8FB7CC" : "#4e87a8";
-  const borderColor = isDarkMode ? "#404040" : "#d1d5db";
-  const iconBg = isDarkMode ? "#363636" : "#eef1f4";
-  const iconBorder = isDarkMode ? "#505050" : "#d5d9de";
-  const buttonBg = "#2c3e50";
-  const buttonHover = "#3a4958";
+  const textAccent    = isDarkMode ? "#8FB7CC" : "#4e87a8";
+  const borderColor   = isDarkMode ? "#404040" : "#d1d5db";
+  const iconBg        = isDarkMode ? "#363636" : "#eef1f4";
+  const iconBorder    = isDarkMode ? "#505050" : "#d5d9de";
+  const buttonBg      = "#2c3e50";
+  const buttonHover   = "#3a4958";
+
+  const cardStyle = {
+    backgroundColor: cardBg,
+    borderColor: borderColor,
+    boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
+  };
+
+  const iconStyle = { backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary };
+
+  const Btn = ({ onClick, children, style = {} }) => (
+    <button
+      onClick={onClick}
+      style={{ backgroundColor: buttonBg, color: "white", boxShadow: "0 10px 16px rgba(0,0,0,0.15)", ...style }}
+      className="py-2.5 px-4 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
+    >
+      {children}
+    </button>
+  );
 
   return (
-    <div
-      className="min-h-screen transition-colors duration-300"
-      style={{ backgroundColor: bgColor }}
-    >
-      <div className="max-w-[1200px] mx-auto px-4 py-6">
-        <header className="flex justify-between items-start mb-6 flex-wrap gap-4">
-          <div>
-            <h1 className="m-0 text-[28px] font-semibold" style={{ color: textPrimary }}>
-              <span style={{ color: textAccent, fontWeight: 600 }}>Welcome, User</span>
-            </h1>
-            <p className="mt-1.5 text-lg" style={{ color: textSecondary }}>
-              Your goals are waiting for you.
-            </p>
-          </div>
-          <HeaderIcons />
-        </header>
+    <>
+      <style>{`
+        .home-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+        .home-grid-3 {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 20px;
+        }
+        .library-inner {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .library-badges {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+          flex-shrink: 0;
+        }
+        .posts-img {
+          display: block;
+        }
 
-        <section className="grid gap-8 grid-cols-1 md:grid-cols-2 mb-10">
-          <div
-            className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
-            style={{
-              backgroundColor: cardBg,
-              borderColor: borderColor,
-              boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
-            }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
-                style={{ backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary }}
-              >
-                <FontAwesomeIcon icon={faHeadphones} />
-              </div>
-              <h3 className="m-0 text-[19px] font-semibold tracking-[-0.03em] uppercase" style={{ color: textPrimary }}>
-                SOLO STUDY
-              </h3>
+        @media (max-width: 768px) {
+          .home-grid-2 {
+            grid-template-columns: 1fr;
+          }
+          .home-grid-3 {
+            grid-template-columns: 1fr;
+          }
+          .library-inner {
+            flex-direction: column;
+          }
+          .library-badges {
+            flex-direction: row;
+            width: 100%;
+            justify-content: center;
+          }
+          .library-badges span {
+            flex: 1;
+            min-width: 0;
+          }
+          .library-badges p {
+            width: auto !important;
+          }
+          .posts-img {
+            display: none;
+          }
+          .posts-card {
+            flex-direction: column !important;
+          }
+        }
+      `}</style>
+
+      <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: bgColor }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
+
+          {/* Header */}
+          <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, color: textPrimary }}>
+                <span style={{ color: textAccent, fontWeight: 600 }}>Welcome, User</span>
+              </h1>
+              <p style={{ marginTop: 6, fontSize: 16, color: textSecondary }}>Your goals are waiting for you.</p>
             </div>
-            <p className="my-2.5 mb-4 leading-relaxed text-md max-w-[90%]" style={{ color: textSecondary }}>
-              Start a focused solo session with built-in timers and sounds.
-            </p>
-            <button
-              onClick={() => navigate("/solo-study")}
-              className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
-              style={{
-                backgroundColor: buttonBg,
-                color: "white",
-                boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
-            >
-              Start Focus Mode
-            </button>
-          </div>
+            <HeaderIcons />
+          </header>
 
-          <div
-            className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
-            style={{
-              backgroundColor: cardBg,
-              borderColor: borderColor,
-              boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
-            }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
-                style={{ backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary }}
-              >
-                <FontAwesomeIcon icon={faUserGroup} />
-              </div>
-              <h3 className="m-0 text-[19px] font-semibold tracking-[-0.03em] uppercase" style={{ color: textPrimary }}>
-                STUDY WITH FRIENDS
-              </h3>
-            </div>
-            <p className="my-2.5 mb-4 leading-relaxed text-md max-w-[90%]" style={{ color: textSecondary }}>
-              Join or create a group study room and stay productive together.
-            </p>
-            <button
-              onClick={() => navigate("/study-with-friends")}
-              className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
-              style={{
-                backgroundColor: buttonBg,
-                color: "white",
-                boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
-            >
-              Start Now
-            </button>
-          </div>
-        </section>
-
-        <section id="library" className="mb-10">
-          <div
-            className="rounded-2xl p-4 shadow-lg border-b relative flex flex-row justify-between items-start flex-nowrap gap-4 transition-all duration-300"
-            style={{
-              backgroundColor: cardBg,
-              borderColor: borderColor,
-              boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
-            }}
-          >
-            <div className="flex-1 min-w-[220px] flex flex-col justify-start max-w-[60%]">
-              <h3 className="text-base font-semibold mb-1" style={{ color: textAccent, fontWeight: 700 }}>
-                YOUR ALL-IN-ONE STUDY LIBRARY
-              </h3>
-              <p className="text-md leading-relaxed mt-1.5 mb-2" style={{ color: textSecondary }}>
-                Explore courses, resources, and roadmap all in one place to make learning smooth and focused.
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <button
-                  onClick={() => navigate("/library")}
-                  className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
-                  style={{
-                    backgroundColor: buttonBg,
-                    color: "white",
-                    boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
-                >
-                  Explore Now
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-row flex-nowrap items-start gap-2.5 min-w-[290px] flex-0-0-auto">
-              <div>
-                <span
-                  className="py-2 px-3 rounded-lg text-[14px] leading-[1.3] font-medium inline-block flex-shrink-0 shadow-md text-center"
-                  style={{
-                    backgroundColor: "#8FB7CC",
-                    color: "#fff",
-                    boxShadow: "0 8px 14px rgba(0,0,0,0.15)",
-                    minHeight: "100px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  Playlists & Courses
-                  <p
-                    style={{
-                      marginTop: "6px",
-                      color: "#fff",
-                      width: "130px",
-                      padding: "2px",
-                      textAlign: "center",
-                      fontSize: "12px",
-                      fontWeight: 300,
-                      lineHeight: "1.3",
-                    }}
-                  >
-                    Ready-made playlists of top courses to guide you from beginner to pro.
-                  </p>
-                </span>
-              </div>
-              <div>
-                <span
-                  className="py-2 px-3 rounded-lg text-[14px] leading-[1.3] font-medium inline-block flex-shrink-0 shadow-md text-center"
-                  style={{
-                    backgroundColor: "rgba(143, 183, 204, 0.15)",
-                    color: isDarkMode ? "#8FB7CC" : "#686868",
-                    boxShadow: isDarkMode
-                      ? "0 8px 14px rgba(0,0,0,0.3)"
-                      : "0 8px 14px rgba(0,0,0,0.08)",
-                    minHeight: "100px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  Resources &amp; Roadmaps
-                  <p
-                    style={{
-                      marginTop: "6px",
-                      color: isDarkMode ? "#8FB7CC" : "#686868",
-                      width: "130px",
-                      padding: "2px",
-                      textAlign: "center",
-                      fontSize: "12px",
-                      fontWeight: 300,
-                      lineHeight: "1.3",
-                    }}
-                  >
-                    Study materials and track roadmaps to stay on the right path.
-                  </p>
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-8 grid-cols-1 md:grid-cols-3">
-          <div
-            className="rounded-2xl p-3 shadow-lg border-b relative flex items-start justify-between gap-4 overflow-hidden transition-all duration-300 md:col-span-2"
-            style={{
-              backgroundColor: cardBg,
-              borderColor: borderColor,
-              boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
-            }}
-            id="posts"
-          >
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
-                  style={{ backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary }}
-                >
-                  <FontAwesomeIcon icon={faPenToSquare} />
+          {/* Solo + Friends */}
+          <section style={{ marginBottom: 20 }}>
+            <div className="home-grid-2">
+              {/* Solo Study */}
+              <div className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300" style={cardStyle}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+                    <FontAwesomeIcon icon={faHeadphones} />
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Solo Study</h3>
                 </div>
-                <h3 className="m-0 text-[19px] font-semibold tracking-[-0.03em] uppercase" style={{ color: textPrimary }}>
-                  POSTS
-                </h3>
+                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                  Start a focused solo session with built-in timers and sounds.
+                </p>
+                <Btn onClick={() => navigate("/solo-study")}>Start Focus Mode</Btn>
               </div>
-              <p className="my-2.5 mb-4 leading-relaxed text-md max-w-[80%]" style={{ color: textSecondary }}>
-                Explore study tips, quick resources, and interactive posts to join live study rooms and share your progress.
-              </p>
-              <button
-                onClick={() => navigate("/posts")}
-                className="py-2.5 px-3.5 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
-                style={{
-                  backgroundColor: buttonBg,
-                  color: "white",
-                  boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
-              >
-                Start Exploring
-              </button>
-            </div>
-            <div className="w-[190px] flex-shrink-0 flex items-end justify-center">
-              <img src={postsImage} alt="Posts preview" className="w-full h-auto object-contain block" />
-            </div>
-          </div>
 
-          <div
-            className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300 md:col-span-1"
-            style={{
-              backgroundColor: cardBg,
-              borderColor: borderColor,
-              boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div className="flex items-center gap-3 mb-2" style={{ justifyContent: "center" }}>
-              <div
-                className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
-                style={{ backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary }}
-              >
-                <FontAwesomeIcon icon={faFloppyDisk} />
+              {/* Study With Friends */}
+              <div className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300" style={cardStyle}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+                    <FontAwesomeIcon icon={faUserGroup} />
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Study With Friends</h3>
+                </div>
+                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                  Join or create a group study room and stay productive together.
+                </p>
+                <Btn onClick={() => navigate("/study-with-friends")}>Start Now</Btn>
               </div>
-              <h3 className="m-0 text-[19px] font-semibold tracking-[-0.03em] uppercase" style={{ color: textPrimary }}>
-                My Saves
-              </h3>
             </div>
-            <p className="my-2.5 mb-4 leading-relaxed text-md max-w-[90%] text-center" style={{ color: textSecondary }}>
-              Your go-to spot for everything you've marked to check later.
-            </p>
-            <button
-              className="py-2.5 px-7 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
-              style={{
-                backgroundColor: buttonBg,
-                color: "white",
-                boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
-            >
-              Open Saved
-            </button>
-          </div>
-        </section>
+          </section>
+
+          {/* Library */}
+          <section style={{ marginBottom: 20 }}>
+            <div className="rounded-2xl p-4 shadow-lg border-b transition-all duration-300" style={cardStyle}>
+              <div className="library-inner">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: textAccent, textTransform: "uppercase" }}>
+                    Your All-in-One Study Library
+                  </h3>
+                  <p style={{ margin: "0 0 20px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                    Explore courses, resources, and roadmap all in one place to make learning smooth and focused.
+                  </p>
+                  <Btn onClick={() => navigate("/library")}>Explore Now</Btn>
+                </div>
+
+                <div className="library-badges">
+                  <span style={{
+                    backgroundColor: "#8FB7CC", color: "#fff",
+                    padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500,
+                    boxShadow: "0 8px 14px rgba(0,0,0,0.15)",
+                    minHeight: 90, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center",
+                  }}>
+                    Playlists & Courses
+                    <p style={{ marginTop: 6, fontSize: 11, fontWeight: 300, lineHeight: 1.4, color: "#fff", width: 120 }}>
+                      Ready-made playlists of top courses to guide you from beginner to pro.
+                    </p>
+                  </span>
+                  <span style={{
+                    backgroundColor: "rgba(143,183,204,0.15)", color: isDarkMode ? "#8FB7CC" : "#686868",
+                    padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500,
+                    boxShadow: isDarkMode ? "0 8px 14px rgba(0,0,0,0.3)" : "0 8px 14px rgba(0,0,0,0.08)",
+                    minHeight: 90, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center",
+                  }}>
+                    Resources & Roadmaps
+                    <p style={{ marginTop: 6, fontSize: 11, fontWeight: 300, lineHeight: 1.4, color: isDarkMode ? "#8FB7CC" : "#686868", width: 120 }}>
+                      Study materials and track roadmaps to stay on the right path.
+                    </p>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Posts + Saves */}
+          <section>
+            <div className="home-grid-3">
+              {/* Posts */}
+              <div className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300 posts-card"
+                style={{ ...cardStyle, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, overflow: "hidden" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </div>
+                    <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Posts</h3>
+                  </div>
+                  <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14, maxWidth: "80%" }}>
+                    Explore study tips, quick resources, and interactive posts to join live study rooms and share your progress.
+                  </p>
+                  <Btn onClick={() => navigate("/posts")}>Start Exploring</Btn>
+                </div>
+                <div className="posts-img" style={{ width: 170, flexShrink: 0 }}>
+                  <img src={postsImage} alt="Posts preview" style={{ width: "100%", height: "auto", objectFit: "contain", display: "block" }} />
+                </div>
+              </div>
+
+              {/* Saves */}
+              <div className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300"
+                style={{ ...cardStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
+                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+                    <FontAwesomeIcon icon={faFloppyDisk} />
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>My Saves</h3>
+                </div>
+                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                  Your go-to spot for everything you've marked to check later.
+                </p>
+                <Btn style={{ paddingLeft: 28, paddingRight: 28 }}>Open Saved</Btn>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

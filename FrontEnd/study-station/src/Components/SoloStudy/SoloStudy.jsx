@@ -7,12 +7,12 @@ import MaximizeButton from "./MaximizeButton";
 import ToDoList from './ToDoList';
 import { useThemeContext } from "../Theme/ThemeContext";
 
-/* ─── شاشة "قلب الموبايل" ─── */
+
 function RotatePrompt() {
   const { isDarkMode } = useThemeContext();
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center gap-6 z-[9999]"
+      className="absolute inset-0 flex flex-col items-center justify-center gap-6 z-[9999]"
       style={{ backgroundColor: isDarkMode ? "#171717" : "#f3f4f6" }}
     >
       <div style={{ animation: "rotateHint 2s ease-in-out infinite", fontSize: "64px" }}>
@@ -37,7 +37,6 @@ function RotatePrompt() {
   );
 }
 
-/* ─── Hook بيحس بالـ orientation ─── */
 function useOrientation() {
   const getState = () => ({
     isMobile: window.innerWidth < 1024,
@@ -59,7 +58,6 @@ function useOrientation() {
   return state;
 }
 
-/* ─── الصفحة الرئيسية ─── */
 const SoloStudy = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { isMobile, isLandscape } = useOrientation();
@@ -70,25 +68,44 @@ const SoloStudy = () => {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  /* موبايل بالطول → اعرض رسالة الدوران */
   if (isMobile && !isLandscape) {
     return (
       <BackgroundProvider>
-        <BackgroundImage />
-        <RotatePrompt />
+        {/* ✅ absolute بدل fixed عشان ميغطيش السايدبار */}
+        <div style={{ position: "relative", width: "100%", height: "100%" }}>
+          <BackgroundImage />
+          <RotatePrompt />
+        </div>
       </BackgroundProvider>
     );
   }
 
-  /* ─── Layout يشتغل على landscape موبايل + تابلت + ديسكتوب ─── */
   return (
     <BackgroundProvider>
-      <div className="min-h-screen w-full relative" style={{ backgroundColor: "transparent" }}>
+      {/* ✅ شيلنا min-h-screen وخليناها h-full بس عشان تاخد المساحة المتبقية */}
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          minHeight: "100%",
+          backgroundColor: "transparent",
+        }}
+      >
         <BackgroundImage />
 
         <div
-          className="relative min-h-screen flex flex-row gap-3 justify-between items-start"
-          style={{ zIndex: 10, padding: isMobile ? "12px" : "24px 32px" }}
+          style={{
+            position: "relative",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "row",
+            gap: "12px",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            padding: isMobile ? "12px" : "24px 32px",
+            minHeight: "100%",
+          }}
         >
           {/* ── Left Column ── */}
           <div className="flex flex-col gap-3 w-auto">

@@ -9,12 +9,14 @@ const DashboardLayout = ({ children }) => {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      backgroundColor: isDarkMode ? '#171717' : '#F3F4F6'
+      backgroundColor: isDarkMode ? '#171717' : '#F3F4F6',
+      position: 'relative',
     }}>
       <SideBar />
       <div style={{
         flex: 1,
-        overflow: 'auto'
+        overflow: 'auto',
+        position: 'relative',  /* ← عشان الـ absolute children تتحسب جوّاه */
       }}>
         {children}
       </div>
