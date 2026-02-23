@@ -9,6 +9,7 @@ using StudyStation.API.Hubs;
 using StudyStation.API.Models;
 using StudyStation.API.Services;
 using System.Text;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
