@@ -20,7 +20,10 @@ namespace StudyStation.API.Features.Posts.GetAllPosts
                 .Include(p => p.User)
                 // تضمين قائمة التعليقات المرتبطة بكل منشور
                 .Include(p => p.Comments)
-                // ترتيب المنشورات من الأحدث إلى الأقدم
+                .Include(p => p.ParentPost)
+                .ThenInclude(c => c.User)
+                .Include(p => p.Reactions) // تأكد من عمل Include للريأكشنز
+                                           // ترتيب المنشورات من الأحدث إلى الأقدم
                 .OrderByDescending(p => p.CreatedAt)
                 // تحويل النتائج إلى DTOs لمنع إرسال بيانات غير ضرورية
                 .Select(p => new PostDto
@@ -28,6 +31,7 @@ namespace StudyStation.API.Features.Posts.GetAllPosts
                     Id = p.Id,
                     Title = p.Title,
                     Content = p.Content,
+                    ImageUrl = p.ImageUrl,
                     CreatedAt = p.CreatedAt,
                     Author = new UserDto // تحويل بيانات المستخدم إلى UserDto
                     {
@@ -35,12 +39,38 @@ namespace StudyStation.API.Features.Posts.GetAllPosts
                         FirstName = p.User.FirstName,
                         LastName = p.User.LastName
                     },
+                    ParentPostId = p.ParentPostId,
+                    SharedPost = p.ParentPost == null ? null : new PostDto
+                    {
+                        Id = p.ParentPost.Id,
+                        Title = p.ParentPost.Title,
+                        Content = p.ParentPost.Content,
+                        ImageUrl = p.ParentPost.ImageUrl,
+                        Author = new UserDto
+                        {
+                            Id = p.ParentPost.User.Id,
+                            FirstName = p.ParentPost.User.FirstName,
+                            LastName = p.ParentPost.User.LastName
+                        }
+                    },
                     Comments = p.Comments.Select(c => new CommentDto // تحويل كل تعليق إلى CommentDto
                     {
                         Id = c.Id,
                         Content = c.Content,
-                        CreatedAt = c.CreatedAt
+                        CreatedAt = c.CreatedAt,
+                        Author = new UserDto
+                        {
+                            Id = c.User.Id,
+                            FirstName = c.User.FirstName,
+                            LastName = c.User.LastName
+                        }
+                    }).ToList(),
+                    Reactions = p.Reactions.Select(r => new ReactionDto
+                    {
+                        Type = r.Type,
+                        UserId = r.UserId
                     }).ToList()
+
                 })
                 .ToListAsync(cancellationToken);
 

@@ -39,6 +39,8 @@ namespace StudyStation.API.Features.Posts.CreatePost
             {
                 Title = request.Title,
                 Content = request.Content,
+                ImageUrl = request.ImageUrl,
+                ParentPostId = request.ParentPostId,
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
