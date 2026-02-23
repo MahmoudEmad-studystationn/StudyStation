@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     {
         policy
             // .AllowAnyOrigin()
-            .WithOrigins("http://localhost:5173", "http://localhost:5174", "https://study-station.runasp.net", "https://study-station-alpha.vercel.app", "https://study-station-51en40xbc-mariams-projects-2d4c7ff0.vercel.app/")
+            .WithOrigins("http://localhost:5173", "http://localhost:5174", "https://study-station.runasp.net", "https://study-station-alpha.vercel.app", "https://study-station-51en40xbc-mariams-projects-2d4c7ff0.vercel.app/", "https://localhost:7152")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -106,9 +106,10 @@ if (app.Environment.IsDevelopment())
     // ✏️ تم الحذف: app.UseSwagger() و app.UseSwaggerUI()
     // ✏️ تم الاستبدال بـ: MapOpenApi و MapScalarApiReference
     // الـ Scalar UI هتبقى متاحة على: /scalar/v1
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    
 }
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 
