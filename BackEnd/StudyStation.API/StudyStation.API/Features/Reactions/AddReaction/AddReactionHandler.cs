@@ -26,7 +26,7 @@ namespace StudyStation.API.Features.Reactions.AddReaction
                 throw new UnauthorizedAccessException("User ID not found or invalid.");
             }
 
-            // 2. التحقق من أن أحد الحقلين (PostId أو CommentId) فقط موجود
+            // 2. التحقق من المنطق (بوست أو كومنت)
             if (request.PostId.HasValue && request.CommentId.HasValue)
             {
                 throw new InvalidOperationException("A reaction can only be on a post or a comment, not both.");
@@ -36,7 +36,34 @@ namespace StudyStation.API.Features.Reactions.AddReaction
                 throw new InvalidOperationException("A reaction must be associated with either a post or a comment.");
             }
 
-            // 3. التحقق من وجود الكيان (المنشور أو التعليق)
+            // --- الجزء الجديد: منع التكرار (Logic Update) ---
+
+            // البحث عن تفاعل سابق لهذا المستخدم على نفس الكيان (بوست أو كومنت)
+            var existingReaction = await _context.Reactions
+                .FirstOrDefaultAsync(r =>
+                    (request.PostId.HasValue && r.PostId == request.PostId) ||
+                    (request.CommentId.HasValue && r.CommentId == request.CommentId) &&
+                    r.UserId == currentUserId, cancellationToken);
+
+            if (existingReaction != null)
+            {
+                // لو المستخدم بعت نفس النوع (مثلاً ضغط Like وهو أصلاً عامل Like)، هنشيل الريأكت "Toggle"
+                if (existingReaction.Type == request.Type)
+                {
+                    _context.Reactions.Remove(existingReaction);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    return new AddReactionResponse { ReactionId = 0 }; // 0 تعني تم الحذف
+                }
+
+                // لو بعت نوع مختلف (مثلاً كان Like وخلاه Love)، هنحدث النوع فقط
+                existingReaction.Type = request.Type;
+                await _context.SaveChangesAsync(cancellationToken);
+                return new AddReactionResponse { ReactionId = existingReaction.Id };
+            }
+
+            // --- نهاية الجزء الجديد ---
+
+            // 3. التحقق من وجود الكيان (فقط في حالة إضافة تفاعل جديد تماماً)
             if (request.PostId.HasValue)
             {
                 var postExists = await _context.Posts.AnyAsync(p => p.Id == request.PostId.Value, cancellationToken);
