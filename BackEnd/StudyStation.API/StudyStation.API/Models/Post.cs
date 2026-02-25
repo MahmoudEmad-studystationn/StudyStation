@@ -11,7 +11,11 @@ namespace StudyStation.API.Models
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+       
+        public string? ImageUrl { get; set; } // حقل اختياري لتخزين رابط الصورة
 
+        public int? ParentPostId { get; set; }
+        public Post? ParentPost { get; set; } // العلاقة مع البوست الأصلي
         // Foreign Key
         [ForeignKey("User")] // <-- هذا السطر يحل المشكلة
         public int UserId { get; set; }

@@ -12,5 +12,8 @@ namespace StudyStation.API.Features.Posts.CreatePost
         [Required]
         [StringLength(5000)]
         public string Content { get; set; } = string.Empty;
+
+        public string? ImageUrl { get; set; }
+        public int? ParentPostId { get; set; }
     }
 }
