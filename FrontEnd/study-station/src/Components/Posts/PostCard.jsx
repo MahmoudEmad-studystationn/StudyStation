@@ -27,6 +27,7 @@ export default function PostCard({
     const [showReactions, setShowReactions] = useState(false);
     const [hoveredReaction, setHoveredReaction] = useState(null);
     const [commentContent, setCommentContent] = useState('');
+    const [showImageModal, setShowImageModal] = useState(false);
 
     const cardBg = isDarkMode ? "#2A2A2A" : "white";
     const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
@@ -45,7 +46,7 @@ export default function PostCard({
     });
     const totalReactions = reactions.length;
 
-    const myReaction = reactions.find(r => r.userId?.toString() === userData?._id?.toString());
+    const myReaction = reactions.find(r => r.isMyReaction === true);
     const isMyPost = userData && post.author?.id?.toString() === userData?._id?.toString();
 
     const handleReactionClick = (reactionType) => {
@@ -120,12 +121,41 @@ export default function PostCard({
                 )}
                 {/* Image */}
                 {post.imageUrl && (
-                    <img
-                        src={post.imageUrl}
-                        alt={post.title || "Post image"}
-                        className="w-full h-48 sm:h-56 md:h-64 rounded-lg object-cover mt-3"
-                        onError={(e) => { e.target.style.display = "none"; }}
-                    />
+                    <>
+                        <img
+                            src={post.imageUrl}
+                            alt={post.title || "Post image"}
+                            className="w-full h-48 sm:h-56 md:h-64 rounded-lg object-cover mt-3 cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => setShowImageModal(true)}
+                            onError={(e) => { e.target.style.display = "none"; }}
+                        />
+
+                        {/* Image Modal */}
+                        {showImageModal && (
+                            <div
+                                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                                style={{ backgroundColor: "rgba(0,0,0,0.85)" }}
+                                onClick={() => setShowImageModal(false)}
+                            >
+                                <div className="relative max-w-4xl max-h-[90vh] w-full">
+                                    <img
+                                        src={post.imageUrl}
+                                        alt={post.title || "Post image"}
+                                        className="w-full h-full object-contain rounded-lg"
+                                        style={{ maxHeight: "90vh" }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <button
+                                        onClick={() => setShowImageModal(false)}
+                                        className="absolute cursor-pointer top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg transition-colors"
+                                        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 

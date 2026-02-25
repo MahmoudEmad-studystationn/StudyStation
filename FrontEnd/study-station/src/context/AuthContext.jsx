@@ -2,6 +2,22 @@ import { createContext, useEffect, useState, useCallback } from "react";
 
 export const AuthContext = createContext();
 
+const isTokenValid = (token) => {
+    if (!token) return false;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        // تحقق إن التوكن مش منتهي
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            return false;
+        }
+        return true;
+    } catch {
+        return false;
+    }
+};
+
 const getCurrentUserId = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) return null;
@@ -23,7 +39,8 @@ const getCurrentUserId = () => {
 };
 
 export default function AuthContextProvider({ children }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('accessToken') != null);
+    const token = localStorage.getItem('accessToken');
+    const [isLoggedIn, setIsLoggedIn] = useState(isTokenValid(token));
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
 

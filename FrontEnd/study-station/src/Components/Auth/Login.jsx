@@ -159,36 +159,17 @@ export default function LoginPage({ switchToSignUp }) {
             return;
         }
 
-        try {
-            const response = await loginApi(formData);
+        const response = await loginApi(formData);
 
-            if (response.success) {
-                const accessToken = response.data.accessToken;
-                const refreshToken = response.data.refreshToken;
-
-                if (accessToken) {
-                    localStorage.setItem("accessToken", accessToken);
-                    localStorage.setItem("refreshToken", refreshToken || "");
-                    
-                    setIsLoggedIn(true);
-
-                    toast.success("Logged in successfully! Welcome back!");
-                    setTimeout(() => navigate("/home"), 1000);
-                } else {
-                    toast.error("Login failed: No token received");
-                }
-            } else {
-                toast.error(response.message || "Invalid email or password");
-            }
-        } catch (err) {
-            const errorMessage =
-                err.response?.data?.error ||
-                err.response?.data?.message ||
-                "Server error. Please try again later.";
-            toast.error(errorMessage);
-        } finally {
-            setLoading(false);
+        if (response.success) {
+            setIsLoggedIn(true);
+            toast.success("Logged in successfully! Welcome back!");
+            setTimeout(() => navigate("/home"), 1000);
+        } else {
+            toast.error(response.message || "Invalid email or password");
         }
+
+        setLoading(false);
     };
 
     return (

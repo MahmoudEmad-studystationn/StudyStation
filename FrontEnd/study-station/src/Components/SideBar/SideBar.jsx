@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
 
@@ -46,78 +45,48 @@ export default function Sidebar() {
 
   return (
     <>
+      
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
 
-        .sidebar-root {
-          font-family: 'Sora', sans-serif;
-        }
+        .sidebar-root { font-family: 'Sora', sans-serif; }
 
-        /* ── DESKTOP ── */
         .sidebar-desktop {
           position: relative;
           z-index: 10;
-          width: ${collapsed ? "84px" : "260px"};
           height: calc(100vh - 40px);
           margin: 20px;
           border-radius: 20px;
-          background: linear-gradient(160deg, #0f1f2e 0%, #162433 60%, #1a2d40 100%);
-          border: 1px solid rgba(255,255,255,0.07);
-          box-shadow:
-            0 24px 48px rgba(0,0,0,0.35),
-            inset 0 1px 0 rgba(255,255,255,0.08);
+          background: #2C3E50;
+          box-shadow: 0 6px 18px rgba(9,30,40,0.15);
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           overflow: hidden;
-          transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
           flex-shrink: 0;
+          
+          transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar-desktop::before {
-          content: '';
-          position: absolute;
-          top: -60px;
-          right: -40px;
-          width: 180px;
-          height: 180px;
-          background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
-          pointer-events: none;
-        }
-
-        .sidebar-desktop::after {
-          content: '';
-          position: absolute;
-          bottom: 60px;
-          left: -30px;
-          width: 140px;
-          height: 140px;
-          background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%);
-          pointer-events: none;
-        }
-
-        /* Brand */
         .brand {
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: ${collapsed ? "28px 0 0 0" : "28px 24px 0 24px"};
-          justify-content: ${collapsed ? "center" : "flex-start"};
           overflow: hidden;
+          transition: padding 0.35s ease, justify-content 0.35s ease;
         }
 
         .brand-icon-wrap {
           width: 40px;
           height: 40px;
           border-radius: 12px;
-          background: linear-gradient(135deg, #38bdf8, #6366f1);
+          background: rgba(255,255,255,0.1);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 18px;
           color: white;
           flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(56,189,248,0.3);
         }
 
         .brand-text {
@@ -126,10 +95,9 @@ export default function Sidebar() {
           color: white;
           letter-spacing: 0.02em;
           white-space: nowrap;
-          opacity: ${collapsed ? 0 : 1};
-          width: ${collapsed ? 0 : "auto"};
           overflow: hidden;
-          transition: opacity 0.2s ease, width 0.2s ease;
+          
+          transition: opacity 0.3s ease, max-width 0.35s ease;
         }
 
         .brand-sub {
@@ -142,14 +110,12 @@ export default function Sidebar() {
           margin-top: 1px;
         }
 
-        /* Divider */
         .divider {
           height: 1px;
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
           margin: 20px 16px;
         }
 
-        /* Nav */
         .nav-list {
           list-style: none;
           margin: 0;
@@ -171,8 +137,7 @@ export default function Sidebar() {
           font-size: 14px;
           font-weight: 500;
           position: relative;
-          transition: all 0.2s ease;
-          justify-content: ${collapsed ? "center" : "flex-start"};
+          transition: background 0.2s ease, color 0.2s ease;
           white-space: nowrap;
           overflow: hidden;
         }
@@ -184,8 +149,8 @@ export default function Sidebar() {
 
         .nav-link.active {
           color: white;
-          background: linear-gradient(135deg, rgba(56,189,248,0.18), rgba(99,102,241,0.14));
-          border: 1px solid rgba(56,189,248,0.2);
+          background: rgba(255,255,255,0.2);
+          border: 1px solid rgba(255,255,255,0.15);
         }
 
         .nav-link.active::before {
@@ -196,7 +161,7 @@ export default function Sidebar() {
           transform: translateY(-50%);
           width: 3px;
           height: 60%;
-          background: linear-gradient(180deg, #38bdf8, #6366f1);
+          background: white;
           border-radius: 0 4px 4px 0;
         }
 
@@ -208,13 +173,11 @@ export default function Sidebar() {
         }
 
         .nav-label {
-          opacity: ${collapsed ? 0 : 1};
-          width: ${collapsed ? 0 : "auto"};
           overflow: hidden;
-          transition: opacity 0.2s ease, width 0.2s ease;
+          white-space: nowrap;
+          transition: opacity 0.3s ease, max-width 0.35s ease;
         }
 
-        /* Tooltip on collapsed */
         .tooltip {
           display: none;
           position: absolute;
@@ -234,11 +197,10 @@ export default function Sidebar() {
           z-index: 9999;
         }
 
-        .nav-link:hover .tooltip {
-          display: ${collapsed ? "block" : "none"};
+        .sidebar-desktop.collapsed .nav-link:hover .tooltip {
+          display: block;
         }
 
-        /* Bottom area */
         .bottom-area {
           padding: 16px 12px;
           border-top: 1px solid rgba(255,255,255,0.06);
@@ -259,22 +221,13 @@ export default function Sidebar() {
           font-family: 'Sora', sans-serif;
           cursor: pointer;
           transition: all 0.2s ease;
-          justify-content: ${collapsed ? "center" : "flex-start"};
           white-space: nowrap;
           overflow: hidden;
-          position: relative;
         }
 
         .logout-btn:hover {
           color: #f87171;
           background: rgba(248,113,113,0.08);
-        }
-
-        .logout-label {
-          opacity: ${collapsed ? 0 : 1};
-          width: ${collapsed ? 0 : "auto"};
-          overflow: hidden;
-          transition: opacity 0.2s ease, width 0.2s ease;
         }
 
         .toggle-btn {
@@ -291,7 +244,6 @@ export default function Sidebar() {
           font-size: 13px;
           transition: all 0.2s ease;
           flex-shrink: 0;
-          margin-left: auto;
         }
 
         .toggle-btn:hover {
@@ -299,31 +251,21 @@ export default function Sidebar() {
           color: white;
         }
 
-        .toggle-row {
-          display: flex;
-          align-items: center;
-          margin-top: 8px;
-          padding: 0 2px;
-          justify-content: ${collapsed ? "center" : "flex-end"};
-        }
-
-        /* ── MOBILE bottom bar ── */
+        /* MOBILE */
         .sidebar-mobile {
           position: fixed;
           bottom: 0;
           left: 0;
           right: 0;
           height: 68px;
-          background: linear-gradient(180deg, rgba(11,22,32,0.97) 0%, rgba(15,31,46,0.99) 100%);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: #2C3E50;
           border-top: 1px solid rgba(255,255,255,0.08);
           display: flex;
           align-items: center;
           padding: 0 4px;
           z-index: 1000;
           font-family: 'Sora', sans-serif;
-          box-shadow: 0 -8px 24px rgba(0,0,0,0.3);
+          box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
         }
 
         .mobile-nav {
@@ -349,9 +291,7 @@ export default function Sidebar() {
           position: relative;
         }
 
-        .mobile-nav-link.active {
-          color: #38bdf8;
-        }
+        .mobile-nav-link.active { color: white; }
 
         .mobile-nav-link.active::after {
           content: '';
@@ -361,7 +301,7 @@ export default function Sidebar() {
           transform: translateX(-50%);
           width: 20px;
           height: 2px;
-          background: linear-gradient(90deg, #38bdf8, #6366f1);
+          background: white;
           border-radius: 2px;
         }
 
@@ -386,16 +326,32 @@ export default function Sidebar() {
         .mobile-logout-btn:hover { color: #f87171; }
       `}</style>
 
-      {/* ── DESKTOP ── */}
+      {/* DESKTOP */}
       {!isMobile && (
-        <aside className="sidebar-root sidebar-desktop">
-          {/* Brand */}
+        <aside
+          className={`sidebar-root sidebar-desktop${collapsed ? " collapsed" : ""}`}
+          
+          style={{ width: collapsed ? "84px" : "260px" }}
+        >
           <div>
-            <div className="brand">
+            <div
+              className="brand"
+              style={{
+                padding: collapsed ? "28px 0 0 0" : "28px 24px 0 24px",
+                justifyContent: collapsed ? "center" : "flex-start",
+              }}
+            >
               <div className="brand-icon-wrap">
                 <IoBookSharp />
               </div>
-              <div className="brand-text">
+              
+              <div
+                className="brand-text"
+                style={{
+                  maxWidth: collapsed ? "0px" : "200px",
+                  opacity: collapsed ? 0 : 1,
+                }}
+              >
                 Study Station
                 <span className="brand-sub">Focus & Learn</span>
               </div>
@@ -408,12 +364,20 @@ export default function Sidebar() {
                 <li key={index}>
                   <NavLink
                     to={item.path}
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? " active" : ""}`
-                    }
+                    className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+                    style={{ justifyContent: collapsed ? "center" : "flex-start" }}
                   >
                     <span className="nav-icon">{item.icon}</span>
-                    <span className="nav-label">{item.label}</span>
+                    
+                    <span
+                      className="nav-label"
+                      style={{
+                        maxWidth: collapsed ? "0px" : "200px",
+                        opacity: collapsed ? 0 : 1,
+                      }}
+                    >
+                      {item.label}
+                    </span>
                     <span className="tooltip">{item.label}</span>
                   </NavLink>
                 </li>
@@ -421,14 +385,22 @@ export default function Sidebar() {
             </ul>
           </div>
 
-          {/* Bottom */}
           <div className="bottom-area">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'space-between' }}>
-              {!collapsed && (
-                <button className="logout-btn" onClick={handleLogout} style={{ flex: 1 }}>
-                  <span className="logout-label">Logout</span>
-                </button>
-              )}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between" }}>
+              <button
+                className="logout-btn"
+                onClick={handleLogout}
+                style={{
+                  flex: collapsed ? "0" : "1",
+                  maxWidth: collapsed ? "0px" : "200px",
+                  opacity: collapsed ? 0 : 1,
+                  padding: collapsed ? "0" : "11px 14px",
+                  transition: "all 0.35s ease",
+                  overflow: "hidden",
+                }}
+              >
+                Logout
+              </button>
               <button
                 className="toggle-btn"
                 onClick={() => setCollapsed(!collapsed)}
@@ -437,7 +409,7 @@ export default function Sidebar() {
                 <FaSignOutAlt
                   style={{
                     transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.3s ease",
+                    transition: "transform 0.35s ease",
                   }}
                 />
               </button>
@@ -446,7 +418,7 @@ export default function Sidebar() {
         </aside>
       )}
 
-      {/* ── MOBILE ── */}
+      {/* MOBILE */}
       {isMobile && (
         <nav className="sidebar-root sidebar-mobile">
           <ul className="mobile-nav">
@@ -454,9 +426,7 @@ export default function Sidebar() {
               <li key={index}>
                 <NavLink
                   to={item.path}
-                  className={({ isActive }) =>
-                    `mobile-nav-link${isActive ? " active" : ""}`
-                  }
+                  className={({ isActive }) => `mobile-nav-link${isActive ? " active" : ""}`}
                 >
                   <span className="mobile-icon">{item.icon}</span>
                   <span className="mobile-label">{item.label}</span>
@@ -466,9 +436,7 @@ export default function Sidebar() {
           </ul>
 
           <button className="mobile-logout-btn" onClick={handleLogout}>
-            <span className="mobile-icon">
-              <FaSignOutAlt />
-            </span>
+            <span className="mobile-icon"><FaSignOutAlt /></span>
             <span className="mobile-label">Logout</span>
           </button>
         </nav>

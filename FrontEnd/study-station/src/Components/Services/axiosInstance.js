@@ -20,17 +20,15 @@ axiosInstance.interceptors.response.use(
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
+
             const result = await refreshTokenApi();
 
             if (result.success) {
                 const newToken = localStorage.getItem("accessToken");
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return axiosInstance(originalRequest);
-            } else {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                window.location.href = "/login";
             }
+            // ❌ مش بنعمل logout هنا خالص
         }
 
         return Promise.reject(error);

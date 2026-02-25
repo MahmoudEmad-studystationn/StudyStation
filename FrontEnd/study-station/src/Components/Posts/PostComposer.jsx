@@ -43,12 +43,15 @@ export default function PostComposer({ callBack }) {
         const formData = new FormData();
         formData.append('title', postTitle);
         if (postBody) formData.append('content', postBody);
+        if (image) formData.append('image', image); 
 
         const res = await createPostsApi(formData);
         if (res) {
             await callBack();
             setPostTitle('');
             setPostBody('');
+            setImage(null);   
+            setImageURL('');   
         }
         setLoading(false);
     }

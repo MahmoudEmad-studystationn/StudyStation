@@ -58,11 +58,7 @@ function AppContent() {
             pauseOnHover
           />
           <Routes>
-            <Route path="/" element={
-              <AuthProtectedRoute>
-                <WelcomePage />
-              </AuthProtectedRoute>
-            } />
+            <Route path="/" element={<WelcomePage />} />
 
             <Route
               path="/signup"

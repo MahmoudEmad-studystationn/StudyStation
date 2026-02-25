@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import PostComments from "./PostComments";
 import PostCard from "./PostCard";
 import PostComposer from "./PostComposer";
@@ -10,12 +8,7 @@ import { toast } from "react-toastify";
 import { useThemeContext } from "../Theme/ThemeContext";
 import HeaderIcons from "../Header/Headericons";
 import SearchBar from "../Header/SearchBar";
-
-const API_URL = "https://study-station.runasp.net/api/Posts";
-
-const getAuthToken = () => {
-  return localStorage.getItem("accessToken") || "";
-};
+import axiosInstance from "../Services/axiosInstance";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
@@ -28,45 +21,15 @@ export default function Posts() {
   const { userData } = useContext(AuthContext);
 
   const bgColor = isDarkMode ? "#171717" : "#f3f4f6";
-  const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
   const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-  const inputBg = isDarkMode ? "#363636" : "white";
-  const buttonPrimary = "#7daebd";
-  const buttonPrimaryHover = "#6a9ab3";
 
   async function fetchPosts() {
     try {
       setLoading(true);
-
-      const token = getAuthToken();
-      const headers = {
-        "Content-Type": "application/json",
-      };
-
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-      const res = await fetch(API_URL, {
-        headers,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!res.ok) throw new Error("Failed to fetch posts");
-
-      const data = await res.json();
+      const { data } = await axiosInstance.get("Posts");
       setPosts(data);
     } catch (err) {
-      if (err.name === "AbortError") {
-        toast.error("Connection timeout. Please check your internet connection.");
-      } else {
-        toast.error(err.message || "Something went wrong");
-      }
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -75,8 +38,6 @@ export default function Posts() {
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  function handleSearch() { }
 
   const filteredPosts = posts.filter((post) => {
     const q = search.toLowerCase();
@@ -87,58 +48,41 @@ export default function Posts() {
   });
 
   async function addReaction(postId, reactionType) {
-    const token = getAuthToken();
-    if (!token) {
-      toast.error("Please login first to add reactions");
-      return;
-    }
-
+    // Optimistic update
     setPosts((prevPosts) =>
-      prevPosts.map((p) => {
-        if (p.id === postId) {
-          const hasMyReaction = (p.reactions || []).some(
-            (r) => r.userId?.toString() === userData?._id?.toString()
-          );
+        prevPosts.map((p) => {
+            if (p.id === postId) {
+                const hasMyReaction = (p.reactions || []).some(
+                    (r) => r.isMyReaction === true
+                );
 
-          if (hasMyReaction) {
-            return {
-              ...p,
-              reactions: (p.reactions || []).filter(
-                (r) => r.userId?.toString() !== userData?._id?.toString()
-              ),
-            };
-          } else {
-            return {
-              ...p,
-              reactions: [
-                ...(p.reactions || []),
-                { type: reactionType, userId: userData?._id },
-              ],
-            };
-          }
-        }
-        return p;
-      })
+                if (hasMyReaction) {
+                    return {
+                        ...p,
+                        reactions: (p.reactions || []).filter(
+                            (r) => r.isMyReaction !== true
+                        ),
+                    };
+                } else {
+                    return {
+                        ...p,
+                        reactions: [
+                            ...(p.reactions || []),
+                            { type: reactionType, isMyReaction: true },
+                        ],
+                    };
+                }
+            }
+            return p;
+        })
     );
 
-    fetch(`${API_URL}/${postId}/reactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ type: reactionType }),
-    }).catch(() => { });
-  }
+    axiosInstance.post(`Posts/${postId}/reactions`, { type: reactionType }).catch(() => {});
+}
 
   async function deletePost(postId) {
-    const token = getAuthToken();
     try {
-      const res = await fetch(`${API_URL}/${postId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error();
+      await axiosInstance.delete(`Posts/${postId}`);
       toast.success("Post deleted successfully!");
     } catch {
       toast.error("Failed to delete post");
