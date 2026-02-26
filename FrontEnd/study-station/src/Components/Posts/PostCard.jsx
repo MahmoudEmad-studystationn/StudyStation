@@ -8,12 +8,8 @@ import { AuthContext } from '../../context/AuthContext';
 const emojiReactions = [
     { type: "Helpful", emoji: "👍", color: "#7daebd" },
     { type: "Interested", emoji: "❤️", color: "#e74c3c" },
-    { type: "Watching", emoji: "👀", color: "#3498db" },
     { type: "Notify", emoji: "🔔", color: "#f39c12" },
-    { type: "Join", emoji: "🤝", color: "#27ae60" },
-    { type: "Appreciate", emoji: "⭐", color: "#f1c40f" },
 ];
-
 export default function PostCard({
     post,
     onReaction,
@@ -50,28 +46,32 @@ export default function PostCard({
     const isMyPost = userData && post.author?.id?.toString() === userData?._id?.toString();
 
     const handleReactionClick = (reactionType) => {
-        onReaction(post.id, reactionType);
+        if (myReaction?.type === reactionType) {
+            onReaction(post.id, reactionType); 
+        } else {
+            onReaction(post.id, reactionType); 
+        }
         setShowReactions(false);
     };
 
     async function createComment(e) {
         e.preventDefault();
         const response = await createCommentApi(commentContent, post.id);
-        if (response && response.message === 'success') {
+        if (response?.message === 'success') {
             setCommentContent('');
-            if (callBack) callBack();
+            if (callBack) callBack({
+                id: response.data?.id || Date.now(),
+                content: commentContent,
+                author: null,
+            });
         }
     }
 
     return (
-        <div
-            className="rounded-xl shadow-md p-5 sm:p-6 md:p-7 transition-colors duration-300"
-            style={{ backgroundColor: cardBg }}
-        >
-            {/* Header */}
+        <div className="rounded-xl shadow-md p-5 sm:p-6 md:p-7 transition-colors duration-300" style={{ backgroundColor: cardBg }}>
             <header className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
                 <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: placeholderBg }}
                 >
                     <FontAwesomeIcon icon={faUser} className="text-lg sm:text-xl" style={{ color: textSecondary }} />

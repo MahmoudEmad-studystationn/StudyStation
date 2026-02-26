@@ -42,9 +42,7 @@ export async function loginApi(formData) {
             email: formData.email.trim().toLowerCase(),
             password: formData.password
         };
-
         const { data } = await axios.post(`${baseUrl}Users/login`, payload);
-
         if (data.accessToken && data.refreshToken) {
             localStorage.setItem("accessToken", data.accessToken);
             localStorage.setItem("refreshToken", data.refreshToken);
@@ -121,20 +119,26 @@ export async function resetPasswordApi({ email, token, password }) {
     }
 }
 
+
 export async function refreshTokenApi() {
     try {
         const refreshToken = localStorage.getItem("refreshToken");
+
         if (!refreshToken) {
             return { success: false, message: "No refresh token found" };
         }
 
         const { data } = await axios.post(`${baseUrl}Users/RefreshToken`, { refreshToken });
 
-        localStorage.setItem("accessToken", data.accessToken);
+        if (data.accessToken) {
+            localStorage.setItem("accessToken", data.accessToken);
+        }
         if (data.refreshToken) {
             localStorage.setItem("refreshToken", data.refreshToken);
         }
+
         return { success: true, data };
+
     } catch (error) {
         console.error("Refresh Token Error:", error);
         localStorage.removeItem("accessToken");
