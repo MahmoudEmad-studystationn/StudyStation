@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using StudyStation.API.Features.Users.VerifyEmail;
 
-namespace StudyStation.API.Features.Users.VerifyEmail
+namespace StudyStation.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
