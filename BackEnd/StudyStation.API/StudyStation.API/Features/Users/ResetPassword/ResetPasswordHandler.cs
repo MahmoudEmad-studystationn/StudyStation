@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using StudyStation.API.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace StudyStation.API.Features.Users.ResetPassword
 {
@@ -26,10 +28,23 @@ namespace StudyStation.API.Features.Users.ResetPassword
             // 2. التحقق من صحة الكود
             // ملاحظة: Identity يستخدم توكن خاص به لإعادة تعيين كلمة المرور،
             // لكننا سنستخدم الـ OTP الذي قمنا بتخزينه يدوياً.
-            if (user.PasswordResetCode != request.Code || user.PasswordResetCodeExpiry < DateTime.UtcNow)
+            // if (user.PasswordResetCode != request.Code || user.PasswordResetCodeExpiry < DateTime.UtcNow)
+            //{
+            //    throw new InvalidOperationException("Invalid or expired password reset code.");
+            // }
+
+            var incomingHash = Convert.ToBase64String(
+                SHA256.HashData(Encoding.UTF8.GetBytes(request.Code))
+            );
+
+            if (user.OtpCodeHash == null ||
+                user.OtpExpiryDate == null ||
+                user.OtpCodeHash != incomingHash ||
+                user.OtpExpiryDate < DateTime.UtcNow)
             {
                 throw new InvalidOperationException("Invalid or expired password reset code.");
             }
+
 
             // 3. إعادة تعيين كلمة المرور
             // أولاً، نحتاج إلى توكن إعادة التعيين الخاص بـ Identity
@@ -44,8 +59,11 @@ namespace StudyStation.API.Features.Users.ResetPassword
             }
 
             // 4. مسح كود الـ OTP بعد استخدامه
-            user.PasswordResetCode = null;
-            user.PasswordResetCodeExpiry = null;
+            // user.PasswordResetCode = null;
+            // user.PasswordResetCodeExpiry = null;
+            user.OtpCodeHash = null;
+            user.OtpExpiryDate = null;
+
             await _userManager.UpdateAsync(user);
 
             return "Password has been reset successfully.";

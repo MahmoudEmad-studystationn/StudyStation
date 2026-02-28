@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using StudyStation.API.Models;
-using StudyStation.API.Services; // <-- إضافة مهمة
+using StudyStation.API.Services;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace StudyStation.API.Features.Users.Register
 {
@@ -50,9 +52,12 @@ namespace StudyStation.API.Features.Users.Register
             // --- الجزء الجديد: توليد وإرسال OTP ---
 
             // 4. توليد كود OTP
-            var otpCode = new Random().Next(100000, 999999).ToString(); // كود من 6 أرقام
-            user.OtpCode = otpCode;
-            user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10); // صلاحية الكود 10 دقائق
+            var otpCode = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+            //var otpCode = new Random().Next(100000, 999999).ToString(); // كود من 6 أرقام
+            //user.OtpCodeHash = otpCode;
+            //user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10); // صلاحية الكود 10 دقائق
+            user.EmailVerificationCode = otpCode;
+            user.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(10);
 
             // 5. تحديث المستخدم في قاعدة البيانات لحفظ الـ OTP
             await _userManager.UpdateAsync(user);

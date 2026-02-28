@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using StudyStation.API.Models;
 using StudyStation.API.Services;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace StudyStation.API.Features.Users.ResendCode
 {
@@ -27,7 +29,8 @@ namespace StudyStation.API.Features.Users.ResendCode
             }
 
             // 2. إنشاء كود OTP جديد
-            var otp = new Random().Next(100000, 999999).ToString();
+            //var otp = new Random().Next(100000, 999999).ToString();
+            var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
             var expiryDate = DateTime.UtcNow.AddMinutes(10); // صالح لمدة 10 دقائق
 
             // 3. تحديد نوع الكود وتحديث المستخدم
@@ -44,8 +47,15 @@ namespace StudyStation.API.Features.Users.ResendCode
                     break;
 
                 case "resetpassword":
-                    user.PasswordResetCode = otp;
-                    user.PasswordResetCodeExpiry = expiryDate;
+                    // ✅ نخزن Hash مش الكود نفسه
+                    var hash = Convert.ToBase64String(
+                        SHA256.HashData(Encoding.UTF8.GetBytes(otp))
+                    );
+
+                    user.OtpCodeHash = hash;
+                    user.OtpExpiryDate = expiryDate;
+                    //user.PasswordResetCode = otp;
+                    //user.PasswordResetCodeExpiry = expiryDate;
                     await _emailService.SendEmailAsync(user.Email, "Your New Password Reset Code", $"Your new password reset code is: {otp}");
                     break;
 

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using StudyStation.API.Models;
 using StudyStation.API.Services;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace StudyStation.API.Features.Users.ForgotPassword
 {
@@ -27,10 +29,23 @@ namespace StudyStation.API.Features.Users.ForgotPassword
                 return new ForgotPasswordResponse { Message = "If an account with this email exists, an OTP has been sent." };
             }
 
+            // ✅ مسح أي OTP قديم قبل توليد جديد
+            user.OtpCodeHash = null;
+            user.OtpExpiryDate = null;
+
             // 2. توليد كود OTP جديد
-            var otpCode = new Random().Next(100000, 999999).ToString();
-            user.OtpCode = otpCode;
-            user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10); // صلاحية الكود 10 دقائق
+            //var otpCode = new Random().Next(100000, 999999).ToString();
+            //user.OtpCode = otpCode;
+            //user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10); // صلاحية الكود 10 دقائق
+
+            var otpCode = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+
+            var hash = Convert.ToBase64String(
+                SHA256.HashData(Encoding.UTF8.GetBytes(otpCode))
+            );
+
+            user.OtpCodeHash = hash;
+            user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10);
 
             // 3. تحديث المستخدم في قاعدة البيانات
             await _userManager.UpdateAsync(user);

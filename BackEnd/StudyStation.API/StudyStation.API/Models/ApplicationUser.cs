@@ -19,7 +19,7 @@ namespace StudyStation.API.Models
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         // --- حقول الـ OTP ---
-        public string? OtpCode { get; set; }
+        public string? OtpCodeHash { get; set; }
         public DateTime? OtpExpiryDate { get; set; }
 
         // ... (باقي الخصائص مثل FirstName, LastName, etc.)
@@ -29,8 +29,8 @@ namespace StudyStation.API.Models
         public DateTime? EmailVerificationCodeExpiry { get; set; }
 
         // الخصائص الجديدة لإعادة تعيين كلمة المرور
-        public string? PasswordResetCode { get; set; }
-        public DateTime? PasswordResetCodeExpiry { get; set; }
+        // public string? PasswordResetCode { get; set; }
+        //public DateTime? PasswordResetCodeExpiry { get; set; }
 
         // ... (باقي الكلاس)
 
