@@ -11,11 +11,14 @@ namespace StudyStation.API.Features.Users.ForgotPassword
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
+        private readonly ILogger<ForgotPasswordHandler> _logger;
 
-        public ForgotPasswordHandler(UserManager<ApplicationUser> userManager, IEmailService emailService)
+
+        public ForgotPasswordHandler(UserManager<ApplicationUser> userManager, IEmailService emailService, ILogger<ForgotPasswordHandler> logger)
         {
             _userManager = userManager;
             _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<ForgotPasswordResponse> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -48,7 +51,13 @@ namespace StudyStation.API.Features.Users.ForgotPassword
             user.OtpExpiryDate = DateTime.UtcNow.AddMinutes(10);
 
             // 3. تحديث المستخدم في قاعدة البيانات
-            await _userManager.UpdateAsync(user);
+            //await _userManager.UpdateAsync(user);
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                _logger.LogError("Failed to update OTP for user {Email}", request.Email);
+                throw new Exception("Failed to process password reset request.");
+            }
 
             // 4. إرسال البريد الإلكتروني
             var emailSubject = "Your Password Reset OTP";
@@ -57,13 +66,30 @@ namespace StudyStation.API.Features.Users.ForgotPassword
                             $"<p>This code is valid for 10 minutes.</p>";
 
             // الكود الجديد والأكثر أماناً
-            if (!string.IsNullOrEmpty(user.Email))
+            //if (!string.IsNullOrEmpty(user.Email))
+            // {
+            //     await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
+            //  }
+
+
+            // return new ForgotPasswordResponse { Message = "If an account with this email exists, an OTP has been sent." };
+            try
             {
-                await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
+                if (!string.IsNullOrEmpty(user.Email))
+                {
+                    await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
+                }
+            }
+            catch (Exception ex)
+            {
+                // نسجل الخطأ لكن ما نوقعش الـ API
+                _logger.LogError(ex, "Failed to send password reset email to {Email}", user.Email);
             }
 
-
-            return new ForgotPasswordResponse { Message = "If an account with this email exists, an OTP has been sent." };
+            return new ForgotPasswordResponse
+            {
+                Message = "If an account with this email exists, an OTP has been sent."
+            };
         }
     }
 }
