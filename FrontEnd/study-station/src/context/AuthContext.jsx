@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState, useCallback } from "react";
-import { refreshTokenApi } from "../Components/Services/authServices";
 
 export const AuthContext = createContext();
 
@@ -50,77 +49,20 @@ export default function AuthContextProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        async function initAuth() {
-            const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('accessToken');
 
-            if (isTokenValid(accessToken)) {
-                setIsLoggedIn(true);
-                const userId = getCurrentUserId();
-                if (userId) setUserData({ _id: userId });
-            } else {
-                const refreshToken = localStorage.getItem('refreshToken');
-                if (refreshToken) {
-                    const result = await refreshTokenApi();
-                    if (result.success) {
-                        setIsLoggedIn(true);
-                        const userId = getCurrentUserId();
-                        if (userId) setUserData({ _id: userId });
-                    } else {
-                        setIsLoggedIn(false);
-                        setUserData(null);
-                    }
-                } else {
-                    setIsLoggedIn(false);
-                    setUserData(null);
-                }
-            }
-
-            setLoading(false);
+        if (isTokenValid(accessToken)) {
+            setIsLoggedIn(true);
+            const userId = getCurrentUserId();
+            if (userId) setUserData({ _id: userId });
+        } else {
+            localStorage.removeItem("accessToken");
+            setIsLoggedIn(false);
+            setUserData(null);
         }
 
-        initAuth();
+        setLoading(false);
     }, []);
-
-    useEffect(() => {
-        if (!isLoggedIn) return;
-
-        function scheduleRefresh() {
-            const token = localStorage.getItem("accessToken");
-            if (!token) return;
-
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const expiresAt = payload.exp * 1000;
-                const now = Date.now();
-                const timeUntilExpiry = expiresAt - now;
-                const refreshIn = timeUntilExpiry - 2 * 60 * 1000;
-
-                if (refreshIn <= 0) {
-                    refreshTokenApi().then(result => {
-                        if (result.success) scheduleRefresh();
-                        else logout();
-                    });
-                    return;
-                }
-
-                const timer = setTimeout(async () => {
-                    const result = await refreshTokenApi();
-                    if (result.success) {
-                        scheduleRefresh();
-                    } else {
-                        logout();
-                    }
-                }, refreshIn);
-
-                return timer;
-            } catch {
-                return null;
-            }
-        }
-
-        const timer = scheduleRefresh();
-        return () => clearTimeout(timer);
-    }, [isLoggedIn, logout]);
 
     useEffect(() => {
         const handleLogout = () => logout();

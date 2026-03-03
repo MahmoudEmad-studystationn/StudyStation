@@ -81,8 +81,8 @@ export async function resetPasswordApi({ email, token, password }) {
     try {
         const payload = {
             email: email.trim().toLowerCase(),
-            code: token,                      
-            newPassword: password             
+            code: token,
+            newPassword: password
         };
 
         console.log("Sending payload:", payload);
@@ -91,7 +91,7 @@ export async function resetPasswordApi({ email, token, password }) {
         return { success: true, data, message: data.message || "Password reset successfully!" };
     } catch (error) {
         console.error("Reset password error:", error.response?.data);
-        
+
         if (error.response?.data?.errors) {
             console.error("Validation errors details:");
             Object.keys(error.response.data.errors).forEach(key => {
@@ -116,34 +116,6 @@ export async function resetPasswordApi({ email, token, password }) {
         }
 
         return { success: false, message: errorMessage };
-    }
-}
-
-
-export async function refreshTokenApi() {
-    try {
-        const refreshToken = localStorage.getItem("refreshToken");
-
-        if (!refreshToken) {
-            return { success: false, message: "No refresh token found" };
-        }
-
-        const { data } = await axios.post(`${baseUrl}Users/RefreshToken`, { refreshToken });
-
-        if (data.accessToken) {
-            localStorage.setItem("accessToken", data.accessToken);
-        }
-        if (data.refreshToken) {
-            localStorage.setItem("refreshToken", data.refreshToken);
-        }
-
-        return { success: true, data };
-
-    } catch (error) {
-        console.error("Refresh Token Error:", error);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        return { success: false, message: "Session expired. Please log in again." };
     }
 }
 
@@ -213,5 +185,25 @@ export async function resendCodeApi(email) {
         }
 
         return { success: false, message: errMsg };
+    }
+}
+
+export async function refreshTokenApi() {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) {
+        throw new Error("No refresh token available");
+    }
+    try {
+        const { data } = await axios.post(`${baseUrl}Users/refresh-token`, {
+            accessToken,
+            refreshToken,
+        });
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken); // Update with new refresh if provided
+        return data;
+    } catch (error) {
+        console.error("Token refresh failed:", error);
+        throw error;
     }
 }

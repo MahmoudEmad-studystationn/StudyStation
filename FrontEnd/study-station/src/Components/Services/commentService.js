@@ -1,40 +1,25 @@
-import axios from "axios";
-import { toast } from "react-toastify";
+import axiosInstance from "./axiosInstance";
 
-const API_URL = "https://study-station.runasp.net/api/Posts";
-
-export async function createCommentApi(commentContent, postId) {
+export async function createCommentApi(content, postId, parentCommentId = null) {
     try {
-        const token = localStorage.getItem("accessToken");
-        const { data } = await axios.post(`${API_URL}/${postId}/comments`, {
-            content: commentContent
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        const response = await axiosInstance.post(`Posts/${postId}/comments`, {
+            content,
+            parentCommentId,
         });
-        toast.success("Comment added successfully!");
-        return { message: 'success', data };
-    } catch (err) {
-        toast.error("Failed to add comment");
-        console.log(err);
-        return null;
+        return { message: "success", data: response.data };
+    } catch (error) {
+        return { message: "error", error };
     }
 }
 
-export async function deleteCommentApi(postId, commentId) {
+export async function addCommentReactionApi(postId, commentId, type) {
     try {
-        const token = localStorage.getItem("accessToken");
-        const { data } = await axios.delete(`${API_URL}/${postId}/comments/${commentId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        toast.success("Comment deleted successfully!");
-        return data;
-    } catch (err) {
-        toast.error("Failed to delete comment");
-        console.log(err);
-        return null;
+        const response = await axiosInstance.post(
+            `Posts/${postId}/comments/${commentId}/reactions`,
+            { type }
+        );
+        return { message: "success", data: response.data };
+    } catch (error) {
+        return { message: "error", error };
     }
 }
