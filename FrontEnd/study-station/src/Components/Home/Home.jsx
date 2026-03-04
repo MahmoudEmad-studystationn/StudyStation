@@ -15,6 +15,19 @@ function Home() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
 
+  // ✅ جيب الاسم من الـ JWT token
+  const getFirstName = () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return "User";
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.given_name || payload.firstName || payload.name || "User";
+    } catch {
+      return "User";
+    }
+  };
+  const firstName = getFirstName();
+
   const bgColor       = isDarkMode ? "#171717" : "#F3F4F6";
   const cardBg        = isDarkMode ? "#2A2A2A" : "white";
   const textPrimary   = isDarkMode ? "#E0E0E0" : "#2f3b48";
@@ -114,7 +127,8 @@ function Home() {
           <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
             <div>
               <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, color: textPrimary }}>
-                <span style={{ color: textAccent, fontWeight: 600 }}>Welcome, User</span>
+                {/* ✅ بيعرض اسم اليوزر الحقيقي */}
+                <span style={{ color: textAccent, fontWeight: 600 }}>Welcome, {firstName}</span>
               </h1>
               <p style={{ marginTop: 6, fontSize: 16, color: textSecondary }}>Your goals are waiting for you.</p>
             </div>

@@ -49,6 +49,21 @@ const LockIcon = (props) => (
     </svg>
 );
 
+const EyeIcon = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+);
+
+const EyeOffIcon = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+);
+
 const ErrorIcon = () => (
     <svg className="w-4 h-4 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" />
@@ -103,6 +118,9 @@ export default function SignUp({ switchToLogin }) {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    // ✅ State للـ show/hide password
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
@@ -193,6 +211,8 @@ export default function SignUp({ switchToLogin }) {
         setLoading(false);
     }
 
+    const eyeIconColor = isDark ? "#ffffff" : COLOR_TEXT;
+
     return (
         <div className={`min-h-screen flex flex-col ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-white"}`}>
             <nav className="flex justify-between items-center px-6 py-4">
@@ -218,7 +238,7 @@ export default function SignUp({ switchToLogin }) {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <Tippy content={errors.firstName} visible={!!errors.firstName && focusedInput === "firstName"} placement="bottom" arrow={true} theme="custom">
                                         <div className="relative w-full">
-                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
+                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                             <input
                                                 type="text"
                                                 name="firstName"
@@ -240,7 +260,7 @@ export default function SignUp({ switchToLogin }) {
 
                                     <Tippy content={errors.lastName} visible={!!errors.lastName && focusedInput === "lastName"} placement="bottom" arrow={true} theme="custom">
                                         <div className="relative w-full">
-                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
+                                            <UserIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                             <input
                                                 type="text"
                                                 name="lastName"
@@ -263,7 +283,7 @@ export default function SignUp({ switchToLogin }) {
 
                                 <Tippy content={errors.email} visible={!!errors.email && focusedInput === "email"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
+                                        <MailIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
                                             type="email"
                                             name="email"
@@ -283,11 +303,12 @@ export default function SignUp({ switchToLogin }) {
                                     </div>
                                 </Tippy>
 
+                                {/* ✅ Password مع Eye Icon */}
                                 <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
+                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="password"
                                             placeholder="Password"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
@@ -297,20 +318,33 @@ export default function SignUp({ switchToLogin }) {
                                             value={formData.password}
                                             onChange={handleChange}
                                         />
+                                        {formData.password && (
+                                            <button
+                                                type="button"
+                                                className="absolute top-1/2 right-3 -translate-y-1/2 focus:outline-none"
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                            >
+                                                {showPassword
+                                                    ? <EyeIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                    : <EyeOffIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                }
+                                            </button>
+                                        )}
                                         {errors.password && (
-                                            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                                            <div className={`absolute top-1/2 -translate-y-1/2 ${formData.password ? "right-8" : "right-3"}`}>
                                                 <ErrorIcon />
                                             </div>
                                         )}
                                     </div>
                                 </Tippy>
 
-                                {/* Confirm Password */}
+                                {/* ✅ Confirm Password مع Eye Icon */}
                                 <Tippy content={errors.confirmPassword} visible={!!errors.confirmPassword && focusedInput === "confirmPassword"} placement="bottom" arrow={true} theme="custom">
                                     <div className="relative">
-                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }} />
+                                        <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
-                                            type="password"
+                                            type={showConfirmPassword ? "text" : "password"}
                                             name="confirmPassword"
                                             placeholder="Confirm Password"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none transition-all duration-150"
@@ -320,8 +354,21 @@ export default function SignUp({ switchToLogin }) {
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                         />
+                                        {formData.confirmPassword && (
+                                            <button
+                                                type="button"
+                                                className="absolute top-1/2 right-3 -translate-y-1/2 focus:outline-none"
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                            >
+                                                {showConfirmPassword
+                                                    ? <EyeIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                    : <EyeOffIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                }
+                                            </button>
+                                        )}
                                         {errors.confirmPassword && (
-                                            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                                            <div className={`absolute top-1/2 -translate-y-1/2 ${formData.confirmPassword ? "right-8" : "right-3"}`}>
                                                 <ErrorIcon />
                                             </div>
                                         )}
@@ -377,7 +424,7 @@ export default function SignUp({ switchToLogin }) {
                                                 strokeWidth="2"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }}
+                                                style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}
                                             >
                                                 <path d="M6 9l6 6 6-6"></path>
                                             </svg>
@@ -410,7 +457,7 @@ export default function SignUp({ switchToLogin }) {
                             </form>
                             {/* Switch to Login */}
                             <div className="mt-4 text-center text-sm">
-                                <p className="m-0" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT }}>
+                                <p className="m-0" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
                                     Already have an account?{" "}
                                     <span className="font-semibold cursor-pointer" style={{ color: COLOR_PRIMARY }} onClick={switchToLogin}>
                                         Log In
@@ -421,14 +468,14 @@ export default function SignUp({ switchToLogin }) {
                     </div>
 
                     {/* Right Side Image */}
-                    <div className={`hidden md:flex md:w-1/2 items-center justify-center p-6 ${theme.palette.mode === "dark" ? "bg-[#171717]" : "bg-gray-50"}`}>
+                    <div className={`hidden md:flex md:w-1/2 items-center justify-center p-6 ${isDark ? "bg-[#171717]" : "bg-gray-50"}`}>
                         <img src={SignUpImg} alt="Student Desk Illustration" className="max-w-full h-auto object-contain rounded-xl" style={{ minHeight: 320 }} />
                     </div>
                 </div>
             </div>
 
             {/* Footer */}
-            <footer className="text-center p-4 text-sm border-t" style={{ color: theme.palette.mode === "dark" ? "#ffffff" : COLOR_TEXT, borderColor: theme.palette.mode === "dark" ? "#2d2d2d" : "#eee" }}>
+            <footer className="text-center p-4 text-sm border-t" style={{ color: isDark ? "#ffffff" : COLOR_TEXT, borderColor: isDark ? "#2d2d2d" : "#eee" }}>
                 <p className="m-0">
                     © 2025 <span className="font-semibold">Study Station</span>. All rights reserved.
                 </p>

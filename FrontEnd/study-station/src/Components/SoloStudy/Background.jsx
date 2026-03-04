@@ -2,11 +2,12 @@ import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Upload, Image } from 'lucide-react';
 import { useThemeContext } from "../Theme/ThemeContext";
 import img1 from '../../assets/images/solo1.mp4';
-import img2 from '../../assets/images/solo2.jpg';
+import img2 from '../../assets/images/solo5.png';
+import img3 from '../../assets/images/solo4.jpg';
 
 const backgrounds = [
     { id: 1, src: img1, alt: 'Clouds', isVideo: true },
-    { id: 2, src: img2, alt: 'Ocean', isVideo: false },
+    { id: 2, src: img2, alt: 'Study', isVideo: false },
 ];
 
 const BackgroundContext = createContext();

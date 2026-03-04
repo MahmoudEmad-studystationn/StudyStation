@@ -43,6 +43,21 @@ const LockIcon = (props) => (
     </svg>
 );
 
+const EyeIcon = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+);
+
+const EyeOffIcon = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+);
+
 const ErrorIcon = () => (
     <svg className="w-4 h-4 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" />
@@ -97,10 +112,14 @@ export default function LoginPage({ switchToSignUp }) {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    // ✅ Eye toggle state
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const { setIsLoggedIn } = useContext(AuthContext);
+
+    const eyeIconColor = isDark ? "#ffffff" : COLOR_TEXT;
 
     useEffect(() => {
         const styleSheet = document.createElement("style");
@@ -163,6 +182,9 @@ export default function LoginPage({ switchToSignUp }) {
 
         if (response.success) {
             setIsLoggedIn(true);
+            // ✅ حفظ الاسم من الـ API response
+            const firstName = response.data?.firstName || response.data?.FirstName || "";
+            if (firstName) localStorage.setItem("firstName", firstName);
             toast.success("Logged in successfully! Welcome back!");
             setTimeout(() => navigate("/home"), 1000);
         } else {
@@ -221,11 +243,12 @@ export default function LoginPage({ switchToSignUp }) {
                                     </div>
                                 </Tippy>
 
+                                {/* ✅ Password مع Eye Icon */}
                                 <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
                                         <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />
                                         <input
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="password"
                                             placeholder="Password"
                                             className="w-full border-2 rounded-xl py-3 pl-11 pr-10 text-sm sm:text-base focus:outline-none"
@@ -235,8 +258,21 @@ export default function LoginPage({ switchToSignUp }) {
                                             value={formData.password}
                                             onChange={handleChange}
                                         />
+                                        {formData.password && (
+                                            <button
+                                                type="button"
+                                                className="absolute top-1/2 right-3 -translate-y-1/2 focus:outline-none"
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                            >
+                                                {showPassword
+                                                    ? <EyeIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                    : <EyeOffIcon className="w-4 h-4" style={{ color: eyeIconColor }} />
+                                                }
+                                            </button>
+                                        )}
                                         {errors.password && (
-                                            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                                            <div className={`absolute top-1/2 -translate-y-1/2 ${formData.password ? "right-8" : "right-3"}`}>
                                                 <ErrorIcon />
                                             </div>
                                         )}
