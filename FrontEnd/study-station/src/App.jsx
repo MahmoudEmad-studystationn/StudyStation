@@ -22,6 +22,7 @@ import AuthProtectedRoute from "./Components/ProtectedRoute/AuthProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContextProvider from "./context/AuthContext";
+import ShareResource from "./Components/Library/ShareResource";
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
@@ -46,9 +47,7 @@ function AppContent() {
     <HeroUIProvider>
       <ThemeProvider theme={theme}>
         <div className={isDarkMode ? "dark" : "light"}>
-          <ToastContainer
-            position="top-center"
-            autoClose={3000}
+          <ToastContainer position="top-center" autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -59,7 +58,6 @@ function AppContent() {
           />
           <Routes>
             <Route path="/" element={<WelcomePage />} />
-
             <Route
               path="/signup"
               element={
@@ -138,6 +136,14 @@ function AppContent() {
                   <DashboardLayout>
                     <Library />
                   </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/share-resource"
+              element={
+                <ProtectedRoute>
+                  <ShareResource />
                 </ProtectedRoute>
               }
             />

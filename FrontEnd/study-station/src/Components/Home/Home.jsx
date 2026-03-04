@@ -120,7 +120,7 @@ function Home() {
         }
       `}</style>
 
-      <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: bgColor }}>
+      <div className="min-h-screen transition-colors duration-300" >
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
 
           {/* Header */}

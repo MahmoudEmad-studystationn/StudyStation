@@ -6,10 +6,8 @@ const isTokenValid = (token) => {
     if (!token) return false;
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        // تحقق إن التوكن مش منتهي
         if (payload.exp && payload.exp * 1000 < Date.now()) {
             localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
             return false;
         }
         return true;
@@ -39,8 +37,7 @@ const getCurrentUserId = () => {
 };
 
 export default function AuthContextProvider({ children }) {
-    const token = localStorage.getItem('accessToken');
-    const [isLoggedIn, setIsLoggedIn] = useState(isTokenValid(token));
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -52,12 +49,26 @@ export default function AuthContextProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        if (isLoggedIn) {
+        const accessToken = localStorage.getItem('accessToken');
+
+        if (isTokenValid(accessToken)) {
+            setIsLoggedIn(true);
             const userId = getCurrentUserId();
             if (userId) setUserData({ _id: userId });
+        } else {
+            localStorage.removeItem("accessToken");
+            setIsLoggedIn(false);
+            setUserData(null);
         }
+
         setLoading(false);
-    }, [isLoggedIn]);
+    }, []);
+
+    useEffect(() => {
+        const handleLogout = () => logout();
+        window.addEventListener("auth:logout", handleLogout);
+        return () => window.removeEventListener("auth:logout", handleLogout);
+    }, [logout]);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userData, setUserData, logout, loading }}>
