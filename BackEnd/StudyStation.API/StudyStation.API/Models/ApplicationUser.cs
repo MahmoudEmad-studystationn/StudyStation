@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using StudyStation.API.Features.StudyWithFriends.Models;
 
 namespace StudyStation.API.Models
 {
@@ -39,5 +40,9 @@ namespace StudyStation.API.Models
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>();
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
+        // Study With Friends properties
+        public ICollection<StudyRoom> OwnedStudyRooms { get; set; } = new List<StudyRoom>();
+        public ICollection<RoomParticipant> RoomParticipations { get; set; } = new List<RoomParticipant>();
     }
 }

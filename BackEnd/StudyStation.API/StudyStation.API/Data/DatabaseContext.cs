@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudyStation.API.Features.Library.Models;
+using StudyStation.API.Features.StudyWithFriends.Models;
 using StudyStation.API.Models;
 
 
@@ -19,6 +20,13 @@ namespace StudyStation.API.Data
         public DbSet<LibraryResource> LibraryResources { get; set; }
         public DbSet<LibraryCategory> LibraryCategories { get; set; }
         public DbSet<ResourceType> ResourceTypes { get; set; }
+
+        // Study With Friends
+        public DbSet<StudyRoom> StudyRooms { get; set; }
+        public DbSet<RoomParticipant> RoomParticipants { get; set; }
+        public DbSet<StudyTask> StudyTasks { get; set; }
+        public DbSet<RoomMessage> RoomMessages { get; set; }
+        public DbSet<FocusSession> FocusSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +47,22 @@ namespace StudyStation.API.Data
                .WithOne(c => c.ParentComment) // الرد الواحد له أب واحد
                .HasForeignKey(c => c.ParentCommentId)
                .OnDelete(DeleteBehavior.NoAction);
+
+            // Study With Friends Configuration
+            modelBuilder.Entity<RoomParticipant>()
+                .HasKey(rp => new { rp.RoomId, rp.UserId });
+
+            modelBuilder.Entity<StudyRoom>()
+                .HasOne(sr => sr.Owner)
+                .WithMany(u => u.OwnedStudyRooms)
+                .HasForeignKey(sr => sr.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RoomParticipant>()
+                .HasOne(rp => rp.User)
+                .WithMany(u => u.RoomParticipations)
+                .HasForeignKey(rp => rp.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
 
