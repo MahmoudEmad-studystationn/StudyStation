@@ -52,7 +52,7 @@ export default function Sidebar() {
         .sidebar-root { font-family: 'Sora', sans-serif; }
 
         .sidebar-desktop {
-          position: relative;
+          position: sticky;
           z-index: 10;
           height: calc(100vh - 40px);
           margin: 20px;

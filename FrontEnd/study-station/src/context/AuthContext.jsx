@@ -2,67 +2,52 @@ import { createContext, useEffect, useState, useCallback } from "react";
 
 export const AuthContext = createContext();
 
-const isTokenValid = (token) => {
-    if (!token) return false;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp && payload.exp * 1000 < Date.now()) {
-            localStorage.removeItem("accessToken");
-            return false;
-        }
-        return true;
-    } catch {
-        return false;
-    }
-};
-
-const getCurrentUserId = () => {
-    const token = localStorage.getItem("accessToken");
+const parseToken = (token) => {
     if (!token) return null;
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const possibleIds = [
-            payload.sub,
-            payload.userId,
-            payload.id,
-            payload.nameid,
-            payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-            payload.unique_name,
-            payload.nameidentifier
-        ];
-        return possibleIds.find(id => id != null)?.toString() || null;
+        return JSON.parse(atob(token.split('.')[1]));
     } catch {
         return null;
     }
 };
 
+const getUserIdFromToken = (token) => {
+    const payload = parseToken(token);
+    if (!payload) return null;
+    const possibleIds = [
+        payload.sub, payload.userId, payload.id, payload.nameid,
+        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        payload.unique_name, payload.nameidentifier
+    ];
+    return possibleIds.find(id => id != null)?.toString() || null;
+};
+
 export default function AuthContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [userData, setUserData]     = useState(null);
+    const [loading, setLoading]       = useState(true);
 
     const logout = useCallback(() => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("firstName");
         setIsLoggedIn(false);
         setUserData(null);
     }, []);
 
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-
-        if (isTokenValid(accessToken)) {
-            setIsLoggedIn(true);
-            const userId = getCurrentUserId();
-            if (userId) setUserData({ _id: userId });
-        } else {
-            localStorage.removeItem("accessToken");
-            setIsLoggedIn(false);
-            setUserData(null);
-        }
-
-        setLoading(false);
+    const loginSuccess = useCallback((token) => {
+        const userId = getUserIdFromToken(token);
+        setIsLoggedIn(true);
+        if (userId) setUserData({ _id: userId });
     }, []);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
+            loginSuccess(accessToken);
+        }
+        setLoading(false);
+    }, [loginSuccess]);
 
     useEffect(() => {
         const handleLogout = () => logout();
@@ -71,7 +56,12 @@ export default function AuthContextProvider({ children }) {
     }, [logout]);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userData, setUserData, logout, loading }}>
+        <AuthContext.Provider value={{
+            isLoggedIn, setIsLoggedIn,
+            userData, setUserData,
+            logout, loading,
+            loginSuccess
+        }}>
             {children}
         </AuthContext.Provider>
     );
