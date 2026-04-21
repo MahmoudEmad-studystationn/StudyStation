@@ -1,7 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudyStation.API.Features.Profile.Queries;
+using StudyStation.API.Features.Profile.Queries.GetDashboard;
 using System.Security.Claims;
 using StudyStation.API.Features.Profile.Commands;
 using StudyStation.API.Features.Profile.DTOs;
@@ -39,6 +40,27 @@ namespace StudyStation.API.Controllers
                 return BadRequest("Update failed");
 
             return Ok("Profile updated successfully");
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetProfileDashboard()
+        {
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                return Unauthorized(new { message = "User ID not found in token." });
+            }
+
+            try
+            {
+                var query = new GetProfileDashboardQuery(userId);
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

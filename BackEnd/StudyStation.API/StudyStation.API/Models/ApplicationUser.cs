@@ -44,5 +44,15 @@ namespace StudyStation.API.Models
         // Study With Friends properties
         public ICollection<StudyRoom> OwnedStudyRooms { get; set; } = new List<StudyRoom>();
         public ICollection<RoomParticipant> RoomParticipations { get; set; } = new List<RoomParticipant>();
+
+        // Profile Dashboard properties
+        public string Track { get; set; } = string.Empty;
+        public string AcademicYear { get; set; } = string.Empty;
+        public int CurrentStreak { get; set; } = 0;
+        public decimal DailyGoalHours { get; set; } = 0m;
+
+        public ICollection<StudyStation.API.Features.Profile.Models.StudyTask> ProfileStudyTasks { get; set; } = new List<StudyStation.API.Features.Profile.Models.StudyTask>();
+        public ICollection<StudyStation.API.Features.Profile.Models.StudySession> StudySessions { get; set; } = new List<StudyStation.API.Features.Profile.Models.StudySession>();
+        public ICollection<StudyStation.API.Features.Profile.Models.ActivityLog> ActivityLogs { get; set; } = new List<StudyStation.API.Features.Profile.Models.ActivityLog>();
     }
 }

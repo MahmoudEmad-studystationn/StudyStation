@@ -28,6 +28,12 @@ namespace StudyStation.API.Data
         public DbSet<RoomMessage> RoomMessages { get; set; }
         public DbSet<FocusSession> FocusSessions { get; set; }
 
+        // Profile Dashboard
+        public DbSet<StudyStation.API.Features.Profile.Models.StudyTask> ProfileStudyTasks { get; set; }
+        public DbSet<StudyStation.API.Features.Profile.Models.StudySession> StudySessions { get; set; }
+        public DbSet<StudyStation.API.Features.Profile.Models.ActivityLog> ActivityLogs { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -63,6 +69,10 @@ namespace StudyStation.API.Data
                 .WithMany(u => u.RoomParticipations)
                 .HasForeignKey(rp => rp.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Profile Dashboard Configuration
+            modelBuilder.Entity<StudyStation.API.Features.Profile.Models.StudyTask>()
+                .ToTable("ProfileStudyTasks");
         }
 
 
