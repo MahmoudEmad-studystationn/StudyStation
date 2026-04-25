@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../Theme/ThemeContext'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input } from "@heroui/react";
 import { libraryApi } from '../Services/libraryService';
 
@@ -26,7 +26,6 @@ function getTypeStyle(type) {
   return TYPE_STYLES.resource;
 }
 
-// ── Sections (للتجميع) ────────────────────────────────────
 const SECTIONS = {
   roadmap:  { label: "Roadmaps",             color: "#8FB7CC" },
   resource: { label: "Resources & Materials", color: "#3D718D" },
@@ -59,9 +58,10 @@ function SkeletonCard({ isDarkMode }) {
   );
 }
 
-// ── Resource Card ─────────────────────────────────────────
+// ── Resource Card — clicking navigates to /library/:id ────
 function ResourceCard({ resource, isDarkMode }) {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
   const t = getTypeStyle(resource.type);
 
   const cardBg     = isDarkMode ? "#1f1f1f" : "#ffffff";
@@ -70,16 +70,19 @@ function ResourceCard({ resource, isDarkMode }) {
   const mutedColor = isDarkMode ? "#9a9a9a" : "#686868";
   const arrowBg    = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
   const arrowColor = hovered ? "#ffffff" : mutedColor;
-  const href       = resource.url || resource.filePath || "#";
 
-  // category badge (Frontend / Backend)
   const catLabel = resource.categoryName || resource.category || null;
+
+  const handleClick = () => {
+    // Navigate to the details page
+    navigate(`/library/${resource.id}`);
+  };
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => href !== "#" && window.open(href, "_blank", "noopener,noreferrer")}
+      onClick={handleClick}
       style={{
         background: cardBg,
         border: `1px solid ${cardBorder}`,
@@ -100,9 +103,8 @@ function ResourceCard({ resource, isDarkMode }) {
         opacity: hovered ? 1 : 0, transition: "opacity .2s",
       }} />
 
-      {/* Badges row: type + category */}
+      {/* Badges row */}
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: ".65rem" }}>
-        {/* Type badge */}
         <span style={{
           display: "inline-flex", alignItems: "center", gap: "5px",
           padding: "3px 9px", borderRadius: "999px",
@@ -117,7 +119,6 @@ function ResourceCard({ resource, isDarkMode }) {
           {t.label}
         </span>
 
-        {/* Category badge (Frontend / Backend) */}
         {catLabel && (
           <span style={{
             display: "inline-flex", alignItems: "center",
@@ -166,7 +167,7 @@ function ResourceCard({ resource, isDarkMode }) {
   );
 }
 
-// ── Section Header ────────────────────────────────────────
+// ── Section Header ─────────────────────────────────────────
 function SectionHeader({ sectionKey, count, isDarkMode }) {
   const s = SECTIONS[sectionKey];
   const t = TYPE_STYLES[sectionKey] || TYPE_STYLES.default;
@@ -194,7 +195,7 @@ function SectionHeader({ sectionKey, count, isDarkMode }) {
   );
 }
 
-// ── Empty / Error ─────────────────────────────────────────
+// ── Empty / Error ──────────────────────────────────────────
 function EmptyState({ isDarkMode }) {
   return (
     <div style={{ textAlign: "center", padding: "4rem 2rem", color: isDarkMode ? "#9a9a9a" : "#6b6f76" }}>
@@ -222,7 +223,7 @@ function ErrorState({ message, onRetry, isDarkMode }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────
+// ── Main ───────────────────────────────────────────────────
 export default function Library() {
   const { isDarkMode } = useThemeContext();
 
@@ -247,7 +248,6 @@ export default function Library() {
 
   useEffect(() => { fetchResources(); }, []);
 
-  // فلاتر ثابتة: All + categories من الداتا
   const categories = ["All", ...new Set(
     resources.map(r => r.categoryName || r.category).filter(Boolean)
   )];

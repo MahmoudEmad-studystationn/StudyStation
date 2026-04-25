@@ -4,13 +4,22 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(),react()],
-  assetsInclude: ['**/*.ttf', '**/*.woff', '**/*.woff2', '**/*.eot'],  // ده مهم للـ fonts
+  plugins: [tailwindcss(), react()],
+  assetsInclude: ['**/*.ttf', '**/*.woff', '**/*.woff2', '**/*.eot'],
   build: {
     rollupOptions: {
       output: {
-        assetFileNames: 'assets/[name]-[hash][extname]'  // اختياري بس يحسن الـ hashing
+        assetFileNames: 'assets/[name]-[hash][extname]'
       }
     }
-  }
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://study-station.runasp.net",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

@@ -4,7 +4,7 @@ import Quotes from './Quotes';
 import BackgroundWidget, { BackgroundProvider, BackgroundImage } from './Background';
 import Sound from './Sound';
 import MaximizeButton from "./MaximizeButton";
-import ToDoList from './ToDoList';
+import ToDoList from './TodoList';
 import { useThemeContext } from "../Theme/ThemeContext";
 
 

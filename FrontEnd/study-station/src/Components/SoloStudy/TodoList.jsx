@@ -5,7 +5,6 @@ import { useThemeContext } from "../Theme/ThemeContext";
 const TodoList = () => {
     const { isDarkMode } = useThemeContext();
 
-    // تحميل التاسكات من localStorage
     const [tasks, setTasks] = useState(() => {
         const saved = localStorage.getItem('todoTasks');
         return saved ? JSON.parse(saved) : [];

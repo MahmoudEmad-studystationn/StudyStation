@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState, useCallback } from "react";
+import { createContext, useEffect, useState, useCallback, useRef } from "react";
+import { loginApi } from "../Components/Services/authServices";
 
 export const AuthContext = createContext();
 
@@ -6,9 +7,7 @@ const parseToken = (token) => {
     if (!token) return null;
     try {
         return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-        return null;
-    }
+    } catch { return null; }
 };
 
 const getUserIdFromToken = (token) => {
@@ -26,41 +25,79 @@ export default function AuthContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData]     = useState(null);
     const [loading, setLoading]       = useState(true);
+    const timerRef = useRef(null);
+
+    const clearTimer = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+    };
 
     const logout = useCallback(() => {
+        clearTimer();
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("firstName");
+        sessionStorage.removeItem("creds"); // ✅ امسح الـ credentials
         setIsLoggedIn(false);
         setUserData(null);
     }, []);
 
-    const loginSuccess = useCallback((token) => {
+    const scheduleReLogin = useCallback((token) => {
+        const payload = parseToken(token);
+        if (!payload?.exp) return;
+
+        const msLeft = payload.exp * 1000 - Date.now() - 60_000;
+        clearTimer();
+
+        const doReLogin = async () => {
+            // ✅ جيب الـ credentials من sessionStorage
+            const raw = sessionStorage.getItem("creds");
+            if (!raw) return;
+
+            const creds = JSON.parse(raw);
+            const res = await loginApi(creds);
+
+            if (res.success) {
+                const newToken = localStorage.getItem("accessToken");
+                const userId = getUserIdFromToken(newToken);
+                if (userId) setUserData({ _id: userId });
+                scheduleReLogin(newToken);
+            }
+        };
+
+        if (msLeft <= 0) {
+            doReLogin();
+        } else {
+            timerRef.current = setTimeout(doReLogin, msLeft);
+        }
+    }, []);
+
+    const loginSuccess = useCallback((token, credentials = null) => {
         const userId = getUserIdFromToken(token);
         setIsLoggedIn(true);
         if (userId) setUserData({ _id: userId });
-    }, []);
+
+        if (credentials) {
+            sessionStorage.setItem("creds", JSON.stringify(credentials));
+        }
+
+        scheduleReLogin(token);
+    }, [scheduleReLogin]);
 
     useEffect(() => {
         const accessToken = localStorage.getItem("accessToken");
-        if (accessToken) {
-            loginSuccess(accessToken);
-        }
+        if (accessToken) loginSuccess(accessToken);
         setLoading(false);
     }, [loginSuccess]);
 
     useEffect(() => {
-        const handleLogout = () => logout();
-        window.addEventListener("auth:logout", handleLogout);
-        return () => window.removeEventListener("auth:logout", handleLogout);
-    }, [logout]);
+        return () => clearTimer();
+    }, []);
 
     return (
         <AuthContext.Provider value={{
             isLoggedIn, setIsLoggedIn,
             userData, setUserData,
-            logout, loading,
-            loginSuccess
+            logout, loading, loginSuccess
         }}>
             {children}
         </AuthContext.Provider>

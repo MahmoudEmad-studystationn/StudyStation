@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaHome, FaHeadphones, FaUsers, FaFolder, FaSignOutAlt } from "react-icons/fa";
 import { FaFilePen } from "react-icons/fa6";
 import { IoBookSharp } from "react-icons/io5";
@@ -7,7 +7,54 @@ import { AuthContext } from "../../context/AuthContext";
 import { toast as toastify } from "react-toastify";
 import { useThemeContext } from '../Theme/ThemeContext';
 
-// ─── Sidebar ───────────────────────────────────────────────
+// ─── Toast Component ────────────────────────────────────────
+function Toast({ message, type = "error", visible, onHide }) {
+  const isError = type === "error";
+  const isSuccess = type === "success";
+
+  const bg = isError ? "#dc2626" : "#22c55e";
+  const icon = isError ? "⚠️" : "✅";
+
+  return (
+    <div style={{
+      position: "fixed",
+      bottom: "2rem",
+      right: "2rem",
+      zIndex: 9999,
+      background: bg,
+      color: "#fff",
+      padding: "12px 18px",
+      borderRadius: "12px",
+      fontSize: "13.5px",
+      fontWeight: 500,
+      boxShadow: "0 8px 28px rgba(0,0,0,.25)",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      maxWidth: "320px",
+      transform: visible ? "translateY(0)" : "translateY(90px)",
+      opacity: visible ? 1 : 0,
+      transition: "all .35s cubic-bezier(.34,1.56,.64,1)",
+      pointerEvents: "none",
+    }}>
+      <span>{icon}</span>
+      <span>{message}</span>
+    </div>
+  );
+}
+
+function useToast() {
+  const [toast, setToast] = useState({ visible: false, message: "", type: "error" });
+
+  const showToast = (message, type = "error", duration = 3500) => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), duration);
+  };
+
+  return { toast, showToast };
+}
+
+// ─── Sidebar ────────────────────────────────────────────────
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -133,53 +180,131 @@ function Sidebar() {
   );
 }
 
-// ─── Icons ─────────────────────────────────────────────────
+// ─── Icons ──────────────────────────────────────────────────
 const CoursesIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-    <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+    <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
   </svg>
 );
-
 const ResourcesIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
   </svg>
 );
-
 const RoadmapIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z" />
   </svg>
 );
 
 const TYPES = [
-  { id: "courses",   color: "#658FA5", label: "Courses and Playlist",    Icon: CoursesIcon },
-  { id: "resources", color: "#3D718D", label: "Resources\nand Materials", Icon: ResourcesIcon },
-  { id: "roadmaps",  color: "#8FB7CC", label: "Roadmaps",                Icon: RoadmapIcon },
+  { id: "courses", color: "#658FA5", label: "Courses and Playlist", Icon: CoursesIcon, typeValue: "courses" },
+  { id: "resources", color: "#3D718D", label: "Resources\nand Materials", Icon: ResourcesIcon, typeValue: "resources" },
+  { id: "roadmaps", color: "#8FB7CC", label: "Roadmaps", Icon: RoadmapIcon, typeValue: "roadmaps" },
 ];
 
-// ─── Main Page ──────────────────────────────────────────────
+// ── Use "/api/Library/add" so Vite proxy handles it ────────
+// Add this to your vite.config.js:
+//
+//   server: {
+//     proxy: {
+//       "/api": {
+//         target: "https://study-station.runasp.net",
+//         changeOrigin: true,
+//         secure: false,
+//       },
+//     },
+//   },
+//
+const API_ADD = "/api/Library/add";
+
+// ─── Main Page ───────────────────────────────────────────────
 export default function ShareResource() {
   const { isDarkMode } = useThemeContext();
+  const navigate = useNavigate();
+  const { toast, showToast } = useToast();
 
   const [resType, setResType] = useState("resources");
-  const [showToast, setShowToast] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", track: "", typeId: "", url: "", filePath: "" });
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    categoryId: "",
+    resourceTypeId: "",
+    url: "",
+    filePath: "",
+  });
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
-  const submit = () => { setShowToast(true); setTimeout(() => setShowToast(false), 3500); };
 
+  // ── Validation → shows toast instead of banner ──────────
+  const validate = () => {
+    if (!form.title.trim()) return "Title is required.";
+    if (!form.categoryId) return "Please select a track / category.";
+    if (!form.url.trim()) return "Resource URL is required.";
+    return null;
+  };
+
+  // ── Submit ───────────────────────────────────────────────
+  const submit = async () => {
+    const validationError = validate();
+    if (validationError) {
+      showToast(validationError, "error");
+      return;
+    }
+
+    setLoading(true);
+
+    const selectedType = TYPES.find(t => t.id === resType)?.typeValue ?? resType;
+
+    const payload = {
+      title: form.title.trim(),
+      type: selectedType,
+      url: form.url.trim(),
+      filePath: form.filePath.trim() || "",
+      description: form.description.trim() || "",
+      categoryId: parseInt(form.categoryId, 10),
+      resourceTypeId: parseInt(form.resourceTypeId, 10) || 1,
+    };
+
+    try {
+      const res = await fetch(API_ADD, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        let msg = `Server error: ${res.status}`;
+        try {
+          const errData = await res.json();
+          msg = errData?.message || errData?.title || msg;
+        } catch (_) { }
+        throw new Error(msg);
+      }
+
+      showToast("Resource submitted! Pending admin review.", "success");
+      setForm({ title: "", description: "", categoryId: "", resourceTypeId: "", url: "", filePath: "" });
+      setResType("resources");
+
+    } catch (err) {
+      showToast(err.message || "Something went wrong. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Theme ─────────────────────────────────────────────────
   const t = isDarkMode ? {
     bg: "#171717", surface: "#1f1f1f", text: "#f0f0f0", muted: "#9a9a9a",
     border: "rgba(255,255,255,0.07)", cardBorder: "rgba(255,255,255,0.06)",
     accentSoft: "rgba(143,183,204,0.1)", btnBg: "#8FB7CC", btnColor: "#2C3E50",
-    toastBg: "#8FB7CC", toastColor: "#2C3E50",
   } : {
     bg: "#F3F4F6", surface: "#ffffff", text: "#1a1a2e", muted: "#686868",
     border: "rgba(44,62,80,0.1)", cardBorder: "rgba(44,62,80,0.08)",
     accentSoft: "rgba(143,183,204,0.18)", btnBg: "#2C3E50", btnColor: "#ffffff",
-    toastBg: "#2C3E50", toastColor: "#ffffff",
   };
 
   const inputStyle = {
@@ -189,14 +314,12 @@ export default function ShareResource() {
     color: t.text, outline: "none", boxSizing: "border-box",
     WebkitAppearance: "none", appearance: "none",
   };
-
   const secLabel = {
     fontFamily: "'Syne', sans-serif", fontSize: 10.5, fontWeight: 700,
     letterSpacing: ".14em", textTransform: "uppercase", color: t.muted,
     marginBottom: ".9rem", paddingBottom: ".5rem",
     borderBottom: `1px solid ${t.border}`, display: "block",
   };
-
   const fieldLabel = { display: "block", fontSize: 12.8, fontWeight: 500, color: t.text, marginBottom: 5 };
 
   return (
@@ -208,7 +331,10 @@ export default function ShareResource() {
       <div style={{ flex: 1, overflowY: "auto", height: "100vh", fontFamily: "'DM Sans', sans-serif", color: t.text }}>
         <div style={{ maxWidth: 640, margin: "0 auto", padding: "2rem 2rem 4rem" }}>
 
-          <button style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, color: t.muted, cursor: "pointer", border: "none", background: "none", fontFamily: "'DM Sans', sans-serif", padding: 0, marginBottom: "1.5rem" }}>
+          <button
+            onClick={() => navigate("/library")}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, color: t.muted, cursor: "pointer", border: "none", background: "none", fontFamily: "'DM Sans', sans-serif", padding: 0, marginBottom: "1.5rem" }}
+          >
             ← Back to Library
           </button>
 
@@ -226,6 +352,7 @@ export default function ShareResource() {
             <div style={{ height: 3, background: "linear-gradient(90deg, #2C3E50, #8FB7CC)" }} />
             <div style={{ padding: "1.75rem" }}>
 
+              {/* Resource Type */}
               <span style={secLabel}>Resource Type</span>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: "1.5rem" }}>
                 {TYPES.map(({ id, color, label, Icon }) => {
@@ -249,30 +376,33 @@ export default function ShareResource() {
               <div style={{ height: 1, background: t.border, margin: "1.5rem 0" }} />
               <span style={secLabel}>Basic Info</span>
 
+              {/* Title */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>Title <span style={{ color: "#dc2626" }}>*</span></label>
                 <input style={inputStyle} value={form.title} onChange={set("title")} placeholder="e.g. React for Beginners — Full Course" />
               </div>
 
+              {/* Description */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>Description</label>
                 <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 95 }} value={form.description} onChange={set("description")} placeholder="What will students learn? Why is this resource valuable?" />
               </div>
 
+              {/* Track + resourceTypeId */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
                   <label style={fieldLabel}>Track / Category <span style={{ color: "#dc2626" }}>*</span></label>
-                  <select style={{ ...inputStyle, color: form.track ? t.text : t.muted }} value={form.track} onChange={set("track")}>
+                  <select style={{ ...inputStyle, color: form.categoryId ? t.text : t.muted }} value={form.categoryId} onChange={set("categoryId")}>
                     <option value="">Select a track…</option>
-                    <option>Frontend</option>
-                    <option>AI / ML</option>
-                    <option>Cyber Security</option>
-                    <option>UI/UX</option>
+                    <option value="1">Frontend</option>
+                    <option value="2">AI / ML</option>
+                    <option value="3">Cyber Security</option>
+                    <option value="4">UI/UX</option>
                   </select>
                 </div>
                 <div>
                   <label style={fieldLabel}>Resource Type ID</label>
-                  <input style={inputStyle} type="number" value={form.typeId} onChange={set("typeId")} placeholder="e.g. 1" />
+                  <input style={inputStyle} type="number" value={form.resourceTypeId} onChange={set("resourceTypeId")} placeholder="e.g. 1" />
                   <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>Numerical ID in the system</div>
                 </div>
               </div>
@@ -280,45 +410,51 @@ export default function ShareResource() {
               <div style={{ height: 1, background: t.border, margin: "1.5rem 0" }} />
               <span style={secLabel}>Links & Files</span>
 
+              {/* URL */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>Resource URL <span style={{ color: "#dc2626" }}>*</span></label>
                 <input style={inputStyle} type="url" value={form.url} onChange={set("url")} placeholder="https://…" />
                 <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>YouTube playlist, course link, article URL, etc.</div>
               </div>
 
+              {/* File Path */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>File Path <span style={{ fontWeight: 400, color: t.muted }}>(optional)</span></label>
                 <input style={inputStyle} value={form.filePath} onChange={set("filePath")} placeholder="/uploads/resource.pdf" />
                 <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>If uploading a file directly (PDF, Doc…)</div>
               </div>
 
+              {/* Actions */}
               <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: "1.5rem" }}>
-                <button style={{ padding: "9px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${t.border}`, color: t.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, cursor: "pointer" }}>
+                <button
+                  onClick={() => navigate("/library")}
+                  disabled={loading}
+                  style={{ padding: "9px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${t.border}`, color: t.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, cursor: "pointer", opacity: loading ? 0.5 : 1 }}
+                >
                   Cancel
                 </button>
-                <button onClick={submit} style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: t.btnBg, color: t.btnColor, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-                  Submit for Review →
+                <button
+                  onClick={submit}
+                  disabled={loading}
+                  style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: t.btnBg, color: t.btnColor, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1, display: "flex", alignItems: "center", gap: 8, transition: "opacity .2s" }}
+                >
+                  {loading ? (
+                    <>
+                      <span style={{ width: 14, height: 14, border: `2px solid ${t.btnColor}44`, borderTop: `2px solid ${t.btnColor}`, borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
+                      Submitting…
+                    </>
+                  ) : "Submit for Review →"}
                 </button>
               </div>
-
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{
-        position: "fixed", bottom: "2rem", right: "2rem", zIndex: 999,
-        background: t.toastBg, color: t.toastColor,
-        padding: "12px 18px", borderRadius: 12, fontSize: 13.5, fontWeight: 500,
-        boxShadow: "0 8px 28px rgba(0,0,0,.22)",
-        transform: showToast ? "translateY(0)" : "translateY(80px)",
-        opacity: showToast ? 1 : 0,
-        transition: "all .35s cubic-bezier(.34,1.56,.64,1)",
-        pointerEvents: "none",
-      }}>
-        ✅ Resource submitted! Pending admin review.
-      </div>
+      {/* Toast — validation errors + success */}
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
 
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

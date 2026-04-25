@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { HeroUIProvider } from "@heroui/react";
+import React, { useState, useEffect, useContext } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ThemeProvider as CustomThemeProvider, useThemeContext } from "./Components/Theme/ThemeContext";
@@ -23,14 +22,20 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContextProvider from "./context/AuthContext";
 import ShareResource from "./Components/Library/ShareResource";
+import { AuthContext } from "./context/AuthContext";
+import { HeroUIProvider } from "@heroui/react";
+import StudyRoom from "./Components/StudyWithFriends/StudyRoom";
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [appLoading, setAppLoading] = useState(true);
+
+  const { loading: authLoading } = useContext(AuthContext);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 3000);
+    const timer = setTimeout(() => setAppLoading(false), 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   const theme = createTheme({
@@ -39,7 +44,7 @@ function AppContent() {
     },
   });
 
-  if (loading) {
+  if (appLoading || authLoading) {
     return <LoadingScreen />;
   }
 
@@ -126,6 +131,14 @@ function AppContent() {
                   <DashboardLayout>
                     <StudyWithFriends />
                   </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/study-rooms/:roomId"
+              element={
+                <ProtectedRoute>
+                    <StudyRoom/>
                 </ProtectedRoute>
               }
             />
