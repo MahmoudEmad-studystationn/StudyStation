@@ -24,6 +24,9 @@ import "react-toastify/dist/ReactToastify.css";
 import AuthContextProvider from "./context/AuthContext";
 import ShareResource from "./Components/Library/ShareResource";
 
+// ✅ الصح بعد ما شفنا مكان الملف
+import ProfilePage from "./Components/Profile/Profile";
+
 function AppContent() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
@@ -47,17 +50,18 @@ function AppContent() {
     <HeroUIProvider>
       <ThemeProvider theme={theme}>
         <div className={isDarkMode ? "dark" : "light"}>
-          <ToastContainer position="top-center" autoClose={3000}
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
             hideProgressBar={false}
-            newestOnTop={false}
             closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
             pauseOnHover
           />
+
           <Routes>
+            {/* Public */}
             <Route path="/" element={<WelcomePage />} />
+
             <Route
               path="/signup"
               element={
@@ -66,6 +70,7 @@ function AppContent() {
                 </AuthProtectedRoute>
               }
             />
+
             <Route
               path="/login"
               element={
@@ -74,7 +79,9 @@ function AppContent() {
                 </AuthProtectedRoute>
               }
             />
+
             <Route path="/auth" element={<AuthPage />} />
+
             <Route
               path="/forgot-password"
               element={
@@ -83,6 +90,7 @@ function AppContent() {
                 </AuthProtectedRoute>
               }
             />
+
             <Route
               path="/reset-password"
               element={
@@ -91,6 +99,7 @@ function AppContent() {
                 </AuthProtectedRoute>
               }
             />
+
             <Route
               path="/verification-code"
               element={
@@ -99,6 +108,8 @@ function AppContent() {
                 </AuthProtectedRoute>
               }
             />
+
+            {/* Protected */}
             <Route
               path="/home"
               element={
@@ -109,6 +120,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/solo-study"
               element={
@@ -119,6 +131,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/study-with-friends"
               element={
@@ -129,6 +142,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/library"
               element={
@@ -139,6 +153,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/share-resource"
               element={
@@ -147,12 +162,25 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/posts"
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
                     <Posts />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ✅ Profile */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ProfilePage />
                   </DashboardLayout>
                 </ProtectedRoute>
               }

@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 import DarkModeToggle from "../Theme/DarkModeToggle";
 import { useThemeContext } from "../Theme/ThemeContext";
-
+import { useNavigate } from "react-router-dom";
 function HeaderIcons() {
     const { isDarkMode } = useThemeContext();
-
+        const navigate = useNavigate();
     const cardBg = isDarkMode ? "#2A2A2A" : "white";
     const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
     const borderColor = isDarkMode ? "#404040" : "#d1d5db";
@@ -38,7 +38,8 @@ function HeaderIcons() {
             </button>
 
             <button
-                className="rounded-xl p-2 sm:p-2.5 min-w-[36px] sm:min-w-[40px] min-h-[36px] sm:min-h-[40px] flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300"
+                  onClick={() => navigate("/profile")}
+               className="rounded-xl p-2 sm:p-2.5 min-w-[36px] sm:min-w-[40px] min-h-[36px] sm:min-h-[40px] flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300"
                 style={iconButtonStyle}
                 onMouseEnter={(e) =>
                     (e.currentTarget.style.backgroundColor = isDarkMode ? "#404040" : "#f5f6f7")
