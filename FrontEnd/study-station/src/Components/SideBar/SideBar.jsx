@@ -52,9 +52,11 @@ export default function Sidebar() {
         .sidebar-root { font-family: 'Sora', sans-serif; }
 
         .sidebar-desktop {
-          position: relative;
+          position: -webkit-sticky; 
+          position: sticky; 
+          top: 20px;
           z-index: 10;
-          height: calc(100vh - 40px);
+                    height: calc(100vh - 40px); 
           margin: 20px;
           border-radius: 20px;
           background: #2C3E50;
@@ -63,8 +65,7 @@ export default function Sidebar() {
           flex-direction: column;
           justify-content: space-between;
           overflow: hidden;
-          flex-shrink: 0;
-          
+          flex-shrink: 0; 
           transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 

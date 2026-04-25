@@ -112,12 +112,12 @@ export default function LoginPage({ switchToSignUp }) {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
-    // ✅ Eye toggle state
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
-    const { setIsLoggedIn } = useContext(AuthContext);
+
+    const { loginSuccess } = useContext(AuthContext);
 
     const eyeIconColor = isDark ? "#ffffff" : COLOR_TEXT;
 
@@ -177,18 +177,23 @@ export default function LoginPage({ switchToSignUp }) {
             setLoading(false);
             return;
         }
-
+        sessionStorage.setItem("test", "hello");
+        console.log("test:", sessionStorage.getItem("test"));
         const response = await loginApi(formData);
 
         if (response.success) {
-            setIsLoggedIn(true);
-            // ✅ حفظ الاسم من الـ API response
+            sessionStorage.setItem("creds", JSON.stringify({
+                email: formData.email,
+                password: formData.password
+            }));
+
+            const token = localStorage.getItem("accessToken");
             const firstName = response.data?.firstName || response.data?.FirstName || "";
             if (firstName) localStorage.setItem("firstName", firstName);
+
+            loginSuccess(token);
             toast.success("Logged in successfully! Welcome back!");
             setTimeout(() => navigate("/home"), 1000);
-        } else {
-            toast.error(response.message || "Invalid email or password");
         }
 
         setLoading(false);
@@ -243,7 +248,6 @@ export default function LoginPage({ switchToSignUp }) {
                                     </div>
                                 </Tippy>
 
-                                {/* ✅ Password مع Eye Icon */}
                                 <Tippy content={errors.password} visible={!!errors.password && focusedInput === "password"} placement="bottom" arrow theme="custom">
                                     <div className="relative">
                                         <LockIcon className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }} />

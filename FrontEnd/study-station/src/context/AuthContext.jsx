@@ -1,77 +1,104 @@
-import { createContext, useEffect, useState, useCallback } from "react";
+import { createContext, useEffect, useState, useCallback, useRef } from "react";
+import { loginApi } from "../Components/Services/authServices";
 
 export const AuthContext = createContext();
 
-const isTokenValid = (token) => {
-    if (!token) return false;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp && payload.exp * 1000 < Date.now()) {
-            localStorage.removeItem("accessToken");
-            return false;
-        }
-        return true;
-    } catch {
-        return false;
-    }
-};
-
-const getCurrentUserId = () => {
-    const token = localStorage.getItem("accessToken");
+const parseToken = (token) => {
     if (!token) return null;
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const possibleIds = [
-            payload.sub,
-            payload.userId,
-            payload.id,
-            payload.nameid,
-            payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-            payload.unique_name,
-            payload.nameidentifier
-        ];
-        return possibleIds.find(id => id != null)?.toString() || null;
-    } catch {
-        return null;
-    }
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch { return null; }
+};
+
+const getUserIdFromToken = (token) => {
+    const payload = parseToken(token);
+    if (!payload) return null;
+    const possibleIds = [
+        payload.sub, payload.userId, payload.id, payload.nameid,
+        payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        payload.unique_name, payload.nameidentifier
+    ];
+    return possibleIds.find(id => id != null)?.toString() || null;
 };
 
 export default function AuthContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [userData, setUserData]     = useState(null);
+    const [loading, setLoading]       = useState(true);
+    const timerRef = useRef(null);
+
+    const clearTimer = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+    };
 
     const logout = useCallback(() => {
+        clearTimer();
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("firstName");
+        sessionStorage.removeItem("creds"); // ✅ امسح الـ credentials
         setIsLoggedIn(false);
         setUserData(null);
     }, []);
 
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
+    const scheduleReLogin = useCallback((token) => {
+        const payload = parseToken(token);
+        if (!payload?.exp) return;
 
-        if (isTokenValid(accessToken)) {
-            setIsLoggedIn(true);
-            const userId = getCurrentUserId();
-            if (userId) setUserData({ _id: userId });
+        const msLeft = payload.exp * 1000 - Date.now() - 60_000;
+        clearTimer();
+
+        const doReLogin = async () => {
+            // ✅ جيب الـ credentials من sessionStorage
+            const raw = sessionStorage.getItem("creds");
+            if (!raw) return;
+
+            const creds = JSON.parse(raw);
+            const res = await loginApi(creds);
+
+            if (res.success) {
+                const newToken = localStorage.getItem("accessToken");
+                const userId = getUserIdFromToken(newToken);
+                if (userId) setUserData({ _id: userId });
+                scheduleReLogin(newToken);
+            }
+        };
+
+        if (msLeft <= 0) {
+            doReLogin();
         } else {
-            localStorage.removeItem("accessToken");
-            setIsLoggedIn(false);
-            setUserData(null);
+            timerRef.current = setTimeout(doReLogin, msLeft);
         }
-
-        setLoading(false);
     }, []);
 
+    const loginSuccess = useCallback((token, credentials = null) => {
+        const userId = getUserIdFromToken(token);
+        setIsLoggedIn(true);
+        if (userId) setUserData({ _id: userId });
+
+        if (credentials) {
+            sessionStorage.setItem("creds", JSON.stringify(credentials));
+        }
+
+        scheduleReLogin(token);
+    }, [scheduleReLogin]);
+
     useEffect(() => {
-        const handleLogout = () => logout();
-        window.addEventListener("auth:logout", handleLogout);
-        return () => window.removeEventListener("auth:logout", handleLogout);
-    }, [logout]);
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) loginSuccess(accessToken);
+        setLoading(false);
+    }, [loginSuccess]);
+
+    useEffect(() => {
+        return () => clearTimer();
+    }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userData, setUserData, logout, loading }}>
+        <AuthContext.Provider value={{
+            isLoggedIn, setIsLoggedIn,
+            userData, setUserData,
+            logout, loading, loginSuccess
+        }}>
             {children}
         </AuthContext.Provider>
     );

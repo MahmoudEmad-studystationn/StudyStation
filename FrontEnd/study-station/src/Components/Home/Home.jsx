@@ -15,17 +15,19 @@ function Home() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
 
-  // ✅ جيب الاسم من الـ JWT token
-  const getFirstName = () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return "User";
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.given_name || payload.firstName || payload.name || "User";
-    } catch {
-      return "User";
-    }
-  };
+const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+
+const getFirstName = () => {
+  try {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return "User";
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const raw = payload.given_name || payload.firstName || payload.name || "User";
+    return capitalize(raw); 
+  } catch {
+    return "User";
+  }
+};
   const firstName = getFirstName();
 
   const bgColor       = isDarkMode ? "#171717" : "#F3F4F6";

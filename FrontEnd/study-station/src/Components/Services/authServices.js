@@ -85,22 +85,9 @@ export async function resetPasswordApi({ email, token, password }) {
             newPassword: password
         };
 
-        console.log("Sending payload:", payload);
-
         const { data } = await axios.post(`${baseUrl}users/reset-password`, payload);
         return { success: true, data, message: data.message || "Password reset successfully!" };
     } catch (error) {
-        console.error("Reset password error:", error.response?.data);
-
-        if (error.response?.data?.errors) {
-            console.error("Validation errors details:");
-            Object.keys(error.response.data.errors).forEach(key => {
-                console.error(`${key}:`, error.response.data.errors[key]);
-            });
-        }
-
-        let errorMessage = "Failed to reset password";
-
         if (error.response?.data?.errors) {
             const errors = error.response.data.errors;
             if (typeof errors === 'object') {
@@ -170,7 +157,6 @@ export async function resendCodeApi(email) {
 
     } catch (error) {
         let errMsg = "Failed to resend code";
-        console.log("ERR:", error.response?.data);
 
         if (error.response?.data?.errors) {
             const errors = error.response.data.errors;
@@ -200,7 +186,7 @@ export async function refreshTokenApi() {
             refreshToken,
         });
         localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken); // Update with new refresh if provided
+        localStorage.setItem("refreshToken", data.refreshToken);
         return data;
     } catch (error) {
         console.error("Token refresh failed:", error);
