@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using StudyStation.API.Data;
 using System.Security.Claims;
 
@@ -41,7 +41,21 @@ namespace StudyStation.API.Features.Posts.DeletePost
                 throw new Exception("You are not authorized to delete this post."); // سيتم تحويله إلى 403 Forbidden
             }
 
-            // 4. حذف المنشور
+            // 4. حذف التعليقات والتفاعلات المرتبطة لتجنب تعارض القيود (Foreign Key Constraints)
+            var comments = _context.Comments.Where(c => c.PostId == request.PostId).ToList();
+            var commentIds = comments.Select(c => c.Id).ToList();
+
+            var commentReactions = _context.Reactions.Where(r => r.CommentId.HasValue && commentIds.Contains(r.CommentId.Value)).ToList();
+            var postReactions = _context.Reactions.Where(r => r.PostId == request.PostId).ToList();
+
+            // حذف تفاعلات التعليقات والمنشور
+            _context.Reactions.RemoveRange(commentReactions);
+            _context.Reactions.RemoveRange(postReactions);
+            
+            // حذف التعليقات
+            _context.Comments.RemoveRange(comments);
+
+            // 5. حذف المنشور
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync(cancellationToken);
         }

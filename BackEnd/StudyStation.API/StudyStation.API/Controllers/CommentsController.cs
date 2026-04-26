@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudyStation.API.Features.Comments.AddComment;
@@ -57,6 +57,34 @@ namespace StudyStation.API.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> DeleteComment(int postId, int commentId)
+        {
+            var command = new StudyStation.API.Features.Comments.DeleteComment.DeleteCommentCommand
+            {
+                PostId = postId,
+                CommentId = commentId
+            };
+
+            try
+            {
+                await _mediator.Send(command);
+                return NoContent(); // 204 No Content تعني العملية نجحت ولا يوجد محتوى للإرجاع
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
             }
         }
 
