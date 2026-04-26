@@ -18,12 +18,23 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
 
     public async Task<StudyRoomDto> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
     {
+        string? generatedCode = null;
+        if (!request.Dto.IsPublic)
+        {
+            bool isUnique = false;
+            while (!isUnique)
+            {
+                generatedCode = GenerateRoomCode();
+                isUnique = !_context.StudyRooms.Any(r => r.RoomCode == generatedCode);
+            }
+        }
+
         var room = new StudyRoom
         {
             Name = request.Dto.Name,
             Subject = request.Dto.Subject,
             IsPublic = request.Dto.IsPublic,
-            RoomCode = request.Dto.IsPublic ? null : request.Dto.RoomCode,
+            RoomCode = generatedCode,
             OwnerId = request.UserId,
             CreatedAt = DateTime.UtcNow
         };
@@ -53,5 +64,13 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
             CreatedAt = room.CreatedAt,
             ParticipantsCount = 1
         };
+    }
+
+    private string GenerateRoomCode()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, 6)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 }

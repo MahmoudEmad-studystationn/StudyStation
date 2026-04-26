@@ -57,6 +57,10 @@ namespace StudyStation.API.Data
                .OnDelete(DeleteBehavior.NoAction);
 
             // Study With Friends Configuration
+            modelBuilder.Entity<StudyRoom>()
+                .HasIndex(r => r.RoomCode)
+                .IsUnique();
+
             modelBuilder.Entity<RoomParticipant>()
                 .HasKey(rp => new { rp.RoomId, rp.UserId });
 
@@ -72,6 +76,31 @@ namespace StudyStation.API.Data
                 .HasForeignKey(rp => rp.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Cascade deletes for StudyRoom dependents
+            modelBuilder.Entity<StudyRoom>()
+                .HasMany(sr => sr.Participants)
+                .WithOne(rp => rp.Room)
+                .HasForeignKey(rp => rp.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudyRoom>()
+                .HasMany(sr => sr.Tasks)
+                .WithOne(t => t.Room)
+                .HasForeignKey(t => t.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudyRoom>()
+                .HasMany(sr => sr.Messages)
+                .WithOne(m => m.Room)
+                .HasForeignKey(m => m.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudyRoom>()
+                .HasMany(sr => sr.FocusSessions)
+                .WithOne(fs => fs.Room)
+                .HasForeignKey(fs => fs.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Profile Dashboard Configuration
             modelBuilder.Entity<StudyStation.API.Features.Profile.Models.StudyTask>()
                 .ToTable("ProfileStudyTasks");
@@ -83,6 +112,7 @@ namespace StudyStation.API.Data
                 .HasForeignKey(f => f.ReporterId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
+
 
 
 
