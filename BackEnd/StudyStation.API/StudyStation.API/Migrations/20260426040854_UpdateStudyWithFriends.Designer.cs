@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudyStation.API.Data;
 
@@ -11,9 +12,11 @@ using StudyStation.API.Data;
 namespace StudyStation.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260426040854_UpdateStudyWithFriends")]
+    partial class UpdateStudyWithFriends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,105 +242,6 @@ namespace StudyStation.API.Migrations
                     b.ToTable("ResourceTypes");
                 });
 
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.ActivityLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ActionType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ActivityLogs");
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudySession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("DurationInHours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubjectName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StudySessions");
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudyTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProfileStudyTasks", (string)null);
-                });
-
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.FocusSession", b =>
                 {
                     b.Property<int>("Id")
@@ -505,10 +409,6 @@ namespace StudyStation.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicYear")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
@@ -518,12 +418,6 @@ namespace StudyStation.API.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentStreak")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DailyGoalHours")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -585,10 +479,6 @@ namespace StudyStation.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Track")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -816,39 +706,6 @@ namespace StudyStation.API.Migrations
                     b.Navigation("ResourceType");
                 });
 
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.ActivityLog", b =>
-                {
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "User")
-                        .WithMany("ActivityLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudySession", b =>
-                {
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "User")
-                        .WithMany("StudySessions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudyTask", b =>
-                {
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "User")
-                        .WithMany("ProfileStudyTasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.FocusSession", b =>
                 {
                     b.HasOne("StudyStation.API.Features.StudyWithFriends.Models.StudyRoom", "Room")
@@ -1029,23 +886,17 @@ namespace StudyStation.API.Migrations
 
             modelBuilder.Entity("StudyStation.API.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("ActivityLogs");
-
                     b.Navigation("Comments");
 
                     b.Navigation("OwnedStudyRooms");
 
                     b.Navigation("Posts");
 
-                    b.Navigation("ProfileStudyTasks");
-
                     b.Navigation("Reactions");
 
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("RoomParticipations");
-
-                    b.Navigation("StudySessions");
                 });
 
             modelBuilder.Entity("StudyStation.API.Models.Comment", b =>
