@@ -58,6 +58,15 @@ public class StudyRoomsController : ControllerBase
         return Ok(new { message = "Joined successfully" });
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteRoom(int id)
+    {
+        var userId = GetCurrentUserId();
+        var success = await _mediator.Send(new DeleteRoomCommand(id, userId));
+        if (!success) return Forbid(); // Using Forbid/NotFound appropriately
+        return NoContent();
+    }
+
     [HttpPost("{id}/leave")]
     public async Task<IActionResult> LeaveRoom(int id)
     {
@@ -79,6 +88,14 @@ public class StudyRoomsController : ControllerBase
     public async Task<IActionResult> ToggleTask(int id, int taskId)
     {
         var result = await _mediator.Send(new ToggleTaskCommand(taskId, id));
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+    [HttpPut("{id}/tasks/{taskId}")]
+    public async Task<IActionResult> UpdateTask(int id, int taskId, [FromBody] UpdateTaskDto dto)
+    {
+        var result = await _mediator.Send(new UpdateTaskCommand(taskId, id, dto));
         if (result == null) return NotFound();
         return Ok(result);
     }
@@ -114,6 +131,15 @@ public class StudyRoomsController : ControllerBase
         var result = await _mediator.Send(new SendMessageCommand(id, userId, content));
         if (result == null) return BadRequest();
         // Here we could also get an instance of IHubContext<StudyHub, IStudyClient> and broadcast the message
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/messages")]
+    public async Task<IActionResult> GetMessages(int id)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _mediator.Send(new GetRoomMessagesQuery(id, userId));
+        if (result == null) return Forbid();
         return Ok(result);
     }
 }

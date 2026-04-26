@@ -4,6 +4,9 @@ using StudyStation.API.Data;
 using StudyStation.API.Features.StudyWithFriends.DTOs;
 using StudyStation.API.Features.StudyWithFriends.Models;
 
+using Microsoft.AspNetCore.SignalR;
+using StudyStation.API.Hubs;
+
 namespace StudyStation.API.Features.StudyWithFriends.Commands;
 
 public record SendMessageCommand(int RoomId, int UserId, string Content) : IRequest<RoomMessageDto?>;
@@ -11,10 +14,12 @@ public record SendMessageCommand(int RoomId, int UserId, string Content) : IRequ
 public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, RoomMessageDto?>
 {
     private readonly DatabaseContext _context;
+    private readonly IHubContext<StudyHub, IStudyClient> _hubContext;
 
-    public SendMessageCommandHandler(DatabaseContext context)
+    public SendMessageCommandHandler(DatabaseContext context, IHubContext<StudyHub, IStudyClient> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     public async Task<RoomMessageDto?> Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -33,7 +38,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Roo
         _context.RoomMessages.Add(message);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new RoomMessageDto
+        var dto = new RoomMessageDto
         {
             Id = message.Id,
             RoomId = message.RoomId,
@@ -42,5 +47,9 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Roo
             Content = message.Content,
             SentAt = message.SentAt
         };
+
+        await _hubContext.Clients.Group(request.RoomId.ToString()).ReceiveMessage(dto);
+
+        return dto;
     }
 }
