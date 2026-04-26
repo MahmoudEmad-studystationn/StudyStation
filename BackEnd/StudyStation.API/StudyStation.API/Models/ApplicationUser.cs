@@ -47,6 +47,7 @@ namespace StudyStation.API.Models
 
         // Profile Dashboard properties
         public string Track { get; set; } = string.Empty;
+        [MaxLength(50)]
         public string AcademicYear { get; set; } = string.Empty;
         public int CurrentStreak { get; set; } = 0;
         public decimal DailyGoalHours { get; set; } = 0m;

@@ -33,6 +33,8 @@ namespace StudyStation.API.Data
         public DbSet<StudyStation.API.Features.Profile.Models.StudySession> StudySessions { get; set; }
         public DbSet<StudyStation.API.Features.Profile.Models.ActivityLog> ActivityLogs { get; set; }
 
+        // Admin features
+        public DbSet<StudyStation.API.Features.Admin.Models.FlaggedItem> FlaggedItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +75,13 @@ namespace StudyStation.API.Data
             // Profile Dashboard Configuration
             modelBuilder.Entity<StudyStation.API.Features.Profile.Models.StudyTask>()
                 .ToTable("ProfileStudyTasks");
+
+            // Admin Dashboard Configuration
+            modelBuilder.Entity<StudyStation.API.Features.Admin.Models.FlaggedItem>()
+                .HasOne(f => f.Reporter)
+                .WithMany() // No reverse navigation property
+                .HasForeignKey(f => f.ReporterId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
 

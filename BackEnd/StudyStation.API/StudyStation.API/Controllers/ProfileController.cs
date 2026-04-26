@@ -42,7 +42,7 @@ namespace StudyStation.API.Controllers
             return Ok("Profile updated successfully");
         }
 
-        [HttpGet("me")]
+        [HttpGet("dashboard")]
         public async Task<IActionResult> GetProfileDashboard()
         {
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
