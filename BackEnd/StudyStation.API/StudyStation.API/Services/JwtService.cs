@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using StudyStation.API.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,7 +15,7 @@ namespace StudyStation.API.Services
             _configuration = configuration;
         }
 
-        public string GenerateAccessToken(ApplicationUser user)
+        public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
         {
             var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt Key not configured");
             var issuer = _configuration["Jwt:Issuer"];
@@ -24,20 +24,19 @@ namespace StudyStation.API.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-               // new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
-               //// new Claim("userId", user.Id.ToString()),
-               // new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               // new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-               // new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-               // new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

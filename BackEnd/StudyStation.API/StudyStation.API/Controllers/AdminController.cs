@@ -7,7 +7,7 @@ namespace StudyStation.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // We can add Roles = "Admin" if Identity handles roles
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IMediator _mediator;

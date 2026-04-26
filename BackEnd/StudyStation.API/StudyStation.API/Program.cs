@@ -124,5 +124,18 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<NotificationHub>("/Hubs/NotificationHub");
 app.MapHub<StudyStation.API.Hubs.StudyHub>("/Hubs/StudyHub");
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await StudyStation.API.Features.Admin.Seeders.AdminSeeder.SeedAdminAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the admin account.");
+    }
+}
 
 app.Run();

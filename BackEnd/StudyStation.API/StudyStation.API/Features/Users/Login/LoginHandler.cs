@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using StudyStation.API.Data;
 using StudyStation.API.Models;
@@ -43,7 +43,8 @@ namespace StudyStation.API.Features.Users.Login
             //}
 
             // 4. إنشاء التوكينز
-            var accessToken = _jwtService.GenerateAccessToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var accessToken = _jwtService.GenerateAccessToken(user, roles);
             var refreshToken = _jwtService.GenerateRefreshToken(user.Id);
 
             // 5. حفظ الـ Refresh Token في قاعدة البيانات
