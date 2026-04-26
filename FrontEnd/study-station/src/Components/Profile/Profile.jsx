@@ -17,44 +17,44 @@ const Icon = ({ d, points, circles, paths, poly, size = 16, strokeWidth = 2.5 })
 /* ─── CSS-in-JS token map ─── */
 const tokens = {
   light: {
-    "--navy":        "#2C3E50",
-    "--ocean":       "#3D718D",
-    "--teal":        "#658FA5",
-    "--sky":         "#8FB7CC",
-    "--bg":          "#F3F4F6",
-    "--surface":     "#ffffff",
-    "--surface2":    "#EAECEF",
-    "--surface3":    "#f8f9fa",
-    "--text":        "#1C2B38",
-    "--text-2":      "#4A5568",
-    "--muted":       "#8A9BAA",
-    "--border":      "rgba(44,62,80,0.08)",
-    "--border-2":    "rgba(44,62,80,0.05)",
-    "--accent":      "#3D718D",
+    "--navy": "#2C3E50",
+    "--ocean": "#3D718D",
+    "--teal": "#658FA5",
+    "--sky": "#8FB7CC",
+    "--bg": "#F3F4F6",
+    "--surface": "#ffffff",
+    "--surface2": "#EAECEF",
+    "--surface3": "#f8f9fa",
+    "--text": "#1C2B38",
+    "--text-2": "#4A5568",
+    "--muted": "#8A9BAA",
+    "--border": "rgba(44,62,80,0.08)",
+    "--border-2": "rgba(44,62,80,0.05)",
+    "--accent": "#3D718D",
     "--accent-soft": "rgba(61,113,141,0.10)",
-    "--sh-sm":       "0 1px 2px rgba(44,62,80,0.05), 0 2px 8px rgba(44,62,80,0.05)",
-    "--sh-md":       "0 2px 4px rgba(44,62,80,0.04), 0 6px 20px rgba(44,62,80,0.07)",
-    "--sh-lg":       "0 4px 8px rgba(44,62,80,0.04), 0 16px 40px rgba(44,62,80,0.09)",
+    "--sh-sm": "0 1px 2px rgba(44,62,80,0.05), 0 2px 8px rgba(44,62,80,0.05)",
+    "--sh-md": "0 2px 4px rgba(44,62,80,0.04), 0 6px 20px rgba(44,62,80,0.07)",
+    "--sh-lg": "0 4px 8px rgba(44,62,80,0.04), 0 16px 40px rgba(44,62,80,0.09)",
   },
   dark: {
-    "--navy":        "#2C3E50",
-    "--ocean":       "#3D718D",
-    "--teal":        "#658FA5",
-    "--sky":         "#8FB7CC",
-    "--bg":          "#171717",
-    "--surface":     "#1e1e1e",
-    "--surface2":    "#252525",
-    "--surface3":    "#2a2a2a",
-    "--text":        "#EDF2F7",
-    "--text-2":      "#A0AEC0",
-    "--muted":       "#5A7080",
-    "--border":      "rgba(255,255,255,0.07)",
-    "--border-2":    "rgba(255,255,255,0.04)",
-    "--accent":      "#8FB7CC",
+    "--navy": "#2C3E50",
+    "--ocean": "#3D718D",
+    "--teal": "#658FA5",
+    "--sky": "#8FB7CC",
+    "--bg": "#171717",
+    "--surface": "#1e1e1e",
+    "--surface2": "#252525",
+    "--surface3": "#2a2a2a",
+    "--text": "#EDF2F7",
+    "--text-2": "#A0AEC0",
+    "--muted": "#5A7080",
+    "--border": "rgba(255,255,255,0.07)",
+    "--border-2": "rgba(255,255,255,0.04)",
+    "--accent": "#8FB7CC",
     "--accent-soft": "rgba(143,183,204,0.10)",
-    "--sh-sm":       "0 1px 2px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.2)",
-    "--sh-md":       "0 2px 4px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.3)",
-    "--sh-lg":       "0 4px 8px rgba(0,0,0,0.2), 0 16px 40px rgba(0,0,0,0.4)",
+    "--sh-sm": "0 1px 2px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.2)",
+    "--sh-md": "0 2px 4px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.3)",
+    "--sh-lg": "0 4px 8px rgba(0,0,0,0.2), 0 16px 40px rgba(0,0,0,0.4)",
   },
 };
 
@@ -72,13 +72,13 @@ const INITIAL_DAYS = [
 ];
 
 const ACTIVITY = [
-  { color: "teal",  icon: <Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]} />, text: <span>Completed <strong>Focus Session</strong> · DS</span>, time: "10:45 AM · 90 min" },
-  { color: "sky",   icon: <Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]} />, text: <span>Visited <strong>Library</strong> · HTML &amp; CSS</span>, time: "9:10 AM · today" },
-  { color: "navy",  icon: <Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{cx:9,cy:7,r:4}]} />, text: <span>Joined room <strong>Late Night Grind</strong></span>, time: "11:30 PM · yesterday" },
-  { color: "teal",  icon: <Icon paths={["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"]} points="14 2 14 8 20 8" />, text: <span>Added task to <strong>Planner</strong> · Algo</span>, time: "8:00 AM · yesterday" },
+  { color: "teal", icon: <Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]} />, text: <span>Completed <strong>Focus Session</strong> · DS</span>, time: "10:45 AM · 90 min" },
+  { color: "sky", icon: <Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]} />, text: <span>Visited <strong>Library</strong> · HTML &amp; CSS</span>, time: "9:10 AM · today" },
+  { color: "navy", icon: <Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2", "M23 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{ cx: 9, cy: 7, r: 4 }]} />, text: <span>Joined room <strong>Late Night Grind</strong></span>, time: "11:30 PM · yesterday" },
+  { color: "teal", icon: <Icon paths={["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"]} points="14 2 14 8 20 8" />, text: <span>Added task to <strong>Planner</strong> · Algo</span>, time: "8:00 AM · yesterday" },
 ];
 
-const BAR_DAYS = ["M","T","W","T","F","S","S"];
+const BAR_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 /* ─── helpers ─── */
 function getInitials(firstName, lastName) {
@@ -99,23 +99,23 @@ function formatDOB(isoString) {
 /* ─── Edit Profile Modal ─── */
 function EditProfileModal({ t, accent, profile, onSave, onClose }) {
   const [form, setForm] = useState({
-    firstName:   profile.firstName   || "",
-    lastName:    profile.lastName    || "",
-    gender:      profile.gender      || "",
+    firstName: profile.firstName || "",
+    lastName: profile.lastName || "",
+    gender: profile.gender || "",
     dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.slice(0, 10) : "",
   });
   const [saving, setSaving] = useState(false);
-  const [error, setError]   = useState(null);
+  const [error, setError] = useState(null);
 
   const handleSave = async () => {
     setSaving(true);
     setError(null);
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
+      const token = localStorage.getItem("accessToken") || "";
       const body = {
-        firstName:   form.firstName,
-        lastName:    form.lastName,
-        gender:      form.gender,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        gender: form.gender,
         dateOfBirth: form.dateOfBirth ? new Date(form.dateOfBirth).toISOString() : null,
       };
       const res = await fetch(`${API_BASE}/Profile`, {
@@ -209,13 +209,13 @@ function AddTaskModal({ t, accent, dayName, onAdd, onClose }) {
 ═══════════════════════════════════════════ */
 export default function ProfilePage() {
   const { isDarkMode: dark } = useThemeContext();
-  const [days, setDays]         = useState(INITIAL_DAYS);
-  const [modal, setModal]       = useState(null);   // null | { dayIdx, dayName }
+  const [days, setDays] = useState(INITIAL_DAYS);
+  const [modal, setModal] = useState(null);   // null | { dayIdx, dayName }
   const [editOpen, setEditOpen] = useState(false);
 
   /* ── API state ── */
-  const [profile, setProfile]   = useState(null);   // data from /api/Profile/me
-  const [loading, setLoading]   = useState(true);
+  const [profile, setProfile] = useState(null);   // data from /api/Profile/me
+  const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
 
   const todayIndex = new Date().getDay();
@@ -227,7 +227,7 @@ export default function ProfilePage() {
   });
   const maxHeight = Math.max(...BAR_HEIGHTS);
 
-  const t      = tokens[dark ? "dark" : "light"];
+  const t = tokens[dark ? "dark" : "light"];
   const accent = dark ? t["--sky"] : t["--ocean"];
 
   /* ── fetch profile on mount ── */
@@ -235,7 +235,7 @@ export default function ProfilePage() {
     setLoading(true);
     setApiError(null);
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
+      const token = localStorage.getItem("accessToken") || "";
       const res = await fetch(`${API_BASE}/Profile/me`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
@@ -252,12 +252,12 @@ export default function ProfilePage() {
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
   /* ── derived display values ── */
-  const firstName   = profile?.firstName   || "";
-  const lastName    = profile?.lastName    || "";
-  const fullName    = [firstName, lastName].filter(Boolean).join(" ") || "Student";
-  const initials    = getInitials(firstName, lastName);
-  const gender      = profile?.gender      || "";
-  const dob         = profile?.dateOfBirth || "";
+  const firstName = profile?.firstName || "";
+  const lastName = profile?.lastName || "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Student";
+  const initials = getInitials(firstName, lastName);
+  const gender = profile?.gender || "";
+  const dob = profile?.dateOfBirth || "";
 
   /* ── planner helpers ── */
   const toggleTask = (dayIdx, taskId) =>
@@ -276,11 +276,11 @@ export default function ProfilePage() {
     ));
 
   const card = {
-    background:   t["--surface"],
-    border:       `1px solid ${t["--border"]}`,
+    background: t["--surface"],
+    border: `1px solid ${t["--border"]}`,
     borderRadius: 22,
-    boxShadow:    t["--sh-md"],
-    transition:   "box-shadow .25s, transform .25s",
+    boxShadow: t["--sh-md"],
+    transition: "box-shadow .25s, transform .25s",
   };
 
   /* ── skeleton loader ── */
@@ -369,14 +369,14 @@ export default function ProfilePage() {
                 <>
                   <div className="profile-name-el" style={{ fontSize: "1.45rem", fontWeight: 800, letterSpacing: "-.025em", color: t["--text"], marginBottom: ".35rem", lineHeight: 1.1 }}>{fullName}</div>
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: ".78rem", fontWeight: 600, color: accent, background: t["--accent-soft"], padding: "4px 11px", borderRadius: 999, marginBottom: ".75rem" }}>
-                    <Icon poly={["16 18 22 12 16 6","8 6 2 12 8 18"]} size={12} /> Frontend Track
+                    <Icon poly={["16 18 22 12 16 6", "8 6 2 12 8 18"]} size={12} /> Frontend Track
                   </div>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {[
                       { icon: <Icon poly={["22 12 18 12 15 21 9 3 6 12 2 12"]} size={11} />, label: "12-day streak" },
-                      { icon: <Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14" size={11} />, label: "Active now" },
-                      ...(gender ? [{ icon: <Icon paths={["M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"]} circles={[{cx:12,cy:7,r:4}]} size={11} />, label: gender }] : []),
-                      ...(dob ? [{ icon: <Icon paths={["M3 4h18v18H3z","M16 2v4","M8 2v4","M3 10h18"]} size={11} />, label: formatDOB(dob) }] : []),
+                      { icon: <Icon circles={[{ cx: 12, cy: 12, r: 10 }]} points="12 6 12 12 16 14" size={11} />, label: "Active now" },
+                      ...(gender ? [{ icon: <Icon paths={["M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"]} circles={[{ cx: 12, cy: 7, r: 4 }]} size={11} />, label: gender }] : []),
+                      ...(dob ? [{ icon: <Icon paths={["M3 4h18v18H3z", "M16 2v4", "M8 2v4", "M3 10h18"]} size={11} />, label: formatDOB(dob) }] : []),
                     ].map(b => (
                       <span key={b.label} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: ".73rem", fontWeight: 600, padding: "4px 11px", borderRadius: 999, border: `1px solid ${t["--border"]}`, background: t["--surface2"], color: t["--text-2"], whiteSpace: "nowrap" }}>
                         <span style={{ color: accent }}>{b.icon}</span>{b.label}
@@ -409,7 +409,7 @@ export default function ProfilePage() {
                 <button
                   onClick={() => setEditOpen(true)}
                   style={{ marginTop: ".25rem", padding: "7px 14px", borderRadius: 10, border: `1px solid ${t["--border"]}`, background: t["--surface2"], color: t["--text-2"], fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", display: "flex", alignItems: "center", gap: 6, justifyContent: "center" }}>
-                  <Icon paths={["M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7","M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"]} size={12} />
+                  <Icon paths={["M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7", "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"]} size={12} />
                   Edit Profile
                 </button>
               </>
@@ -420,10 +420,10 @@ export default function ProfilePage() {
         {/* 2. STAT STRIP */}
         <div className="fade-up stat-strip-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1rem" }}>
           {[
-            { grad:"#2C3E50,#3D718D", trend:"↑ 14%", up:true, icon:<Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14"/>, val:"6.4", sup:"h",  label:"This Week",   bar:64 },
-            { grad:"#3D718D,#658FA5", trend:"↑ 8%",  up:true, icon:<Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]}/>, val:"9", sup:"/12", label:"Tasks Today", bar:75 },
-            { grad:"#658FA5,#8FB7CC", trend:"= same",up:false,icon:<Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{cx:9,cy:7,r:4}]}/>, val:"4", sup:"", label:"Focus Rooms",  bar:40 },
-            { grad:"#8FB7CC,#b8d4e4", trend:"↑ 5%",  up:true, icon:<Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]}/>, val:"12",sup:"", label:"Resources",   bar:55 },
+            { grad: "#2C3E50,#3D718D", trend: "↑ 14%", up: true, icon: <Icon circles={[{ cx: 12, cy: 12, r: 10 }]} points="12 6 12 12 16 14" />, val: "6.4", sup: "h", label: "This Week", bar: 64 },
+            { grad: "#3D718D,#658FA5", trend: "↑ 8%", up: true, icon: <Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]} />, val: "9", sup: "/12", label: "Tasks Today", bar: 75 },
+            { grad: "#658FA5,#8FB7CC", trend: "= same", up: false, icon: <Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2", "M23 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{ cx: 9, cy: 7, r: 4 }]} />, val: "4", sup: "", label: "Focus Rooms", bar: 40 },
+            { grad: "#8FB7CC,#b8d4e4", trend: "↑ 5%", up: true, icon: <Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]} />, val: "12", sup: "", label: "Resources", bar: 55 },
           ].map(st => (
             <div key={st.label} className="tile-hover" style={{ ...card, boxShadow: t["--sh-sm"], padding: "1.25rem 1.4rem", position: "relative", overflow: "hidden", borderTop: "none" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2.5, borderRadius: "16px 16px 0 0", background: `linear-gradient(90deg, ${st.grad})` }} />
@@ -449,7 +449,7 @@ export default function ProfilePage() {
           <div className="card-hover" style={{ ...card, padding: "1.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.4rem" }}>
               <div style={{ fontSize: "1rem", fontWeight: 800, letterSpacing: "-.02em", color: t["--text"], display: "flex", alignItems: "center", gap: 9 }}>
-                <span style={{ color: accent }}><Icon paths={["M3 4h18v18H3z","M16 2v4","M8 2v4","M3 10h18"]} size={17} /></span>
+                <span style={{ color: accent }}><Icon paths={["M3 4h18v18H3z", "M16 2v4", "M8 2v4", "M3 10h18"]} size={17} /></span>
                 Study Planner
               </div>
               <button className="card-action-el"
@@ -462,8 +462,10 @@ export default function ProfilePage() {
             <div className="week-grid-el" style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8 }}>
               {days.map((day, dayIdx) => (
                 <div key={day.name} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <div style={{ fontSize: ".62rem", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", textAlign: "center", paddingBottom: 6, borderBottom: `1px solid ${t["--border"]}`,
-                    color: dayIdx === normalizedToday ? accent : t["--muted"] }}>
+                  <div style={{
+                    fontSize: ".62rem", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", textAlign: "center", paddingBottom: 6, borderBottom: `1px solid ${t["--border"]}`,
+                    color: dayIdx === normalizedToday ? accent : t["--muted"]
+                  }}>
                     {dayIdx === normalizedToday
                       ? <span style={{ display: "inline-block", background: t["--accent-soft"], borderRadius: 6, padding: "2px 6px" }}>{day.name}</span>
                       : day.name}
@@ -474,12 +476,12 @@ export default function ProfilePage() {
                       style={{ background: task.done ? t["--accent-soft"] : t["--surface2"], borderRadius: 8, padding: "7px 8px", fontSize: ".67rem", fontWeight: 600, color: task.done ? accent : t["--text-2"], lineHeight: 1.3, cursor: "pointer", transition: "background .15s, color .15s, transform .15s", border: `1px solid ${t["--border-2"]}`, display: "flex", alignItems: "flex-start", gap: 5, wordBreak: "break-word", textDecoration: task.done ? "line-through" : "none", opacity: task.done ? .65 : 1, position: "relative" }}>
                       {task.done
                         ? <Icon points="20 6 9 17 4 12" size={11} strokeWidth={2.5} />
-                        : <Icon circles={[{cx:12,cy:12,r:2},{cx:12,cy:5,r:2},{cx:12,cy:19,r:2}]} size={11} strokeWidth={2.5} />}
+                        : <Icon circles={[{ cx: 12, cy: 12, r: 2 }, { cx: 12, cy: 5, r: 2 }, { cx: 12, cy: 19, r: 2 }]} size={11} strokeWidth={2.5} />}
                       <span style={{ flex: 1 }}>{task.text}</span>
                       <span className="delete-btn-el" onClick={e => { e.stopPropagation(); deleteTask(dayIdx, task.id); }}
                         style={{ opacity: 0, transition: "opacity .15s", cursor: "pointer", color: t["--muted"], flexShrink: 0 }}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width={10} height={10}>
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                       </span>
                     </div>
@@ -488,7 +490,7 @@ export default function ProfilePage() {
                     onClick={() => setModal({ dayIdx, dayName: day.name })}
                     style={{ background: "transparent", borderRadius: 8, padding: "7px 8px", fontSize: ".67rem", fontWeight: 700, color: t["--muted"], lineHeight: 1.3, cursor: "pointer", transition: "background .15s, color .15s", border: `1px dashed ${t["--border"]}`, display: "flex", alignItems: "center", gap: 5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width={11} height={11}>
-                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     Add
                   </button>
@@ -504,7 +506,7 @@ export default function ProfilePage() {
                 <div style={{ fontSize: "1rem", fontWeight: 800, letterSpacing: "-.02em", color: t["--text"], display: "flex", alignItems: "center", gap: 9 }}>
                   <span style={{ color: accent }}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width={17} height={17}>
-                      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                      <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
                     </svg>
                   </span>
                   Weekly Hours
@@ -531,7 +533,7 @@ export default function ProfilePage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem", padding: "1rem", background: t["--surface2"], borderRadius: 14 }}>
                 <svg viewBox="0 0 52 52" width={56} height={56} style={{ flexShrink: 0 }}>
-                  <circle cx="26" cy="26" r="20" fill="none" stroke={t["--border"]} strokeWidth="5"/>
+                  <circle cx="26" cy="26" r="20" fill="none" stroke={t["--border"]} strokeWidth="5" />
                   <circle cx="26" cy="26" r="20" fill="none" stroke="url(#tg)" strokeWidth="5"
                     strokeDasharray={`${2 * Math.PI * 20 * 0.73} ${2 * Math.PI * 20}`}
                     strokeDashoffset={`${2 * Math.PI * 20 * 0.25}`}
@@ -540,7 +542,7 @@ export default function ProfilePage() {
                   />
                   <defs>
                     <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#3D718D"/><stop offset="100%" stopColor="#8FB7CC"/>
+                      <stop offset="0%" stopColor="#3D718D" /><stop offset="100%" stopColor="#8FB7CC" />
                     </linearGradient>
                   </defs>
                 </svg>

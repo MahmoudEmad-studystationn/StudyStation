@@ -7,8 +7,10 @@ import {
     getRoomById,
     leaveRoom,
     sendMessage as apiSendMessage,
+    getMessages,
     addTask,
     toggleTask,
+    updateTask,
     deleteTask,
     startFocusSession,
     stopFocusSession,
@@ -21,11 +23,11 @@ const AV_PALETTE = [
     { background: "linear-gradient(135deg,#8FB7CC,#c2d9e8)" },
     { background: "linear-gradient(135deg,#2C3E50,#658FA5)" },
 ];
-const getAvStyle  = i => AV_PALETTE[i % AV_PALETTE.length];
+const getAvStyle = i => AV_PALETTE[i % AV_PALETTE.length];
 const getInitials = (name = "") => name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
-const fmtTime     = iso => iso
+const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
-    : new Date().toLocaleTimeString("en-US",    { hour: "2-digit", minute: "2-digit" });
+    : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
 // ── Toast ──────────────────────────────────────────────────────────────────
 function Toast({ message, visible }) {
@@ -51,13 +53,13 @@ function Toast({ message, visible }) {
 function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = false, onConfirm, onCancel, isDarkMode }) {
     if (!isOpen) return null;
     const surface = isDarkMode ? "#1f1f1f" : "#fff";
-    const border  = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
-    const text    = isDarkMode ? "#EDF2F7" : "#1C2B38";
-    const text2   = isDarkMode ? "#A0AEC0" : "#4A5568";
+    const border = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
+    const text = isDarkMode ? "#EDF2F7" : "#1C2B38";
+    const text2 = isDarkMode ? "#A0AEC0" : "#4A5568";
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(28,43,56,.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}
             onClick={e => e.target === e.currentTarget && onCancel()}>
-            <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 20, padding: "1.75rem 2rem", width: "100%", maxWidth: 400, boxShadow: "0 8px 40px rgba(0,0,0,.18)", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+            <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 20, padding: "1.75rem 2rem", width: "100%", maxWidth: 400, boxShadow: "0 8px 40px rgba(0,0,0,.18)" }}>
                 <div style={{ fontSize: "1rem", fontWeight: 800, color: text, marginBottom: ".5rem" }}>{title}</div>
                 <div style={{ fontSize: ".85rem", color: text2, lineHeight: 1.6, marginBottom: "1.5rem" }}>{body}</div>
                 <div style={{ display: "flex", gap: ".75rem", justifyContent: "flex-end" }}>
@@ -74,87 +76,83 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
 }
 
 export default function StudyRoom() {
-    const { roomId }  = useParams();
-    const navigate    = useNavigate();
+    const { roomId } = useParams();
+    const navigate = useNavigate();
     const { isDarkMode } = useThemeContext();
 
     // ── Core state ─────────────────────────────────────────────────────────
-    const [room,         setRoom]         = useState(null);
-    const [messages,     setMessages]     = useState([]);
-    const [input,        setInput]        = useState("");
-    const [sessionId,    setSessionId]    = useState(null);
-    const [loading,      setLoading]      = useState(true);
-    const [error,        setError]        = useState("");
-    const [leaving,      setLeaving]      = useState(false);
-    const [sending,      setSending]      = useState(false);
-    const [toast,        setToast]        = useState({ visible: false, msg: "" });
+    const [room, setRoom] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState("");
+    const [sessionId, setSessionId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [leaving, setLeaving] = useState(false);
+    const [sending, setSending] = useState(false);
+    const [toast, setToast] = useState({ visible: false, msg: "" });
     const [leaveConfirm, setLeaveConfirm] = useState(false);
 
-    // مهم: نحتفظ بـ ref للـ tasks عشان الـ polling لا يمسحها
     const tasksRef = useRef([]);
 
     const bottomRef = useRef(null);
-    const pollRef   = useRef(null);
+    const pollRef = useRef(null);
 
     // ── Design tokens ──────────────────────────────────────────────────────
-    const pageBg      = isDarkMode ? "#171717"  : "#F3F4F6";
-    const surface     = isDarkMode ? "#1e1e1e"  : "#fff";
-    const surface2    = isDarkMode ? "#252525"  : "#EAECF0";
-    const surface3    = isDarkMode ? "#2b2b2b"  : "#f5f6f8";
-    const border      = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
-    const textPrimary = isDarkMode ? "#EDF2F7"  : "#1C2B38";
-    const muted       = isDarkMode ? "#5A7080"  : "#8A9BAA";
-    const msgColor    = isDarkMode ? "#A0AEC0"  : "#4A5568";
-    const sendBtnBg   = isDarkMode ? "#3D718D"  : "#2C3E50";
+    const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
+    const surface = isDarkMode ? "#1e1e1e" : "#fff";
+    const surface2 = isDarkMode ? "#252525" : "#EAECF0";
+    const surface3 = isDarkMode ? "#2b2b2b" : "#f5f6f8";
+    const border = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
+    const textPrimary = isDarkMode ? "#EDF2F7" : "#1C2B38";
+    const muted = isDarkMode ? "#5A7080" : "#8A9BAA";
+    const msgColor = isDarkMode ? "#A0AEC0" : "#4A5568";
+    const sendBtnBg = isDarkMode ? "#3D718D" : "#2C3E50";
 
     function showToast(msg) {
         setToast({ visible: true, msg });
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ── Fetch room data ─────────────────────────────────────────────────────
-    // silent=true → الـ polling: لا يمسح tasks أو messages optimistic
+    // ضيف ده جوه الـ StudyRoom component فوق الـ state declarations
+    const currentUserId = (() => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            if (!token) return null;
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload?.sub ?? null;
+        } catch { return null; }
+    })();
+
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
             const data = await getRoomById(roomId);
 
-            // ── نحدث الـ room بدون نمسح التاسكات اللي اتضافت locally ──
             setRoom(prev => {
-                // لو لسه مفيش room (أول fetch)، خد كل حاجة من الـ API
                 if (!prev) {
                     tasksRef.current = data.tasks ?? [];
                     return data;
                 }
-                // في الـ polling: حافظ على tasks من الـ ref (اللي فيه أحدث local state)
-                // وخد باقي البيانات (members, name, …) من الـ API
-                return {
-                    ...data,
-                    tasks: tasksRef.current,
-                };
+                return { ...data, tasks: tasksRef.current };
             });
 
-            // ── Merge messages (لا تمسح الـ optimistic) ──
             setMessages(prev => {
                 const incoming = data.messages ?? [];
-                if (!incoming.length) return prev;
-
-                // IDs الرسائل المؤكدة
+                if (prev.length === 0) {
+                    return incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
+                }
                 const confirmedIds = new Set(
                     prev.filter(m => !m.isOptimistic).map(m => m.id)
                 );
-                // رسائل جديدة من السيرفر مش موجودة عندنا
                 const newOnes = incoming.filter(m => !confirmedIds.has(m.id));
                 if (!newOnes.length) return prev;
-
-                // اجمع: رسائل مؤكدة + جديدة، امسح الـ optimistic المقابلة
                 const confirmed = prev.filter(m => !m.isOptimistic);
-                const merged = [...confirmed, ...newOnes].sort(
+                return [...confirmed, ...newOnes].sort(
                     (a, b) => new Date(a.sentAt) - new Date(b.sentAt)
                 );
-                return merged;
             });
+
         } catch (err) {
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
@@ -181,25 +179,20 @@ export default function StudyRoom() {
 
         const optId = `opt-${Date.now()}`;
         const optimisticMsg = {
-            id:           optId,
-            content:      text,
-            senderName:   room?.currentUserName ?? "You",
-            sentAt:       new Date().toISOString(),
+            id: optId,
+            content: text,
+            senderName: room?.currentUserName ?? room?.currentUser?.userName ?? "You",
+            sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
         setMessages(prev => [...prev, optimisticMsg]);
 
         try {
             await apiSendMessage(roomId, text);
-            // بعد إرسال ناجح، جيب الرسائل الجديدة وامسح الـ optimistic
-            const data = await getRoomById(roomId);
-            const incoming = data.messages ?? [];
-            setMessages(() => {
-                return incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
-            });
+            const msgs = await getMessages(roomId);
+            const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
+            setMessages(incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt)));
         } catch (err) {
-            console.error("Send failed", err);
-            // في حالة فشل، امسح الـ optimistic وأظهر error
             setMessages(prev => prev.filter(m => m.id !== optId));
             showToast("Failed to send message");
         } finally {
@@ -244,8 +237,6 @@ export default function StudyRoom() {
         } catch (err) { console.error("Stop focus failed", err); }
     };
 
-    // ── Tasks ────────────────────────────────────────────────────────────────
-    // كل عملية tasks لازم تحدث tasksRef وsetRoom في نفس الوقت
     const handleAddTask = async taskText => {
         if (!taskText?.trim()) return;
         try {
@@ -298,9 +289,26 @@ export default function StudyRoom() {
         }
     };
 
+    const handleUpdateTask = async (taskId, newTitle) => {
+        // Optimistic update
+        setRoom(prev => {
+            const updated = (prev.tasks ?? []).map(t =>
+                t.id === taskId ? { ...t, title: newTitle } : t
+            );
+            tasksRef.current = updated;
+            return { ...prev, tasks: updated };
+        });
+        try {
+            await updateTask(roomId, taskId, newTitle);
+        } catch (err) {
+            console.error("Update task failed", err);
+            showToast("Failed to update task");
+        }
+    };
+
     // ── Loading / Error ──────────────────────────────────────────────────────
     if (loading) return (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             <span style={{ color: muted, fontSize: ".85rem", fontWeight: 600 }}>Loading room…</span>
@@ -308,7 +316,7 @@ export default function StudyRoom() {
     );
 
     if (error || !room) return (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: ".75rem", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: ".75rem" }}>
             <span style={{ color: "#f87171", fontSize: ".9rem", fontWeight: 600 }}>{error || "Room not found."}</span>
             <button onClick={() => navigate("/study-with-friends")} style={{ padding: "9px 20px", borderRadius: 12, border: "none", background: "#2C3E50", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: ".85rem" }}>
                 Back to Rooms
@@ -319,7 +327,7 @@ export default function StudyRoom() {
     const members = room.members ?? [];
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
             <style>{`
                 @keyframes spin  { to { transform: rotate(360deg); } }
                 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 50% { box-shadow: 0 0 0 5px rgba(52,211,153,0); } }
@@ -383,6 +391,7 @@ export default function StudyRoom() {
                         tasks={room.tasks ?? []}
                         onAdd={handleAddTask}
                         onToggle={handleToggleTask}
+                        onUpdate={handleUpdateTask}
                         onDelete={handleDeleteTask}
                     />
                 </div>
@@ -425,9 +434,9 @@ export default function StudyRoom() {
                             </div>
                         )}
                         {messages.map((msg, i) => {
-                            const senderName  = msg.senderName ?? msg.userName ?? "Member";
+                            const senderName = msg.senderName ?? msg.userName ?? "Member";
                             const memberIndex = members.findIndex(m => (m.userName ?? m.name) === senderName);
-                            const avStyle     = getAvStyle(memberIndex >= 0 ? memberIndex : i);
+                            const avStyle = getAvStyle(memberIndex >= 0 ? memberIndex : i);
                             return (
                                 <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? .65 : 1, transition: "opacity .3s" }}>
                                     <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...avStyle }}>
@@ -461,7 +470,7 @@ export default function StudyRoom() {
                                 disabled={sending}
                                 style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, scrollbarWidth: "thin", transition: "border .2s", opacity: sending ? .7 : 1 }}
                                 onFocus={e => e.currentTarget.style.borderColor = "#8FB7CC"}
-                                onBlur={e  => e.currentTarget.style.borderColor = border}
+                                onBlur={e => e.currentTarget.style.borderColor = border}
                             />
                             <button
                                 onClick={sendMsg}
@@ -474,7 +483,7 @@ export default function StudyRoom() {
                                     ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", display: "block", animation: "spin .6s linear infinite" }} />
                                     : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                                      </svg>
+                                    </svg>
                                 }
                             </button>
                         </div>

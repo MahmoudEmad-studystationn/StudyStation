@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../Theme/ThemeContext";
 import CreateRoomModal from "./CreateRoomModal";
-import {
-  getAllRooms,
-  joinRoom,
-  deleteRoom,          // ← تضيفه في الـ service لو مش موجود
-} from "../Services/studyWithFriendsService";
+import { getAllRooms, getRoomById, joinRoom, deleteRoom } from "../Services/studyWithFriendsService";
 
 const C = { navy: "#2C3E50", ocean: "#3D718D", teal: "#658FA5", sky: "#8FB7CC" };
 
@@ -49,7 +45,6 @@ function Toast({ message, visible, type = "success" }) {
   );
 }
 
-// ── Confirm Modal (بديل window.confirm) ──
 function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = false, onConfirm, onCancel, isDarkMode }) {
   if (!isOpen) return null;
   const surface = isDarkMode ? "#1f1f1f" : "#fff";
@@ -67,7 +62,6 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
         borderRadius: 20, padding: "1.75rem 2rem",
         width: "100%", maxWidth: 400,
         boxShadow: "0 8px 40px rgba(0,0,0,.18)",
-        fontFamily: "'Plus Jakarta Sans',sans-serif",
       }}>
         <div style={{ fontSize: "1rem", fontWeight: 800, color: text, marginBottom: ".5rem" }}>{title}</div>
         <div style={{ fontSize: ".85rem", color: text2, lineHeight: 1.6, marginBottom: "1.5rem" }}>{body}</div>
@@ -92,34 +86,47 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
   );
 }
 
-// ── Normalize ──
 function normalizeRoom(apiRoom, currentUserId) {
-  const currentCount = apiRoom.currentParticipants ?? apiRoom.participantCount ?? apiRoom.members?.length ?? 0;
+  const currentCount = apiRoom.participantsCount ?? apiRoom.members?.length ?? 0;
   const maxCount = apiRoom.maxParticipants ?? apiRoom.capacity ?? 8;
   const fillPct = maxCount > 0 ? Math.round((currentCount / maxCount) * 100) : 0;
 
-  const participants = apiRoom.members?.slice(0, 3).map(m =>
-    (m.displayName || m.username || m.userName || "?").slice(0, 2).toUpperCase()
-  ) ?? [];
+  const membersArr = apiRoom.members ?? [];
+  const participants = membersArr.length > 0
+    ? membersArr.slice(0, 3).map(m =>
+      (m.displayName || m.username || m.userName || "?").slice(0, 2).toUpperCase()
+    )
+    : Array.from({ length: Math.min(currentCount, 3) }, (_, i) =>
+      String.fromCharCode(65 + i) + String.fromCharCode(65 + i)
+    );
   if (currentCount > 3) participants.push(`+${currentCount - 3}`);
 
-  // هل اليوزر الحالي ميمبر في الروم دي؟
-  const isMember = apiRoom.members?.some(m =>
-    m.id === currentUserId || m.userId === currentUserId
-  ) ?? false;
+  const myId = currentUserId != null ? String(currentUserId) : null;
 
-  // هل اليوزر الحالي هو اللي عمل الروم؟
-  const isOwner = apiRoom.creatorId === currentUserId || apiRoom.ownerId === currentUserId;
+  const isMember = myId != null && (
+    apiRoom.currentUserIsMember ??
+    apiRoom.isMember ??
+    membersArr.some(m =>
+      String(m.id) === myId || String(m.userId) === myId
+    ) ?? false
+  );
+
+  const isOwner = myId != null && String(apiRoom.ownerId) === myId;
 
   return {
-    id: apiRoom.id, name: apiRoom.name,
+    id: apiRoom.id,
+    name: apiRoom.name,
     subject: apiRoom.subject ?? "General",
-    desc: apiRoom.description ?? "",
+    desc: apiRoom.description ?? apiRoom.desc ?? "",
     isPublic: apiRoom.isPublic ?? true,
     roomCode: apiRoom.roomCode ?? null,
-    current: currentCount, max: maxCount, fill: fillPct,
+    current: currentCount,
+    max: maxCount,
+    fill: fillPct,
     full: currentCount >= maxCount,
-    participants, isMember, isOwner,
+    participants,
+    isMember,
+    isOwner,
   };
 }
 
@@ -159,15 +166,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
 
   async function handleDelete(e) {
     e.stopPropagation();
-    setDeleting(true);
-    try {
-      await deleteRoom(room.id);
-      onDelete(room.id, room.name);
-    } catch (err) {
-      console.error("Delete failed:", err);
-    } finally {
-      setDeleting(false);
-    }
+    onDelete(room.id, room.name);
   }
 
   return (
@@ -203,7 +202,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
           )}
           {/* "Owner" badge */}
           {room.isOwner && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: "999px", fontSize: ".63rem", fontWeight: 700, background: "rgba(250,204,21,.12)", color: "#f59e0b", letterSpacing: ".03em" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: "999px", fontSize: ".63rem", fontWeight: 700, background: `linear-gradient(135deg,rgba(44,62,80,.18),rgba(61,113,141,.18))`, color: C.teal, letterSpacing: ".03em" }}>
               ★ Owner
             </span>
           )}
@@ -331,12 +330,12 @@ export default function StudyWithFriends() {
   const [toast, setToast] = useState({ visible: false, msg: "", type: "success" });
   const [confirm, setConfirm] = useState({ open: false, roomId: null, roomName: "" });
 
-  // جيب الـ currentUserId من localStorage أو token
   const currentUserId = (() => {
     try {
-      const raw = localStorage.getItem("user") || localStorage.getItem("currentUser") || "{}";
-      const u = JSON.parse(raw);
-      return u?.id ?? u?.userId ?? u?.Id ?? null;
+      const token = localStorage.getItem("accessToken");
+      if (!token) return null;
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload?.sub ?? payload?.userId ?? payload?.id ?? null;
     } catch { return null; }
   })();
 
@@ -352,17 +351,26 @@ export default function StudyWithFriends() {
   ];
 
   async function fetchRooms() {
-    setLoading(true); setError(null);
-    try {
-      const data = await getAllRooms();
-      const list = Array.isArray(data) ? data : data?.rooms ?? [];
-      setRooms(list.map(r => normalizeRoom(r, currentUserId)));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  setLoading(true); setError(null);
+  try {
+    const data = await getAllRooms();
+    const list = Array.isArray(data) ? data : data?.rooms ?? [];
+    
+    const detailed = await Promise.all(
+      list.map(r => getRoomById(r.id).catch(() => r))
+    );
+    
+    // ← أضف السطر ده مؤقتاً
+    console.log("🔍 First room full details:", detailed[0]);
+    console.log("🔍 All keys:", Object.keys(detailed[0] || {}));
+    
+    setRooms(detailed.map(r => normalizeRoom(r, currentUserId)));
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => { fetchRooms(); }, []);
 
@@ -389,6 +397,7 @@ export default function StudyWithFriends() {
       setRooms(prev => prev.filter(r => r.id !== roomId));
       showToast(`Room "${roomName}" deleted`);
     } catch (err) {
+      console.error("Delete failed:", err);
       showToast("Failed to delete room", "error");
     }
   }

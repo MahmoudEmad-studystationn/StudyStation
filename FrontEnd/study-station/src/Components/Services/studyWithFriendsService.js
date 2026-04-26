@@ -21,7 +21,6 @@ export const joinRoom = (id, roomCode) =>
 export const leaveRoom = (id) =>
     axiosInstance.post(`${BASE}/${id}/leave`).then(r => r.data);
 
-// ✅ الـ API بيستقبل string كـ JSON body — لازم نبعت JSON.stringify مع الـ header
 export const addTask = (id, taskText) =>
     axiosInstance.post(
         `${BASE}/${id}/tasks`,
@@ -32,10 +31,17 @@ export const addTask = (id, taskText) =>
 export const toggleTask = (id, taskId) =>
     axiosInstance.patch(`${BASE}/${id}/tasks/${taskId}/toggle`).then(r => r.data);
 
+// ✅ جديد — edit task title
+export const updateTask = (id, taskId, title) =>
+    axiosInstance.put(
+        `${BASE}/${id}/tasks/${taskId}`,
+        JSON.stringify({ title }),
+        { headers: { "Content-Type": "application/json" } }
+    ).then(r => r.data);
+
 export const deleteTask = (id, taskId) =>
     axiosInstance.delete(`${BASE}/${id}/tasks/${taskId}`).then(r => r.data);
 
-// ✅ integer كـ JSON body
 export const startFocusSession = (id, durationMinutes) =>
     axiosInstance.post(
         `${BASE}/${id}/focus/start`,
@@ -46,13 +52,15 @@ export const startFocusSession = (id, durationMinutes) =>
 export const stopFocusSession = (id, sessionId) =>
     axiosInstance.post(`${BASE}/${id}/focus/${sessionId}/stop`).then(r => r.data);
 
-// ✅ message string كـ JSON body
 export const sendMessage = (id, messageText) =>
     axiosInstance.post(
         `${BASE}/${id}/messages`,
         JSON.stringify(messageText),
         { headers: { "Content-Type": "application/json" } }
     ).then(r => r.data);
+
+export const getMessages = (id) =>
+    axiosInstance.get(`${BASE}/${id}/messages`).then(r => r.data);
 
 export const deleteRoom = (roomId) =>
     axiosInstance.delete(`${BASE}/${roomId}`).then(r => r.data);
