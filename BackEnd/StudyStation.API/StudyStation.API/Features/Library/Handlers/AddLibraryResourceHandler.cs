@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using StudyStation.API.Data;
 using StudyStation.API.Features.Library.Commands;
 using StudyStation.API.Features.Library.Models;
@@ -19,6 +19,7 @@ namespace StudyStation.API.Features.Library.Handlers
             var resource = new LibraryResource
             {
                 Title = request.Title,
+                Type = request.Type,
                 Url = request.Url,
                 FilePath = request.FilePath,
                 Description = request.Description,
