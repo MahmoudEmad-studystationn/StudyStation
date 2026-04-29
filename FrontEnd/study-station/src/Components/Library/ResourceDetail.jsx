@@ -4,8 +4,22 @@ import { ArrowLeft, ArrowRight, BookOpen, List, Map } from "lucide-react";
 import { useThemeContext } from "../Theme/ThemeContext";
 import { useLibraryResource, useAllLibraryResources } from "../Services/useLibrary";
 
-const BASE_URL = "https://study-station.runasp.net/api/Library";
+// ── Maps ──────────────────────────────────────────────────
+const CATEGORY_MAP = {
+    1: "Frontend",
+    2: "Backend",
+    3: "AI / ML",
+    4: "Cyber Security",
+    5: "UI/UX",
+};
 
+const RESOURCE_TYPE_MAP = {
+    1: "Videos",
+    2: "Articles",
+    3: "Books",
+};
+
+// ─── TypeIcon ─────────────────────────────────────────────
 const TypeIcon = ({ type, iconBg, iconColor }) => {
     const base = "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0";
     const style = { backgroundColor: iconBg, color: iconColor };
@@ -19,25 +33,20 @@ const TypeIcon = ({ type, iconBg, iconColor }) => {
     }
 };
 
-export default function ShareResource({ onBack, onNavigate }) {
+// ─── Detail View ──────────────────────────────────────────
+export default function ResourceDetail({ onBack, onNavigate }) {
     const [copied, setCopied] = useState(false);
     const navigate = useNavigate();
-
-    // ─── Get resource id from URL params (e.g. /library/:id) ───
     const { id } = useParams();
 
-    // ─── Fetch this resource ────────────────────────────────────
     const { data, isLoading, error } = useLibraryResource(id);
-
-    // ─── Fetch all resources to build "More from Track" list ───
     const { resources: allResources } = useAllLibraryResources();
 
-    // Related = same track, different id (max 3)
+    // Related = same track/category, different id (max 3)
     const relatedResources = allResources
-        .filter((r) => r.id !== Number(id) && r.track === data?.track)
+        .filter((r) => r.id !== Number(id) && (r.track === data?.track || r.categoryId === data?.categoryId))
         .slice(0, 3);
 
-    // ─── Theme ──────────────────────────────────────────────────
     const { isDarkMode } = useThemeContext();
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const cardBg = isDarkMode ? "#262626" : "#ffffff";
@@ -54,10 +63,7 @@ export default function ShareResource({ onBack, onNavigate }) {
     const pulseBg = isDarkMode ? "#404040" : "#e2e8f0";
     const pulseBgLight = isDarkMode ? "#525252" : "#f1f5f9";
 
-    const handleBackToLibrary = () => {
-        if (onBack) onBack();
-        else navigate("/library");
-    };
+    const handleBackToLibrary = () => { if (onBack) onBack(); else navigate("/library"); };
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -70,22 +76,31 @@ export default function ShareResource({ onBack, onNavigate }) {
         if (data?.url) window.open(data.url, "_blank", "noopener,noreferrer");
     };
 
-    // ─── Loading skeleton ───────────────────────────────────────
+    // Resolve names from IDs or direct fields
+    const categoryName = data?.categoryName || CATEGORY_MAP[data?.categoryId] || data?.category || null;
+    const resourceType = data?.resourceTypeName || RESOURCE_TYPE_MAP[data?.resourceTypeId] || null;
+
+    // Free / Paid — stored in `type` field
+    const pricingRaw = data?.type?.toLowerCase();
+    const isPaid = pricingRaw === "paid";
+    const isFree = pricingRaw === "free";
+
+    // ─── Loading skeleton ─────────────────────────────────
     if (isLoading) {
         return (
             <div className="min-h-screen px-5 py-6 animate-pulse" style={{ backgroundColor: pageBg }}>
                 <div className="h-4 w-28 rounded mb-5" style={{ backgroundColor: pulseBg }} />
                 <div className="rounded-2xl p-6 mb-4" style={{ backgroundColor: cardBg }}>
                     <div className="flex gap-2 mb-4">
-                        <div className="h-7 w-20 rounded-full" style={{ backgroundColor: pulseBgLight }} />
-                        <div className="h-7 w-22 rounded-full" style={{ backgroundColor: pulseBgLight }} />
-                        <div className="h-7 w-18 rounded-full" style={{ backgroundColor: pulseBgLight }} />
+                        {[20, 22, 18].map((w, i) => (
+                            <div key={i} className={`h-7 w-${w} rounded-full`} style={{ backgroundColor: pulseBgLight }} />
+                        ))}
                     </div>
                     <div className="h-10 rounded w-3/4 mb-3" style={{ backgroundColor: pulseBgLight }} />
                     <div className="space-y-2 mb-6">
-                        <div className="h-3.5 rounded w-full" style={{ backgroundColor: pulseBgLight }} />
-                        <div className="h-3.5 rounded w-5/6" style={{ backgroundColor: pulseBgLight }} />
-                        <div className="h-3.5 rounded w-4/6" style={{ backgroundColor: pulseBgLight }} />
+                        {[100, 83, 66].map((w, i) => (
+                            <div key={i} className={`h-3.5 rounded w-${w === 100 ? "full" : w === 83 ? "5/6" : "4/6"}`} style={{ backgroundColor: pulseBgLight }} />
+                        ))}
                     </div>
                     <div className="flex gap-2 mb-5">
                         <div className="h-11 w-36 rounded-xl" style={{ backgroundColor: pulseBgLight }} />
@@ -101,18 +116,14 @@ export default function ShareResource({ onBack, onNavigate }) {
         );
     }
 
-    // ─── Error state ────────────────────────────────────────────
+    // ─── Error state ──────────────────────────────────────
     if (error) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-5" style={{ backgroundColor: pageBg }}>
                 <p className="text-sm font-medium" style={{ color: textSecondary }}>
                     ⚠️ Failed to load resource: {error}
                 </p>
-                <button
-                    onClick={handleBackToLibrary}
-                    className="text-sm underline"
-                    style={{ color: textSecondary }}
-                >
+                <button onClick={handleBackToLibrary} className="text-sm underline" style={{ color: textSecondary }}>
                     ← Back to Library
                 </button>
             </div>
@@ -131,12 +142,11 @@ export default function ShareResource({ onBack, onNavigate }) {
                     onMouseEnter={(e) => { e.currentTarget.style.color = backHover; }}
                     onMouseLeave={(e) => { e.currentTarget.style.color = textSecondary; }}
                 >
-                    <ArrowLeft size={13} />
-                    Back to Library
+                    <ArrowLeft size={13} /> Back to Library
                 </button>
 
                 {/* ── Main Card ── */}
-                <div className="rounded-2xl px-6 pt-6 pb-7 shadow-sm mb-5" style={{ backgroundColor: cardBg }}>
+                <div className="rounded-2xl px-8 pt-8 pb-9 shadow-sm mb-5" style={{ backgroundColor: cardBg }}>
 
                     {/* Badges */}
                     <div className="flex items-center gap-2 flex-wrap mb-3">
@@ -147,19 +157,26 @@ export default function ShareResource({ onBack, onNavigate }) {
                                 : { color: "#2563eb", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe" }}
                         >
                             <BookOpen size={11} />
-                            {data?.type || "Course"}
+                            {data?.contentType || "Resource"}
                         </span>
-                        <span
-                            className="flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full"
-                            style={isDarkMode
-                                ? { color: "#86efac", backgroundColor: "rgba(34,197,94,0.2)", border: "1px solid #15803d" }
-                                : { color: "#15803d", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0" }}
-                        >
-                            ✓ {data?.status || "Approved"}
-                        </span>
-                        {data?.track && (
-                            <span className="text-[11px] font-medium px-3 py-1 rounded-full border" style={{ color: textPrimary, borderColor }}>
-                                {data.track}
+
+                        {categoryName && (
+                            <span
+                                className="text-[11px] font-medium px-3 py-1 rounded-full border"
+                                style={{ color: textPrimary, borderColor }}
+                            >
+                                {categoryName}
+                            </span>
+                        )}
+
+                        {resourceType && (
+                            <span
+                                className="text-[11px] font-medium px-3 py-1 rounded-full"
+                                style={isDarkMode
+                                    ? { color: "#a0b4c4", backgroundColor: "rgba(100,120,140,0.25)" }
+                                    : { color: "#4a6578", backgroundColor: "rgba(100,120,140,0.1)" }}
+                            >
+                                {resourceType}
                             </span>
                         )}
                     </div>
@@ -167,7 +184,7 @@ export default function ShareResource({ onBack, onNavigate }) {
                     {/* Title */}
                     <h1
                         className="leading-tight mb-3"
-                        style={{ fontSize: "2rem", fontWeight: 900, fontFamily: "sans-serif", color: textPrimary }}
+                        style={{ fontSize: "2.2rem", fontWeight: 900, fontFamily: "sans-serif", color: textPrimary }}
                     >
                         {data?.title}
                     </h1>
@@ -183,7 +200,7 @@ export default function ShareResource({ onBack, onNavigate }) {
                             onClick={handleOpenResource}
                             className="flex items-center gap-2 bg-[#2C3E50] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#1a2530] transition-colors cursor-pointer"
                         >
-                            🔗 Open Resource
+                             Open Resource
                         </button>
                         <button
                             onClick={handleCopyLink}
@@ -192,16 +209,16 @@ export default function ShareResource({ onBack, onNavigate }) {
                             onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = btnSecondaryHover; }}
                             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = btnSecondaryBg; }}
                         >
-                            {copied ? "✓ Copied!" : "📋 Copy Link"}
+                            {copied ? "✓ Copied!" : "Copy Link"}
                         </button>
                     </div>
 
                     {/* Meta Grid 2×2 */}
                     <div className="grid grid-cols-2 gap-3">
                         {[
-                            { label: "TRACK", value: data?.track || "—" },
-                            { label: "TYPE", value: data?.type || "—" },
-                            { label: "RESOURCE TYPE ID", value: data?.resourceTypeId ?? "—" },
+                            { label: "CATEGORY", value: categoryName || "—" },
+                            { label: "RESOURCE TYPE", value: resourceType || "—" },
+                            { label: "PRICING", value: isFree ? "Free" : isPaid ? "Paid" : "—" },
                             { label: "ADDED BY", value: data?.addedBy || "Community" },
                         ].map(({ label, value }) => (
                             <div key={label} className="rounded-xl px-4 py-3" style={{ backgroundColor: metaBoxBg }}>
@@ -214,11 +231,14 @@ export default function ShareResource({ onBack, onNavigate }) {
                     </div>
                 </div>
 
-                {/* ── More from Track ── */}
+                {/* ── More from Category ── */}
                 {relatedResources.length > 0 && (
                     <>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-3 px-1" style={{ color: sectionLabel }}>
-                            More from {data?.track} Track
+                        <p
+                            className="text-[10px] font-bold uppercase tracking-widest mb-3 px-1"
+                            style={{ color: sectionLabel }}
+                        >
+                            More from {categoryName || "this"} Track
                         </p>
                         <div className="flex flex-col gap-3">
                             {relatedResources.map((item) => (
@@ -233,7 +253,9 @@ export default function ShareResource({ onBack, onNavigate }) {
                                         <p className="text-sm font-semibold truncate" style={{ color: textPrimary }}>
                                             {item.title}
                                         </p>
-                                        <p className="text-xs" style={{ color: textSecondary }}>{item.type}</p>
+                                        <p className="text-xs" style={{ color: textSecondary }}>
+                                            {RESOURCE_TYPE_MAP[item.resourceTypeId] || item.type || "Resource"}
+                                        </p>
                                     </div>
                                     <ArrowRight size={16} className="flex-shrink-0" style={{ color: textSecondary }} />
                                 </button>

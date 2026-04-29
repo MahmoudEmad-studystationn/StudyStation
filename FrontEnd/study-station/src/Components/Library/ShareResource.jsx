@@ -1,43 +1,141 @@
-import { useState, useEffect, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { FaHome, FaHeadphones, FaUsers, FaFolder, FaSignOutAlt } from "react-icons/fa";
-import { FaFilePen } from "react-icons/fa6";
-import { IoBookSharp } from "react-icons/io5";
-import { AuthContext } from "../../context/AuthContext";
-import { toast as toastify } from "react-toastify";
-import { useThemeContext } from '../Theme/ThemeContext';
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, ArrowRight, BookOpen, List, Map } from "lucide-react";
+import { useThemeContext } from "../Theme/ThemeContext";
+import { useLibraryResource, useAllLibraryResources } from "../Services/useLibrary";
 
-// ─── Toast Component ────────────────────────────────────────
-function Toast({ message, type = "error", visible, onHide }) {
-  const isError = type === "error";
-  const isSuccess = type === "success";
+const CATEGORIES = [
+  { id: 1, label: "Frontend", example: "React, CSS, HTML" },
+  { id: 2, label: "Backend", example: "Node.js, APIs, DBs" },
+  { id: 3, label: "AI / ML", example: "PyTorch, LLMs, Data" },
+  { id: 4, label: "Cyber Security", example: "Networking, Pentesting" },
+  { id: 5, label: "UI/UX", example: "Figma, Design Systems" },
+];
 
-  const bg = isError ? "#dc2626" : "#22c55e";
-  const icon = isError ? "⚠️" : "✅";
+const RESOURCE_TYPES = [
+  { id: 1, label: "Videos", example: "YouTube, Vimeo playlists" },
+  { id: 2, label: "Articles", example: "Blog posts, Docs, Guides" },
+  { id: 3, label: "Books", example: "PDFs, eBooks, Textbooks" },
+];
 
+const PRICING_OPTIONS = [
+  { id: "Free", label: "Free", color: "#22c55e", desc: "Freely accessible" },
+  { id: "Paid", label: "Paid", color: "#f59e0b", desc: "Requires purchase" },
+];
+
+const BASE_URL = "https://study-station.runasp.net/api/Library";
+
+// ── SVG Icons ─────────────────────────────────────────────
+const IconVideo = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="1" y="3" width="10" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M11 6.5l4-2v7l-4-2V6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconArticle = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="2" y="1.5" width="12" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M5 5.5h6M5 8h6M5 10.5h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
+
+const IconBook = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M3 2.5C3 2.5 5 2 8 2s5 .5 5 .5V14s-2-.5-5-.5S3 14 3 14V2.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    <path d="M8 2v11.5" stroke="currentColor" strokeWidth="1.3" />
+  </svg>
+);
+
+const IconFrontend = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="1" y="2" width="14" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M5 14h6M8 12v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    <path d="M5 8l2-2-2-2M9 8h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconBackend = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="1" y="2" width="14" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
+    <rect x="1" y="8" width="14" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
+    <circle cx="13" cy="4" r="0.8" fill="currentColor" />
+    <circle cx="13" cy="10" r="0.8" fill="currentColor" />
+  </svg>
+);
+
+const IconAI = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
+
+const IconSecurity = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1.5L2 4v4c0 3.5 2.5 6 6 7 3.5-1 6-3.5 6-7V4L8 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    <path d="M5.5 8l1.5 1.5L10.5 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconUX = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    <circle cx="8" cy="10" r="1.5" fill="currentColor" />
+  </svg>
+);
+
+const IconFree = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1l1.8 3.6L14 5.6l-3 2.9.7 4.1L8 10.5 4.3 12.6 5 8.5 2 5.6l4.2-.6L8 1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconPaid = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M8 4.5v7M6 6.5c0-.83.9-1.5 2-1.5s2 .67 2 1.5S9.1 8 8 8s-2 .67-2 1.5S6.9 11 8 11s2-.67 2-1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
+
+const CATEGORY_ICONS = {
+  1: <IconFrontend />,
+  2: <IconBackend />,
+  3: <IconAI />,
+  4: <IconSecurity />,
+  5: <IconUX />,
+};
+
+const RESOURCE_TYPE_ICONS = {
+  1: <IconVideo />,
+  2: <IconArticle />,
+  3: <IconBook />,
+};
+
+const PRICING_ICONS = {
+  Free: <IconFree />,
+  Paid: <IconPaid />,
+};
+
+// ─── Toast (react-toastify style, top-right) ──────────────
+function Toast({ message, type = "error", visible }) {
+  const bg = type === "error" ? "#dc2626" : "#22c55e";
   return (
     <div style={{
-      position: "fixed",
-      bottom: "2rem",
-      right: "2rem",
-      zIndex: 9999,
-      background: bg,
-      color: "#fff",
-      padding: "12px 18px",
-      borderRadius: "12px",
-      fontSize: "13.5px",
-      fontWeight: 500,
-      boxShadow: "0 8px 28px rgba(0,0,0,.25)",
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      maxWidth: "320px",
-      transform: visible ? "translateY(0)" : "translateY(90px)",
+      position: "fixed", top: "1.25rem", right: "1.25rem", zIndex: 9999,
+      background: bg, color: "#fff", padding: "13px 18px", borderRadius: "10px",
+      fontSize: "13.5px", fontWeight: 500, boxShadow: "0 8px 28px rgba(0,0,0,.22)",
+      display: "flex", alignItems: "center", gap: "9px", maxWidth: "320px",
+      transform: visible ? "translateY(0)" : "translateY(-80px)",
       opacity: visible ? 1 : 0,
       transition: "all .35s cubic-bezier(.34,1.56,.64,1)",
       pointerEvents: "none",
     }}>
-      <span>{icon}</span>
+      {type === "error"
+        ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" strokeWidth="1.3"/><path d="M8 5v3.5M8 11v.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        : <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" strokeWidth="1.3"/><path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      }
       <span>{message}</span>
     </div>
   );
@@ -45,187 +143,334 @@ function Toast({ message, type = "error", visible, onHide }) {
 
 function useToast() {
   const [toast, setToast] = useState({ visible: false, message: "", type: "error" });
-
   const showToast = (message, type = "error", duration = 3500) => {
     setToast({ visible: true, message, type });
     setTimeout(() => setToast(t => ({ ...t, visible: false })), duration);
   };
-
   return { toast, showToast };
 }
 
-// ─── Sidebar ────────────────────────────────────────────────
-function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (mobile) setCollapsed(true);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const items = [
-    { icon: <FaHome />, label: "Home", path: "/home" },
-    { icon: <FaHeadphones />, label: "Solo Study", path: "/solo-study" },
-    { icon: <FaUsers />, label: "Study With Friends", path: "/study-with-friends" },
-    { icon: <FaFolder />, label: "Library", path: "/library" },
-    { icon: <FaFilePen />, label: "Posts", path: "/posts" },
-  ];
-
-  const handleLogout = () => {
-    logout();
-    toastify.success("Logged out successfully!");
-    navigate("/", { replace: true });
-  };
-
+// ─── Toggle List Component ─────────────────────────────────
+function ToggleList({ options, value, onChange, isDarkMode, columns = 1, iconMap }) {
+  const t = isDarkMode;
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
-        .sidebar-root { font-family: 'Sora', sans-serif; }
-        .sidebar-desktop { position:relative; z-index:10; height:calc(100vh - 40px); margin:20px; border-radius:20px; background:#2C3E50; box-shadow:0 6px 18px rgba(9,30,40,0.15); display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; flex-shrink:0; transition:width 0.35s cubic-bezier(0.4,0,0.2,1); }
-        .brand { display:flex; align-items:center; gap:12px; overflow:hidden; transition:padding 0.35s ease, justify-content 0.35s ease; }
-        .brand-icon-wrap { width:40px; height:40px; border-radius:12px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:18px; color:white; flex-shrink:0; }
-        .brand-text { font-size:16px; font-weight:700; color:white; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; transition:opacity 0.3s ease, max-width 0.35s ease; }
-        .brand-sub { font-size:10px; font-weight:400; color:rgba(255,255,255,0.4); letter-spacing:0.08em; text-transform:uppercase; display:block; margin-top:1px; }
-        .sb-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); margin:20px 16px; }
-        .nav-list { list-style:none; margin:0; padding:0 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
-        .nav-link { text-decoration:none; display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px; color:rgba(255,255,255,0.55); font-size:14px; font-weight:500; position:relative; transition:background 0.2s ease,color 0.2s ease; white-space:nowrap; overflow:hidden; }
-        .nav-link:hover { color:white; background:rgba(255,255,255,0.07); }
-        .nav-link.active { color:white; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.15); }
-        .nav-link.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:3px; height:60%; background:white; border-radius:0 4px 4px 0; }
-        .nav-icon { font-size:17px; flex-shrink:0; display:flex; align-items:center; }
-        .nav-label { overflow:hidden; white-space:nowrap; transition:opacity 0.3s ease, max-width 0.35s ease; }
-        .tooltip { display:none; position:absolute; left:calc(100% + 12px); top:50%; transform:translateY(-50%); background:#1e3a4f; color:white; font-size:12px; font-weight:500; padding:6px 12px; border-radius:8px; white-space:nowrap; border:1px solid rgba(255,255,255,0.1); box-shadow:0 8px 16px rgba(0,0,0,0.3); pointer-events:none; z-index:9999; }
-        .sidebar-desktop.collapsed .nav-link:hover .tooltip { display:block; }
-        .bottom-area { padding:16px 12px; border-top:1px solid rgba(255,255,255,0.06); }
-        .logout-btn { display:flex; align-items:center; gap:12px; width:100%; padding:11px 14px; border-radius:12px; background:transparent; border:none; color:rgba(255,255,255,0.45); font-size:14px; font-weight:500; font-family:'Sora',sans-serif; cursor:pointer; transition:all 0.2s ease; white-space:nowrap; overflow:hidden; }
-        .logout-btn:hover { color:#f87171; background:rgba(248,113,113,0.08); }
-        .toggle-btn { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); cursor:pointer; font-size:13px; transition:all 0.2s ease; flex-shrink:0; }
-        .toggle-btn:hover { background:rgba(255,255,255,0.12); color:white; }
-        .sidebar-mobile { position:fixed; bottom:0; left:0; right:0; height:68px; background:#2C3E50; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; padding:0 4px; z-index:1000; font-family:'Sora',sans-serif; box-shadow:0 -4px 12px rgba(0,0,0,0.2); }
-        .mobile-nav { display:flex; flex:1; justify-content:space-around; align-items:center; list-style:none; margin:0; padding:0; }
-        .mobile-nav-link { text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 12px; border-radius:12px; color:rgba(255,255,255,0.4); transition:all 0.2s ease; position:relative; }
-        .mobile-nav-link.active { color:white; }
-        .mobile-nav-link.active::after { content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%); width:20px; height:2px; background:white; border-radius:2px; }
-        .mobile-icon { font-size:20px; }
-        .mobile-label { font-size:10px; font-weight:500; letter-spacing:0.02em; }
-        .mobile-logout-btn { background:transparent; border:none; color:rgba(255,255,255,0.4); display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 12px; border-radius:12px; cursor:pointer; font-family:'Sora',sans-serif; transition:all 0.2s ease; }
-        .mobile-logout-btn:hover { color:#f87171; }
-      `}</style>
-
-      {!isMobile && (
-        <aside className={`sidebar-root sidebar-desktop${collapsed ? " collapsed" : ""}`} style={{ width: collapsed ? "84px" : "260px" }}>
-          <div>
-            <div className="brand" style={{ padding: collapsed ? "28px 0 0 0" : "28px 24px 0 24px", justifyContent: collapsed ? "center" : "flex-start" }}>
-              <div className="brand-icon-wrap"><IoBookSharp /></div>
-              <div className="brand-text" style={{ maxWidth: collapsed ? "0px" : "200px", opacity: collapsed ? 0 : 1 }}>
-                Study Station
-                <span className="brand-sub">Focus & Learn</span>
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+      gap: "8px",
+    }}>
+      {options.map((opt) => {
+        const active = String(value) === String(opt.id);
+        const accentColor = opt.color || "#8FB7CC";
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            style={{
+              display: "flex", alignItems: "center", gap: "10px",
+              padding: "10px 12px", borderRadius: "10px",
+              border: active
+                ? `2px solid ${accentColor}`
+                : `1px solid ${t ? "rgba(255,255,255,0.09)" : "rgba(44,62,80,0.12)"}`,
+              background: active
+                ? (t ? `${accentColor}18` : `${accentColor}14`)
+                : (t ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"),
+              cursor: "pointer",
+              transition: "all .18s",
+              textAlign: "left",
+              width: "100%",
+              minWidth: 0,
+              boxSizing: "border-box",
+            }}
+          >
+            <span style={{
+              color: active ? accentColor : (t ? "#9a9a9a" : "#686868"),
+              flexShrink: 0,
+              display: "flex", alignItems: "center",
+            }}>
+              {iconMap ? iconMap[opt.id] : null}
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: "13px", fontWeight: 600,
+                color: active ? accentColor : (t ? "#e0e0e0" : "#2C3E50"),
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+              }}>
+                {opt.label}
               </div>
+              {(opt.example || opt.desc) && (
+                <div style={{
+                  fontSize: "11px", color: t ? "#7a7a7a" : "#9a9a9a",
+                  marginTop: "1px", whiteSpace: "nowrap",
+                  overflow: "hidden", textOverflow: "ellipsis",
+                }}>
+                  {opt.example || opt.desc}
+                </div>
+              )}
             </div>
-            <div className="sb-divider" />
-            <ul className="nav-list">
-              {items.map((item, index) => (
-                <li key={index}>
-                  <NavLink to={item.path} className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} style={{ justifyContent: collapsed ? "center" : "flex-start" }}>
-                    <span className="nav-icon">{item.icon}</span>
-                    <span className="nav-label" style={{ maxWidth: collapsed ? "0px" : "200px", opacity: collapsed ? 0 : 1 }}>{item.label}</span>
-                    <span className="tooltip">{item.label}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bottom-area">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between" }}>
-              <button className="logout-btn" onClick={handleLogout} style={{ flex: collapsed ? "0" : "1", maxWidth: collapsed ? "0px" : "200px", opacity: collapsed ? 0 : 1, padding: collapsed ? "0" : "11px 14px", transition: "all 0.35s ease", overflow: "hidden" }}>
-                Logout
-              </button>
-              <button className="toggle-btn" onClick={() => setCollapsed(!collapsed)}>
-                <FaSignOutAlt style={{ transform: collapsed ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.35s ease" }} />
-              </button>
-            </div>
-          </div>
-        </aside>
-      )}
-
-      {isMobile && (
-        <nav className="sidebar-root sidebar-mobile">
-          <ul className="mobile-nav">
-            {items.map((item, index) => (
-              <li key={index}>
-                <NavLink to={item.path} className={({ isActive }) => `mobile-nav-link${isActive ? " active" : ""}`}>
-                  <span className="mobile-icon">{item.icon}</span>
-                  <span className="mobile-label">{item.label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-          <button className="mobile-logout-btn" onClick={handleLogout}>
-            <span className="mobile-icon"><FaSignOutAlt /></span>
-            <span className="mobile-label">Logout</span>
+            {active && (
+              <div style={{
+                width: "16px", height: "16px", borderRadius: "50%",
+                background: accentColor,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                  <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            )}
           </button>
-        </nav>
-      )}
-    </>
+        );
+      })}
+    </div>
   );
 }
 
-// ─── Icons ──────────────────────────────────────────────────
-const CoursesIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-    <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
-  </svg>
-);
-const ResourcesIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-  </svg>
-);
-const RoadmapIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z" />
-  </svg>
-);
+// ─── TypeIcon ─────────────────────────────────────────────
+const TypeIcon = ({ type, iconBg, iconColor }) => {
+  const base = "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0";
+  const style = { backgroundColor: iconBg, color: iconColor };
+  switch (type?.toLowerCase()) {
+    case "playlist": return <div className={base} style={style}><List size={18} /></div>;
+    case "roadmap": return <div className={base} style={style}><Map size={18} /></div>;
+    default: return <div className={base} style={style}><BookOpen size={18} /></div>;
+  }
+};
 
-const TYPES = [
-  { id: "courses", color: "#658FA5", label: "Courses and Playlist", Icon: CoursesIcon, typeValue: "courses" },
-  { id: "resources", color: "#3D718D", label: "Resources\nand Materials", Icon: ResourcesIcon, typeValue: "resources" },
-  { id: "roadmaps", color: "#8FB7CC", label: "Roadmaps", Icon: RoadmapIcon, typeValue: "roadmaps" },
-];
+// ─── ResourceDetail ───────────────────────────────────────
+function ResourceDetail({ onBack, onNavigate }) {
+  const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-// ── Use "/api/Library/add" so Vite proxy handles it ────────
-// Add this to your vite.config.js:
-//
-//   server: {
-//     proxy: {
-//       "/api": {
-//         target: "https://study-station.runasp.net",
-//         changeOrigin: true,
-//         secure: false,
-//       },
-//     },
-//   },
-//
-const API_ADD = "/api/Library/add";
+  const { data, isLoading, error } = useLibraryResource(id);
+  const { resources: allResources } = useAllLibraryResources();
 
-// ─── Main Page ───────────────────────────────────────────────
-export default function ShareResource() {
+  const relatedResources = allResources
+    .filter((r) => r.id !== Number(id) && r.track === data?.track)
+    .slice(0, 3);
+
+  const { isDarkMode } = useThemeContext();
+  const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
+  const cardBg = isDarkMode ? "#262626" : "#ffffff";
+  const textPrimary = isDarkMode ? "#f3f4f6" : "#2C3E50";
+  const textSecondary = isDarkMode ? "#9ca3af" : "#686868";
+  const borderColor = isDarkMode ? "#404040" : "#cbd5e1";
+  const metaBoxBg = isDarkMode ? "#1f1f1f" : "#E8EAED";
+  const typeIconBg = isDarkMode ? "#404040" : "#f1f5f9";
+  const typeIconColor = isDarkMode ? "#9ca3af" : "#686868";
+  const backHover = isDarkMode ? "#e5e7eb" : "#2C3E50";
+  const sectionLabel = isDarkMode ? "#9ca3af" : "#686868";
+  const btnSecondaryBg = isDarkMode ? "#404040" : "transparent";
+  const btnSecondaryHover = isDarkMode ? "#525252" : "#f8fafc";
+  const pulseBg = isDarkMode ? "#404040" : "#e2e8f0";
+  const pulseBgLight = isDarkMode ? "#525252" : "#f1f5f9";
+
+  const CATEGORY_MAP = { 1: "Frontend", 2: "Backend", 3: "AI / ML", 4: "Cyber Security", 5: "UI/UX" };
+  const RESOURCE_TYPE_MAP = { 1: "Videos", 2: "Articles", 3: "Books" };
+
+  const handleBackToLibrary = () => { if (onBack) onBack(); else navigate("/library"); };
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  const handleOpenResource = () => {
+    if (data?.url) window.open(data.url, "_blank", "noopener,noreferrer");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen px-5 py-6 animate-pulse" style={{ backgroundColor: pageBg }}>
+        <div className="h-4 w-28 rounded mb-5" style={{ backgroundColor: pulseBg }} />
+        <div className="rounded-2xl p-8 mb-4" style={{ backgroundColor: cardBg }}>
+          <div className="flex gap-2 mb-4">
+            {[20, 22, 18].map((w, i) => <div key={i} className={`h-7 w-${w} rounded-full`} style={{ backgroundColor: pulseBgLight }} />)}
+          </div>
+          <div className="h-12 rounded w-3/4 mb-3" style={{ backgroundColor: pulseBgLight }} />
+          <div className="space-y-2 mb-6">
+            {[100, 83, 66].map((w, i) => <div key={i} className={`h-3.5 rounded w-${w === 100 ? "full" : w === 83 ? "5/6" : "4/6"}`} style={{ backgroundColor: pulseBgLight }} />)}
+          </div>
+          <div className="flex gap-2 mb-5">
+            <div className="h-11 w-36 rounded-xl" style={{ backgroundColor: pulseBgLight }} />
+            <div className="h-11 w-28 rounded-xl" style={{ backgroundColor: pulseBgLight }} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-16 rounded-xl" style={{ backgroundColor: pulseBgLight }} />)}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-5" style={{ backgroundColor: pageBg }}>
+        <p className="text-sm font-medium" style={{ color: textSecondary }}>Failed to load resource: {error}</p>
+        <button onClick={handleBackToLibrary} className="text-sm underline" style={{ color: textSecondary }}>← Back to Library</button>
+      </div>
+    );
+  }
+
+  const categoryName = data?.categoryName || CATEGORY_MAP[data?.categoryId] || data?.category || null;
+  const resourceType = data?.resourceTypeName || RESOURCE_TYPE_MAP[data?.resourceTypeId] || null;
+  const pricing = data?.type?.toLowerCase();
+  const isPaid = pricing === "paid";
+  const isFree = pricing === "free";
+
+  return (
+    <div className="min-h-screen px-5 py-6 flex flex-col items-center" style={{ backgroundColor: pageBg }}>
+      <div className="w-full max-w-2xl">
+
+        {/* Back */}
+        <button
+          onClick={handleBackToLibrary}
+          className="flex items-center gap-1.5 text-sm transition-colors mb-5 cursor-pointer"
+          style={{ color: textSecondary, background: "none", border: "none", padding: 0 }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = backHover; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = textSecondary; }}
+        >
+          <ArrowLeft size={13} /> Back to Library
+        </button>
+
+        {/* Main Card */}
+        <div className="rounded-2xl mb-5" style={{ backgroundColor: cardBg, padding: "32px 36px 36px" }}>
+
+          {/* Badges — only content type, category, resource type */}
+          <div className="flex items-center gap-2 flex-wrap mb-4">
+            <span
+              className="flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide"
+              style={isDarkMode
+                ? { color: "#93c5fd", backgroundColor: "rgba(59,130,246,0.2)", border: "1px solid #2563eb" }
+                : { color: "#2563eb", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe" }}
+            >
+              <BookOpen size={11} />
+              {data?.contentType || "Resource"}
+            </span>
+
+            {categoryName && (
+              <span
+                className="text-[11px] font-medium px-3 py-1 rounded-full border"
+                style={{ color: textPrimary, borderColor }}
+              >
+                {categoryName}
+              </span>
+            )}
+
+            {resourceType && (
+              <span
+                className="text-[11px] font-medium px-3 py-1 rounded-full"
+                style={isDarkMode
+                  ? { color: "#a0b4c4", backgroundColor: "rgba(100,120,140,0.25)" }
+                  : { color: "#4a6578", backgroundColor: "rgba(100,120,140,0.1)" }}
+              >
+                {resourceType}
+              </span>
+            )}
+          </div>
+
+          {/* Title */}
+          <h1
+            className="leading-tight mb-3"
+            style={{ fontSize: "2.2rem", fontWeight: 900, fontFamily: "sans-serif", color: textPrimary, margin: "0 0 12px" }}
+          >
+            {data?.title}
+          </h1>
+
+          {/* Description */}
+          <p className="leading-relaxed mb-6" style={{ fontSize: "14px", color: textSecondary, margin: "0 0 22px" }}>
+            {data?.description}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 flex-wrap mb-6">
+            <button
+              onClick={handleOpenResource}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                background: "#2C3E50", color: "#fff",
+                border: "none", padding: "11px 24px", borderRadius: 12,
+                fontSize: 14, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <path d="M8 1h5v5M13 1L7 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Open Resource
+            </button>
+            <button
+              onClick={handleCopyLink}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                background: btnSecondaryBg, color: textPrimary,
+                border: `1px solid ${borderColor}`, padding: "11px 24px", borderRadius: 12,
+                fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "background .15s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = btnSecondaryHover; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = btnSecondaryBg; }}
+            >
+              {copied
+                ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                : <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4" y="1" width="8" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M2 4v8a1.5 1.5 0 001.5 1.5H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+              }
+              {copied ? "Copied!" : "Copy Link"}
+            </button>
+          </div>
+
+          {/* Meta Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "CATEGORY", value: categoryName || "—" },
+              { label: "RESOURCE TYPE", value: resourceType || "—" },
+              { label: "PRICING", value: isFree ? "Free" : isPaid ? "Paid" : "—" },
+              { label: "ADDED BY", value: data?.addedBy || "Community" },
+            ].map(({ label, value }) => (
+              <div key={label} className="rounded-xl" style={{ backgroundColor: metaBoxBg, padding: "14px 16px" }}>
+                <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: textSecondary, margin: "0 0 5px" }}>{label}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: textPrimary, margin: 0 }}>{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Related */}
+        {relatedResources.length > 0 && (
+          <>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: sectionLabel, marginBottom: 12, paddingLeft: 4 }}>
+              More from {data?.track} Track
+            </p>
+            <div className="flex flex-col gap-3">
+              {relatedResources.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate ? onNavigate(item.id) : navigate(`/library/${item.id}`)}
+                  className="rounded-2xl px-5 py-4 flex items-center gap-3 w-full text-left cursor-pointer"
+                  style={{ backgroundColor: cardBg, border: "none" }}
+                >
+                  <TypeIcon type={item.type} iconBg={typeIconBg} iconColor={typeIconColor} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate" style={{ color: textPrimary, margin: 0 }}>{item.title}</p>
+                    <p className="text-xs" style={{ color: textSecondary, margin: 0 }}>{item.type}</p>
+                  </div>
+                  <ArrowRight size={16} className="flex-shrink-0" style={{ color: textSecondary }} />
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── ShareForm ────────────────────────────────────────────
+function ShareForm() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
   const { toast, showToast } = useToast();
-
-  const [resType, setResType] = useState("resources");
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -233,195 +478,178 @@ export default function ShareResource() {
     description: "",
     categoryId: "",
     resourceTypeId: "",
+    pricing: "Free",
     url: "",
     filePath: "",
   });
 
-  const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
+  const set = (k) => (v) => setForm(f => ({ ...f, [k]: v }));
 
-  // ── Validation → shows toast instead of banner ──────────
   const validate = () => {
     if (!form.title.trim()) return "Title is required.";
-    if (!form.categoryId) return "Please select a track / category.";
+    if (!form.categoryId) return "Please select a category / track.";
+    if (!form.resourceTypeId) return "Please select a resource type.";
     if (!form.url.trim()) return "Resource URL is required.";
     return null;
   };
 
-  // ── Submit ───────────────────────────────────────────────
   const submit = async () => {
-    const validationError = validate();
-    if (validationError) {
-      showToast(validationError, "error");
-      return;
-    }
-
+    const err = validate();
+    if (err) { showToast(err, "error"); return; }
     setLoading(true);
-
-    const selectedType = TYPES.find(t => t.id === resType)?.typeValue ?? resType;
-
     const payload = {
       title: form.title.trim(),
-      type: selectedType,
+      type: form.pricing,
       url: form.url.trim(),
       filePath: form.filePath.trim() || "",
       description: form.description.trim() || "",
       categoryId: parseInt(form.categoryId, 10),
-      resourceTypeId: parseInt(form.resourceTypeId, 10) || 1,
+      resourceTypeId: parseInt(form.resourceTypeId, 10),
     };
-
     try {
-      const res = await fetch(API_ADD, {
+      const res = await fetch(`${BASE_URL}/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) {
         let msg = `Server error: ${res.status}`;
-        try {
-          const errData = await res.json();
-          msg = errData?.message || errData?.title || msg;
-        } catch (_) { }
+        try { const d = await res.json(); msg = d?.message || d?.title || msg; } catch (_) { }
         throw new Error(msg);
       }
-
       showToast("Resource submitted! Pending admin review.", "success");
-      setForm({ title: "", description: "", categoryId: "", resourceTypeId: "", url: "", filePath: "" });
-      setResType("resources");
-
-    } catch (err) {
-      showToast(err.message || "Something went wrong. Please try again.", "error");
+      setForm({ title: "", description: "", categoryId: "", resourceTypeId: "", pricing: "Free", url: "", filePath: "" });
+    } catch (e) {
+      showToast(e.message || "Something went wrong.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Theme ─────────────────────────────────────────────────
-  const t = isDarkMode ? {
-    bg: "#171717", surface: "#1f1f1f", text: "#f0f0f0", muted: "#9a9a9a",
-    border: "rgba(255,255,255,0.07)", cardBorder: "rgba(255,255,255,0.06)",
-    accentSoft: "rgba(143,183,204,0.1)", btnBg: "#8FB7CC", btnColor: "#2C3E50",
-  } : {
-    bg: "#F3F4F6", surface: "#ffffff", text: "#1a1a2e", muted: "#686868",
-    border: "rgba(44,62,80,0.1)", cardBorder: "rgba(44,62,80,0.08)",
-    accentSoft: "rgba(143,183,204,0.18)", btnBg: "#2C3E50", btnColor: "#ffffff",
+  const t = isDarkMode;
+  const th = {
+    bg: t ? "#171717" : "#F3F4F6",
+    surface: t ? "#1f1f1f" : "#ffffff",
+    text: t ? "#f0f0f0" : "#1a1a2e",
+    muted: t ? "#9a9a9a" : "#686868",
+    border: t ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)",
+    cardBorder: t ? "rgba(255,255,255,0.06)" : "rgba(44,62,80,0.08)",
+    accentSoft: t ? "rgba(143,183,204,0.1)" : "rgba(143,183,204,0.18)",
+    btnBg: t ? "#8FB7CC" : "#2C3E50",
+    btnColor: t ? "#2C3E50" : "#ffffff",
   };
 
   const inputStyle = {
-    width: "100%", padding: "9px 13px", background: t.bg,
-    border: `1px solid ${t.border}`, borderRadius: 9,
+    width: "100%", padding: "9px 13px", background: th.bg,
+    border: `1px solid ${th.border}`, borderRadius: 9,
     fontFamily: "'DM Sans', sans-serif", fontSize: 14,
-    color: t.text, outline: "none", boxSizing: "border-box",
-    WebkitAppearance: "none", appearance: "none",
+    color: th.text, outline: "none", boxSizing: "border-box",
   };
   const secLabel = {
     fontFamily: "'Syne', sans-serif", fontSize: 10.5, fontWeight: 700,
-    letterSpacing: ".14em", textTransform: "uppercase", color: t.muted,
+    letterSpacing: ".14em", textTransform: "uppercase", color: th.muted,
     marginBottom: ".9rem", paddingBottom: ".5rem",
-    borderBottom: `1px solid ${t.border}`, display: "block",
+    borderBottom: `1px solid ${th.border}`, display: "block",
   };
-  const fieldLabel = { display: "block", fontSize: 12.8, fontWeight: 500, color: t.text, marginBottom: 5 };
+  const fieldLabel = { display: "block", fontSize: 12.8, fontWeight: 500, color: th.text, marginBottom: 7 };
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: t.bg, transition: "background .3s, color .3s" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');`}</style>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: th.bg, transition: "background .3s, color .3s" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap'); @keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
-      <Sidebar />
+      <div style={{ flex: 1, overflowY: "auto", height: "100vh", fontFamily: "'DM Sans', sans-serif", color: th.text }}>
+        <div style={{ maxWidth: 660, margin: "0 auto", padding: "2rem 2rem 4rem" }}>
 
-      <div style={{ flex: 1, overflowY: "auto", height: "100vh", fontFamily: "'DM Sans', sans-serif", color: t.text }}>
-        <div style={{ maxWidth: 640, margin: "0 auto", padding: "2rem 2rem 4rem" }}>
-
+          {/* Back */}
           <button
             onClick={() => navigate("/library")}
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, color: t.muted, cursor: "pointer", border: "none", background: "none", fontFamily: "'DM Sans', sans-serif", padding: 0, marginBottom: "1.5rem" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, color: th.muted, cursor: "pointer", border: "none", background: "none", fontFamily: "'DM Sans', sans-serif", padding: 0, marginBottom: "1.5rem" }}
           >
-            ← Back to Library
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9 2L5 7l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Back to Library
           </button>
 
           <div style={{ marginBottom: "1.25rem" }}>
-            <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "1.65rem", color: t.text, marginBottom: ".4rem" }}>Contribute a Resource</h1>
-            <p style={{ color: t.muted, fontSize: 14, lineHeight: 1.6 }}>Share a course, video, article, or tool with the community. Your submission will be reviewed by an admin before going live.</p>
+            <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "1.65rem", color: th.text, marginBottom: ".4rem" }}>Contribute a Resource</h1>
+            <p style={{ color: th.muted, fontSize: 14, lineHeight: 1.6 }}>Share a course, video, article, or tool with the community. Your submission will be reviewed by an admin before going live.</p>
           </div>
 
-          <div style={{ background: t.accentSoft, border: "1px solid rgba(143,183,204,.3)", borderRadius: 12, padding: "11px 14px", display: "flex", alignItems: "flex-start", gap: 9, marginBottom: "1.5rem", fontSize: 13, color: t.text, lineHeight: 1.55 }}>
-            <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>💡</span>
+          {/* Info banner */}
+          <div style={{ background: th.accentSoft, border: "1px solid rgba(143,183,204,.3)", borderRadius: 12, padding: "11px 14px", display: "flex", alignItems: "flex-start", gap: 9, marginBottom: "1.5rem", fontSize: 13, color: th.text, lineHeight: 1.55 }}>
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0, marginTop: 2, color: "#8FB7CC" }}>
+              <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+              <path d="M7.5 6.5v4M7.5 4.5v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
             <span>Submissions are <strong>reviewed before publishing</strong>. This keeps the library high-quality and organized for everyone.</span>
           </div>
 
-          <div style={{ background: t.surface, border: `1px solid ${t.cardBorder}`, borderRadius: 18, overflow: "hidden" }}>
+          <div style={{ background: th.surface, border: `1px solid ${th.cardBorder}`, borderRadius: 18, overflow: "hidden" }}>
             <div style={{ height: 3, background: "linear-gradient(90deg, #2C3E50, #8FB7CC)" }} />
             <div style={{ padding: "1.75rem" }}>
 
-              {/* Resource Type */}
-              <span style={secLabel}>Resource Type</span>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: "1.5rem" }}>
-                {TYPES.map(({ id, color, label, Icon }) => {
-                  const active = resType === id;
-                  return (
-                    <div key={id} onClick={() => setResType(id)} style={{
-                      background: color, borderRadius: 12, padding: "12px 8px",
-                      cursor: "pointer", display: "flex", flexDirection: "column",
-                      alignItems: "center", justifyContent: "center", gap: 8, minHeight: 80,
-                      boxShadow: active ? `0 4px 16px ${color}88` : "none",
-                      opacity: active ? 1 : 0.78, transition: "all .2s",
-                      border: active ? "2px solid rgba(255,255,255,0.5)" : "2px solid transparent",
-                    }}>
-                      <Icon />
-                      <div style={{ color: "white", fontWeight: 600, fontSize: 12, lineHeight: 1.3, textAlign: "center", whiteSpace: "pre-line" }}>{label}</div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div style={{ height: 1, background: t.border, margin: "1.5rem 0" }} />
+              {/* Basic Info */}
               <span style={secLabel}>Basic Info</span>
-
-              {/* Title */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>Title <span style={{ color: "#dc2626" }}>*</span></label>
-                <input style={inputStyle} value={form.title} onChange={set("title")} placeholder="e.g. React for Beginners — Full Course" />
+                <input style={inputStyle} value={form.title} onChange={e => set("title")(e.target.value)} placeholder="e.g. React for Beginners — Full Course" />
               </div>
-
-              {/* Description */}
-              <div style={{ marginBottom: "1.1rem" }}>
+              <div style={{ marginBottom: "1.5rem" }}>
                 <label style={fieldLabel}>Description</label>
-                <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 95 }} value={form.description} onChange={set("description")} placeholder="What will students learn? Why is this resource valuable?" />
+                <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 85 }} value={form.description} onChange={e => set("description")(e.target.value)} placeholder="What will students learn? Why is this resource valuable?" />
               </div>
 
-              {/* Track + resourceTypeId */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div>
-                  <label style={fieldLabel}>Track / Category <span style={{ color: "#dc2626" }}>*</span></label>
-                  <select style={{ ...inputStyle, color: form.categoryId ? t.text : t.muted }} value={form.categoryId} onChange={set("categoryId")}>
-                    <option value="">Select a track…</option>
-                    <option value="1">Frontend</option>
-                    <option value="2">AI / ML</option>
-                    <option value="3">Cyber Security</option>
-                    <option value="4">UI/UX</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={fieldLabel}>Resource Type ID</label>
-                  <input style={inputStyle} type="number" value={form.resourceTypeId} onChange={set("resourceTypeId")} placeholder="e.g. 1" />
-                  <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>Numerical ID in the system</div>
-                </div>
+              <div style={{ height: 1, background: th.border, margin: "1.5rem 0" }} />
+
+              {/* Category */}
+              <span style={secLabel}>Category / Track <span style={{ color: "#dc2626" }}>*</span></span>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <ToggleList options={CATEGORIES} value={form.categoryId} onChange={set("categoryId")} isDarkMode={isDarkMode} columns={2} iconMap={CATEGORY_ICONS} />
               </div>
 
-              <div style={{ height: 1, background: t.border, margin: "1.5rem 0" }} />
+              <div style={{ height: 1, background: th.border, margin: "1.5rem 0" }} />
+
+              {/* Resource Type */}
+              <span style={secLabel}>Resource Type <span style={{ color: "#dc2626" }}>*</span></span>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <ToggleList options={RESOURCE_TYPES} value={form.resourceTypeId} onChange={set("resourceTypeId")} isDarkMode={isDarkMode} columns={3} iconMap={RESOURCE_TYPE_ICONS} />
+              </div>
+
+              <div style={{ height: 1, background: th.border, margin: "1.5rem 0" }} />
+
+              {/* Pricing */}
+              <span style={secLabel}>Pricing</span>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <ToggleList options={PRICING_OPTIONS} value={form.pricing} onChange={set("pricing")} isDarkMode={isDarkMode} columns={2} iconMap={PRICING_ICONS} />
+              </div>
+
+              <div style={{ height: 1, background: th.border, margin: "1.5rem 0" }} />
+
+              {/* Links */}
               <span style={secLabel}>Links & Files</span>
-
-              {/* URL */}
               <div style={{ marginBottom: "1.1rem" }}>
                 <label style={fieldLabel}>Resource URL <span style={{ color: "#dc2626" }}>*</span></label>
-                <input style={inputStyle} type="url" value={form.url} onChange={set("url")} placeholder="https://…" />
-                <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>YouTube playlist, course link, article URL, etc.</div>
+                <input
+                  style={inputStyle} type="url"
+                  value={form.url} onChange={e => set("url")(e.target.value)}
+                  placeholder={
+                    form.resourceTypeId == 1 ? "https://youtube.com/playlist?list=..."
+                      : form.resourceTypeId == 3 ? "https://... or /uploads/book.pdf"
+                        : "https://..."
+                  }
+                />
+                <div style={{ fontSize: 11.5, color: th.muted, marginTop: 4 }}>
+                  {form.resourceTypeId == 1 && "YouTube playlist, Vimeo course link, etc."}
+                  {form.resourceTypeId == 2 && "Article URL, blog post, documentation link, etc."}
+                  {form.resourceTypeId == 3 && "eBook URL, PDF link, or online textbook URL."}
+                  {!form.resourceTypeId && "YouTube playlist, course link, article URL, etc."}
+                </div>
               </div>
-
-              {/* File Path */}
               <div style={{ marginBottom: "1.1rem" }}>
-                <label style={fieldLabel}>File Path <span style={{ fontWeight: 400, color: t.muted }}>(optional)</span></label>
-                <input style={inputStyle} value={form.filePath} onChange={set("filePath")} placeholder="/uploads/resource.pdf" />
-                <div style={{ fontSize: 11.5, color: t.muted, marginTop: 4 }}>If uploading a file directly (PDF, Doc…)</div>
+                <label style={fieldLabel}>File Path <span style={{ fontWeight: 400, color: th.muted }}>(optional)</span></label>
+                <input style={inputStyle} value={form.filePath} onChange={e => set("filePath")(e.target.value)} placeholder="/uploads/resource.pdf" />
+                <div style={{ fontSize: 11.5, color: th.muted, marginTop: 4 }}>If the file is stored on the server (PDF, Doc…)</div>
               </div>
 
               {/* Actions */}
@@ -429,32 +657,44 @@ export default function ShareResource() {
                 <button
                   onClick={() => navigate("/library")}
                   disabled={loading}
-                  style={{ padding: "9px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${t.border}`, color: t.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, cursor: "pointer", opacity: loading ? 0.5 : 1 }}
+                  style={{ padding: "9px 20px", borderRadius: 10, background: "transparent", border: `1px solid ${th.border}`, color: th.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, cursor: "pointer", opacity: loading ? 0.5 : 1 }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={submit}
                   disabled={loading}
-                  style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: t.btnBg, color: t.btnColor, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1, display: "flex", alignItems: "center", gap: 8, transition: "opacity .2s" }}
+                  style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: th.btnBg, color: th.btnColor, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1, display: "flex", alignItems: "center", gap: 8, transition: "opacity .2s" }}
                 >
                   {loading ? (
                     <>
-                      <span style={{ width: 14, height: 14, border: `2px solid ${t.btnColor}44`, borderTop: `2px solid ${t.btnColor}`, borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
+                      <span style={{ width: 14, height: 14, border: `2px solid ${th.btnColor}44`, borderTop: `2px solid ${th.btnColor}`, borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
                       Submitting…
                     </>
-                  ) : "Submit for Review →"}
+                  ) : (
+                    <>
+                      Submit for Review
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                        <path d="M2 6.5h9M7 2.5l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </>
+                  )}
                 </button>
               </div>
+
             </div>
           </div>
         </div>
       </div>
 
-      {/* Toast — validation errors + success */}
       <Toast message={toast.message} type={toast.type} visible={toast.visible} />
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
+}
+
+// ─── Export ───────────────────────────────────────────────
+export default function ShareResource({ onBack, onNavigate }) {
+  const { id } = useParams();
+  if (id) return <ResourceDetail onBack={onBack} onNavigate={onNavigate} />;
+  return <ShareForm />;
 }
