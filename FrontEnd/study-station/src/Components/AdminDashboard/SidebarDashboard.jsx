@@ -147,7 +147,7 @@ export default function SidebarDashboard() {
                     <div style={styles.adminAv}>MM</div>
                     <div>
                         <div style={styles.adminName}>Mariam Mohammed</div>
-                        <div style={styles.adminRole}>Super Admin</div>
+<div style={styles.adminRole}>User</div>
                     </div>
                 </div>
                 <button

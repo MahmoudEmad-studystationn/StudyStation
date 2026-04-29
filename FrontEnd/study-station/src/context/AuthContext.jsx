@@ -36,7 +36,7 @@ export default function AuthContextProvider({ children }) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("firstName");
-        sessionStorage.removeItem("creds"); // ✅ امسح الـ credentials
+        sessionStorage.removeItem("creds");
         setIsLoggedIn(false);
         setUserData(null);
     }, []);
@@ -49,13 +49,10 @@ export default function AuthContextProvider({ children }) {
         clearTimer();
 
         const doReLogin = async () => {
-            // ✅ جيب الـ credentials من sessionStorage
             const raw = sessionStorage.getItem("creds");
             if (!raw) return;
-
             const creds = JSON.parse(raw);
             const res = await loginApi(creds);
-
             if (res.success) {
                 const newToken = localStorage.getItem("accessToken");
                 const userId = getUserIdFromToken(newToken);
@@ -75,11 +72,9 @@ export default function AuthContextProvider({ children }) {
         const userId = getUserIdFromToken(token);
         setIsLoggedIn(true);
         if (userId) setUserData({ _id: userId });
-
         if (credentials) {
             sessionStorage.setItem("creds", JSON.stringify(credentials));
         }
-
         scheduleReLogin(token);
     }, [scheduleReLogin]);
 

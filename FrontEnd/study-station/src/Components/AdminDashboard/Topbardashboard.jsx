@@ -4,10 +4,10 @@ import { useThemeContext } from "../Theme/ThemeContext";
 export default function TopbarDashboard({ sidebarWidth = 230, breadcrumb = "Dashboard" }) {
     const { isDarkMode } = useThemeContext();
 
-    const cardBg = isDarkMode ? "#1a2330" : "#ffffff";
-    const borderColor = isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(44,62,80,0.08)";
-    const textMuted = isDarkMode ? "#5a7a8e" : "#8A9BAA";
-    const textPrimary = isDarkMode ? "#e8edf2" : "#1C2B38";
+   const cardBg      = isDarkMode ? "#2A2A2A" : "#ffffff";
+const borderColor = isDarkMode ? "#404040" : "rgba(44,62,80,0.08)";
+const textMuted   = isDarkMode ? "#B0B0B0" : "#6b6f76";
+const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
 
     return (
         <header
@@ -25,7 +25,7 @@ export default function TopbarDashboard({ sidebarWidth = 230, breadcrumb = "Dash
                 gap: "1rem",
                 zIndex: 100,
                 boxShadow: isDarkMode
-                    ? "0 1px 3px rgba(0,0,0,0.3), 0 3px 10px rgba(0,0,0,0.2)"
+                    ? "0 1px 0 rgba(255,255,255,0.04)"
                     : "0 1px 3px rgba(44,62,80,0.06), 0 3px 10px rgba(44,62,80,0.06)",
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
             }}

@@ -31,6 +31,8 @@ import Dashboard from "./Components/AdminDashboard/Dashboad";
 import UsersPage from "./Components/AdminDashboard/UserDashoard";
 import ResourcesPage from "./Components/AdminDashboard/Reasourses";
 import ModerationPage from "./Components/AdminDashboard/Moderation";
+import AdminProtectedRoute from "./Components/ProtectedRoute/AdminProtectedRoute";
+
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
@@ -214,44 +216,37 @@ function AppContent() {
 
             {/* ── Protected (Admin) ── */}
             <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard/users"
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <UsersPage />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              }
-            />
+  path="/dashboard"
+  element={
+    <AdminProtectedRoute>
+      <Dashboard />
+    </AdminProtectedRoute>
+  }
+/>
+<Route
+  path="/dashboard/users"
+  element={
+    <AdminProtectedRoute>
+      <UsersPage />
+    </AdminProtectedRoute>
+  }
+/>
 
             <Route
               path="/dashboard/resources"
               element={
-                <ProtectedRoute>
-                  <DashboardLayout>
+                <AdminProtectedRoute>
                     <ResourcesPage />
-                  </DashboardLayout>
-                </ProtectedRoute>
+                </AdminProtectedRoute>
               }
             />
 
             <Route
               path="/dashboard/moderation"
               element={
-                <ProtectedRoute>
-                  <DashboardLayout>
+                <AdminProtectedRoute>
                     <ModerationPage />
-                  </DashboardLayout>
-                </ProtectedRoute>
+                </AdminProtectedRoute>
               }
             />
           </Routes>
