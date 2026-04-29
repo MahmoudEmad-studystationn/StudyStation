@@ -64,7 +64,7 @@ function normalizeRoom(apiRoom, currentUserId) {
   const myId = currentUserId != null ? String(currentUserId) : null;
   const isMember = myId != null && (apiRoom.currentUserIsMember ?? apiRoom.isMember ?? membersArr.some(m => String(m.id) === myId || String(m.userId) === myId) ?? false);
   const isOwner = myId != null && String(apiRoom.ownerId) === myId;
-  return { id: apiRoom.id, name: apiRoom.name, subject: apiRoom.subject ?? "General", desc: apiRoom.description ?? apiRoom.desc ?? "", isPublic: apiRoom.isPublic ?? true, roomCode: apiRoom.roomCode ?? null, current: currentCount, max: maxCount, fill: fillPct, full: maxCount != null && currentCount >= maxCount, participants, isMember, isOwner };
+  return { id: apiRoom.id, name: apiRoom.name, subject: apiRoom.subject ?? "General", desc: "", createdAt: apiRoom.createdAt ?? null, isPublic: apiRoom.isPublic ?? true, roomCode: apiRoom.roomCode ?? null, current: currentCount, max: maxCount, fill: fillPct, full: maxCount != null && currentCount >= maxCount, participants, isMember, isOwner };
 }
 
 function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
@@ -133,8 +133,11 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
 
       <div style={{ fontWeight: 700, fontSize: ".95rem", color: titleColor, marginBottom: ".35rem", lineHeight: 1.3 }}>{room.name}</div>
       <div style={{ fontSize: ".82rem", color: mutedColor, lineHeight: 1.55, marginBottom: ".9rem", flex: 1, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", minHeight: "2.5rem" }}>
-        {room.desc || <span style={{ opacity: 0.45, fontStyle: "italic" }}>A {room.isPublic ? "public" : "private"} {room.subject} study room.</span>}
-      </div>
+        {room.desc || (
+          <span style={{ opacity: 0.45, fontStyle: "italic" }}>
+            Created {new Date(room.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          </span>
+        )}      </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -167,7 +170,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         </>
       )}
 
-      <button onClick={room.isMember ? () => {} : handleJoin} disabled={room.full || joining || room.isMember}
+      <button onClick={room.isMember ? () => { } : handleJoin} disabled={room.full || joining || room.isMember}
         style={{ width: "100%", padding: "8px", borderRadius: "10px", border: "none", background: room.isMember ? "rgba(52,211,153,.12)" : room.full ? surface2 : (joining ? accent : C.navy), color: room.isMember ? "#34d399" : room.full ? mutedColor : "#fff", fontFamily: "inherit", fontSize: ".8rem", fontWeight: 600, cursor: (room.full || joining || room.isMember) ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "all .2s" }}>
         {room.isMember ? <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> Already Joined</>
           : room.full ? <><IconLock /> Full</>
@@ -247,15 +250,12 @@ export default function StudyWithFriends() {
   function handleJoin(name, roomId) {
     showToast(`Joined "${name}" successfully`);
 
-    // ✅ FIX 2: Optimistic update فوري — الكارد يتغير لـ "Already Joined" على الفور
-    // من غير ما ننتظر fetchRooms (اللي بياخد وقت)
     setRooms(prev => prev.map(r =>
       r.id === roomId
         ? { ...r, isMember: true, current: r.current + 1 }
         : r
     ));
 
-    // fetchRooms في الـ background عشان نجيب الداتا الحقيقية
     fetchRooms();
 
     setTimeout(() => navigate(`/study-rooms/${roomId}`), 800);

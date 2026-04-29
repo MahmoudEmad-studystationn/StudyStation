@@ -28,12 +28,14 @@ import { HeroUIProvider } from "@heroui/react";
 import StudyRoom from "./Components/StudyWithFriends/StudyRoom";
 import ProfilePage from "./Components/Profile/Profile";
 import Dashboard from "./Components/AdminDashboard/Dashboad";
+import UsersPage from "./Components/AdminDashboard/UserDashoard";
+import ResourcesPage from "./Components/AdminDashboard/Reasourses";
+import ModerationPage from "./Components/AdminDashboard/Moderation";
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
   const [appLoading, setAppLoading] = useState(true);
-
   const { loading: authLoading } = useContext(AuthContext);
 
   useEffect(() => {
@@ -64,7 +66,7 @@ function AppContent() {
           />
 
           <Routes>
-            {/* Public */}
+            {/* ── Public ── */}
             <Route path="/" element={<WelcomePage />} />
 
             <Route
@@ -114,7 +116,7 @@ function AppContent() {
               }
             />
 
-            {/* Protected */}
+            {/* ── Protected (User) ── */}
             <Route
               path="/home"
               element={
@@ -156,6 +158,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/library"
               element={
@@ -181,7 +184,7 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <ResourceDetail/>
+                    <ResourceDetail />
                   </DashboardLayout>
                 </ProtectedRoute>
               }
@@ -198,7 +201,6 @@ function AppContent() {
               }
             />
 
-            {/* ✅ Profile */}
             <Route
               path="/profile"
               element={
@@ -209,11 +211,46 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
+            {/* ── Protected (Admin) ── */}
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/users"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <UsersPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/resources"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ResourcesPage />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/moderation"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ModerationPage />
+                  </DashboardLayout>
                 </ProtectedRoute>
               }
             />
