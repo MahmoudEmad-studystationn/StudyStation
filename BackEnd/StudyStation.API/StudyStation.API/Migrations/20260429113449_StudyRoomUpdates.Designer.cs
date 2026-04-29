@@ -12,8 +12,8 @@ using StudyStation.API.Data;
 namespace StudyStation.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260429111748_StudyRoom_updates")]
-    partial class StudyRoom_updates
+    [Migration("20260429113449_StudyRoomUpdates")]
+    partial class StudyRoomUpdates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
