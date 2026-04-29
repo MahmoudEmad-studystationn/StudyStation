@@ -29,6 +29,30 @@ const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
+// ✅ دالة مركزية لاستخراج اسم الـ member من أي شكل API
+const getMemberName = (m) =>
+    m?.userName ||
+    m?.name ||
+    m?.displayName ||
+    m?.fullName ||
+    m?.user?.userName ||
+    m?.user?.name ||
+    m?.user?.displayName ||
+    m?.profile?.name ||
+    m?.profile?.userName ||
+    "Unknown";
+
+// ✅ دالة مركزية لاستخراج اسم المُرسِل من رسالة
+const getSenderName = (msg) =>
+    msg?.senderName ||
+    msg?.userName ||
+    msg?.sender?.userName ||
+    msg?.sender?.name ||
+    msg?.sender?.displayName ||
+    msg?.user?.userName ||
+    msg?.user?.name ||
+    "Unknown";
+
 function Toast({ message, visible }) {
     return (
         <div style={{
@@ -119,6 +143,12 @@ export default function StudyRoom() {
                 getMessages(roomId),
             ]);
 
+            // ✅ DEBUG مؤقت — اشيل السطرين دول لما تتأكد الأسماء بتظهر صح
+            const rawMembers = data.members || data.participants || data.activeUsers || [];
+            if (rawMembers.length > 0) {
+                console.log("🔍 Member object shape:", JSON.stringify(rawMembers[0], null, 2));
+            }
+
             setRoom(prev => {
                 const savedTasks = localStorage.getItem(`tasks_${roomId}`);
                 const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
@@ -127,12 +157,18 @@ export default function StudyRoom() {
             });
 
             const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
+
             setMessages(prev => {
                 const optimistic = prev.filter(m => m.isOptimistic);
-                const stillPending = optimistic.filter(opt => !incoming.some(s => s.content === opt.content));
-                return [...incoming, ...stillPending].sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
+                const stillPending = optimistic.filter(
+                    opt => !incoming.some(s => s.content === opt.content)
+                );
+                return [...incoming, ...stillPending]
+                    .sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
             });
+
         } catch (err) {
+            console.error("Fetch Error:", err);
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
             if (!silent) setLoading(false);
@@ -149,11 +185,18 @@ export default function StudyRoom() {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    useEffect(() => {
+        if (room?.tasks) {
+            localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
+        }
+    }, [room?.tasks, roomId]);
+
     const sendMsg = async () => {
         const text = input.trim();
         if (!text || sending) return;
         setSending(true);
         setInput("");
+
         const optId = `opt-${Date.now()}`;
         const optimisticMsg = {
             id: optId,
@@ -162,7 +205,9 @@ export default function StudyRoom() {
             sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
+
         setMessages(prev => [...prev, optimisticMsg]);
+
         try {
             await apiSendMessage(roomId, text);
             const msgs = await getMessages(roomId);
@@ -176,7 +221,9 @@ export default function StudyRoom() {
         }
     };
 
-    const handleKey = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } };
+    const handleKey = e => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+    };
 
     const handleLeave = () => setLeaveConfirm(true);
 
@@ -222,7 +269,9 @@ export default function StudyRoom() {
 
     const handleToggleTask = async taskId => {
         setRoom(prev => {
-            const updated = (prev.tasks ?? []).map(t => t.id === taskId ? { ...t, isDone: !t.isDone } : t);
+            const updated = (prev.tasks ?? []).map(t =>
+                t.id === taskId ? { ...t, isDone: !t.isDone } : t
+            );
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
@@ -243,7 +292,9 @@ export default function StudyRoom() {
 
     const handleUpdateTask = async (taskId, newTitle) => {
         setRoom(prev => {
-            const updated = (prev.tasks ?? []).map(t => t.id === taskId ? { ...t, title: newTitle } : t);
+            const updated = (prev.tasks ?? []).map(t =>
+                t.id === taskId ? { ...t, title: newTitle } : t
+            );
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
@@ -267,7 +318,7 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members || room.participants || [];
+    const members = room.members || room.participants || room.activeUsers || [];
 
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
@@ -294,52 +345,90 @@ export default function StudyRoom() {
                     </span>
                 </div>
 
+                {/* ✅ Members في الـ Top Bar — باستخدام getMemberName */}
                 <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "nowrap", overflow: "hidden" }}>
                     {members.slice(0, 4).map((m, i) => {
-                        // تعديل مهم: فحص شامل لاستخراج الاسم الحقيقي بدل "Member"
-                        const realName = m.userName || m.name || m.user?.userName || m.user?.name || m.fullName || "Member";
+                        const name = getMemberName(m);
                         return (
-                            <div key={i} title={realName} style={{
+                            <div key={m?.id || m?.userId || i} title={name} style={{
                                 display: "flex", alignItems: "center", gap: "6px",
-                                padding: "4px 10px 4px 4px", borderRadius: 999,
-                                background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", flexShrink: 0,
+                                padding: "4px 10px 4px 4px",
+                                borderRadius: 999,
+                                background: "rgba(255,255,255,.1)",
+                                border: "1px solid rgba(255,255,255,.15)",
+                                flexShrink: 0,
                             }}>
-                                <div style={{ width: 28, height: 28, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", ...getAvStyle(i), flexShrink: 0 }}>
-                                    {getInitials(realName)}
+                                <div style={{
+                                    width: 28, height: 28, borderRadius: "50%",
+                                    border: "2px solid rgba(255,255,255,.2)",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
+                                    ...getAvStyle(i), flexShrink: 0,
+                                }}>
+                                    {getInitials(name)}
                                 </div>
-                                <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.85)", whiteSpace: "nowrap" }}>{realName}</span>
+                                <span style={{
+                                    fontSize: ".72rem", fontWeight: 700,
+                                    color: "rgba(255,255,255,.85)",
+                                    whiteSpace: "nowrap",
+                                }}>
+                                    {name}
+                                </span>
                             </div>
                         );
                     })}
-                    {members.length > 4 && <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.5)", flexShrink: 0 }}>+{members.length - 4}</span>}
+                    {members.length > 4 && (
+                        <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.5)", flexShrink: 0 }}>
+                            +{members.length - 4}
+                        </span>
+                    )}
                 </div>
 
-                <button onClick={handleLeave} disabled={leaving} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer" }}>
-                    {leaving ? "Leaving…" : "Leave Room"}
+                <button
+                    onClick={handleLeave}
+                    disabled={leaving}
+                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1 }}
+                >
+                    {leaving ? "Leaving…" : (
+                        <>
+                            <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Leave Room
+                        </>
+                    )}
                 </button>
             </div>
 
             {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
-                {/* LEFT */}
+
+                {/* ── LEFT — Panel ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
                     <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
                 </div>
 
-                {/* CENTER */}
+                {/* ── CENTER — Shared Workspace ── */}
                 <div style={{ background: pageBg, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
-                    <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>Shared Workspace</div>
+                    <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
+                        Shared Workspace
+                    </div>
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: 0.3 }}>
+                        <svg width={56} height={56} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? "#8FB7CC" : "#2C3E50"} strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
+                        </svg>
                         <span style={{ fontSize: ".82rem", fontWeight: 600, color: muted }}>Shared whiteboard coming soon</span>
                     </div>
                 </div>
 
-                {/* RIGHT (CHAT) */}
+                {/* ── RIGHT — Chat ── */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
-                            <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                            <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
                             Room Chat
                         </span>
                         <span style={{ fontSize: ".65rem", fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "rgba(52,211,153,.1)", color: "#34d399", border: "1px solid rgba(52,211,153,.2)" }}>
@@ -348,17 +437,33 @@ export default function StudyRoom() {
                     </div>
 
                     <div style={{ flex: 1, overflowY: "auto", padding: ".75rem 1.25rem", display: "flex", flexDirection: "column", gap: ".65rem", scrollbarWidth: "thin" }}>
+                        <div style={{ textAlign: "center", fontSize: ".67rem", fontWeight: 600, color: muted, padding: "4px 0" }}>
+                            Welcome to {room.name} · {room.subject}
+                        </div>
+
+                        {messages.length === 0 && !loading && (
+                            <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: 0.6 }}>
+                                No messages yet. Say hi! 👋
+                            </div>
+                        )}
+
+                        {/* ✅ الرسائل — باستخدام getSenderName */}
                         {messages.map((msg, i) => {
-                            const sName = msg.senderName || msg.userName || msg.user?.userName || "Member";
+                            const senderName = getSenderName(msg);
                             return (
-                                <div key={msg.id || i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1 }}>
-                                    <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", ...getAvStyle(i) }}>{getInitials(sName)}</div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                                            <span style={{ fontSize: ".72rem", fontWeight: 700, color: textPrimary }}>{sName}</span>
+                                <div key={msg.id || i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
+                                    <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...getAvStyle(i) }}>
+                                        {getInitials(senderName)}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 2 }}>
+                                            <span style={{ fontSize: ".72rem", fontWeight: 700, color: textPrimary }}>{senderName}</span>
                                             <span style={{ fontSize: ".62rem", color: muted }}>{fmtTime(msg.sentAt)}</span>
+                                            {msg.isOptimistic && <span style={{ fontSize: ".58rem", color: muted }}>sending…</span>}
                                         </div>
-                                        <div style={{ fontSize: ".8rem", color: msgColor, background: surface2, padding: "7px 10px", borderRadius: "4px 12px 12px 12px", display: "inline-block", maxWidth: "100%", marginTop: 2 }}>{msg.content}</div>
+                                        <div style={{ fontSize: ".8rem", color: msgColor, lineHeight: 1.55, wordBreak: "break-word", background: surface2, padding: "7px 10px", borderRadius: "4px 12px 12px 12px", display: "inline-block", maxWidth: "100%" }}>
+                                            {msg.content ?? msg.text}
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -367,17 +472,29 @@ export default function StudyRoom() {
                     </div>
 
                     <div style={{ padding: ".75rem 1.25rem", borderTop: `1px solid ${border}`, flexShrink: 0 }}>
-                        <div style={{ display: "flex", gap: 8 }}>
-                            <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Message the room…" rows={1} style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none" }} />
-                            <button onClick={sendMsg} disabled={sending || !input.trim()} style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                {sending ? "..." : ">"}
+                        <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+                            <textarea
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyDown={handleKey}
+                                placeholder="Message the room…"
+                                rows={1}
+                                disabled={sending}
+                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s" }}
+                            />
+                            <button
+                                onClick={sendMsg}
+                                disabled={sending || !input.trim()}
+                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
+                            >
+                                {sending ? <div style={{ width: 12, height: 12, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .6s linear infinite" }} /> : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ConfirmModal isOpen={leaveConfirm} title="Leave Room" body={`Are you sure you want to leave "${room?.name}"?`} onConfirm={confirmLeave} onCancel={() => setLeaveConfirm(false)} isDarkMode={isDarkMode} />
+            <ConfirmModal isOpen={leaveConfirm} title="Leave Room" body={`Are you sure you want to leave "${room.name}"?`} confirmLabel="Leave" danger isDarkMode={isDarkMode} onConfirm={confirmLeave} onCancel={() => setLeaveConfirm(false)} />
             <Toast message={toast.msg} visible={toast.visible} />
         </div>
     );
