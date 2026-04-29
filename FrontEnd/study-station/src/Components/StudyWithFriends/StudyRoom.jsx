@@ -29,7 +29,6 @@ const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-// ── Toast ──────────────────────────────────────────────────────────────────
 function Toast({ message, visible }) {
     return (
         <div style={{
@@ -49,7 +48,6 @@ function Toast({ message, visible }) {
     );
 }
 
-// ── Confirm Modal ───────────────────────────────────────────────────────────
 function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = false, onConfirm, onCancel, isDarkMode }) {
     if (!isOpen) return null;
     const surface = isDarkMode ? "#1f1f1f" : "#fff";
@@ -57,8 +55,10 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
     const text = isDarkMode ? "#EDF2F7" : "#1C2B38";
     const text2 = isDarkMode ? "#A0AEC0" : "#4A5568";
     return (
-        <div style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(28,43,56,.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}
-            onClick={e => e.target === e.currentTarget && onCancel()}>
+        <div
+            style={{ position: "fixed", inset: 0, zIndex: 900, background: "rgba(28,43,56,.55)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}
+            onClick={e => e.target === e.currentTarget && onCancel()}
+        >
             <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 20, padding: "1.75rem 2rem", width: "100%", maxWidth: 400, boxShadow: "0 8px 40px rgba(0,0,0,.18)" }}>
                 <div style={{ fontSize: "1rem", fontWeight: 800, color: text, marginBottom: ".5rem" }}>{title}</div>
                 <div style={{ fontSize: ".85rem", color: text2, lineHeight: 1.6, marginBottom: "1.5rem" }}>{body}</div>
@@ -80,9 +80,13 @@ export default function StudyRoom() {
     const navigate = useNavigate();
     const { isDarkMode } = useThemeContext();
 
-    // ── Core state ─────────────────────────────────────────────────────────
     const [room, setRoom] = useState(null);
-    const [messages, setMessages] = useState([]);
+
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem(`messages_${roomId}`);
+        return saved ? JSON.parse(saved) : [];
+    });
+
     const [input, setInput] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -93,11 +97,10 @@ export default function StudyRoom() {
     const [leaveConfirm, setLeaveConfirm] = useState(false);
 
     const tasksRef = useRef([]);
-
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
+    const manualLeaveRef = useRef(false);
 
-    // ── Design tokens ──────────────────────────────────────────────────────
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#1e1e1e" : "#fff";
     const surface2 = isDarkMode ? "#252525" : "#EAECF0";
@@ -113,15 +116,10 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ضيف ده جوه الـ StudyRoom component فوق الـ state declarations
-    const currentUserId = (() => {
-        try {
-            const token = localStorage.getItem("accessToken");
-            if (!token) return null;
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload?.sub ?? null;
-        } catch { return null; }
-    })();
+    // ✅ FIX: استخراج الـ members من أي اسم ممكن يرجعه الـ API
+    const extractMembers = (data) => {
+        return data.members ?? data.participants ?? data.users ?? data.roomMembers ?? [];
+    };
 
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
@@ -129,31 +127,37 @@ export default function StudyRoom() {
         try {
             const data = await getRoomById(roomId);
 
+            console.log("Room data from API:", data); // ← شايف إيه بييجي من السيرفر
+
+            // ✅ FIX: استخراج الـ members بشكل صحيح
+            const freshMembers = extractMembers(data);
+
             setRoom(prev => {
                 if (!prev) {
-                    tasksRef.current = data.tasks ?? [];
-                    return data;
+                    const savedTasks = localStorage.getItem(`tasks_${roomId}`);
+                    const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
+                    tasksRef.current = localTasks;
+                    return { ...data, tasks: localTasks, members: freshMembers };
                 }
-                return { ...data, tasks: tasksRef.current };
+                // ✅ FIX: محتفظين بالـ tasks المحلية بس بنحدث الـ members من السيرفر دايمًا
+                return { ...data, tasks: tasksRef.current, members: freshMembers };
             });
 
-            setMessages(prev => {
-                const incoming = data.messages ?? [];
-                if (prev.length === 0) {
-                    return incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
-                }
-                const confirmedIds = new Set(
-                    prev.filter(m => !m.isOptimistic).map(m => m.id)
-                );
-                const newOnes = incoming.filter(m => !confirmedIds.has(m.id));
-                if (!newOnes.length) return prev;
-                const confirmed = prev.filter(m => !m.isOptimistic);
-                return [...confirmed, ...newOnes].sort(
-                    (a, b) => new Date(a.sentAt) - new Date(b.sentAt)
-                );
-            });
+            if (data.messages && Array.isArray(data.messages)) {
+                setMessages(prev => {
+                    const incoming = data.messages;
+                    const existingIds = new Set(prev.map(m => m.id));
+                    const newOnes = incoming.filter(m => !existingIds.has(m.id));
+                    if (newOnes.length === 0 && prev.length > 0) return prev;
+                    const merged = [...prev, ...newOnes].sort(
+                        (a, b) => new Date(a.sentAt || Date.now()) - new Date(b.sentAt || Date.now())
+                    );
+                    return merged;
+                });
+            }
 
         } catch (err) {
+            console.error("Fetch Error:", err);
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
             if (!silent) setLoading(false);
@@ -163,14 +167,32 @@ export default function StudyRoom() {
     useEffect(() => {
         fetchRoom();
         pollRef.current = setInterval(() => fetchRoom(true), 5000);
-        return () => clearInterval(pollRef.current);
-    }, [fetchRoom]);
+
+        return () => {
+            clearInterval(pollRef.current);
+            if (!manualLeaveRef.current) {
+                leaveRoom(roomId).catch(() => { });
+            }
+            localStorage.removeItem(`messages_${roomId}`);
+        };
+    }, [fetchRoom, roomId]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // ── Send message ────────────────────────────────────────────────────────
+    useEffect(() => {
+        if (room?.tasks) {
+            localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
+        }
+    }, [room?.tasks, roomId]);
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            localStorage.setItem(`messages_${roomId}`, JSON.stringify(messages.filter(m => !m.isOptimistic)));
+        }
+    }, [messages, roomId]);
+
     const sendMsg = async () => {
         const text = input.trim();
         if (!text || sending) return;
@@ -185,14 +207,23 @@ export default function StudyRoom() {
             sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
+
         setMessages(prev => [...prev, optimisticMsg]);
 
         try {
             await apiSendMessage(roomId, text);
             const msgs = await getMessages(roomId);
             const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
-            setMessages(incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt)));
-        } catch (err) {
+
+            setMessages(prev => {
+                const filtered = prev.filter(m => m.id !== optId);
+                const existingIds = new Set(filtered.map(m => m.id));
+                const newOnes = incoming.filter(m => !existingIds.has(m.id));
+                return [...filtered, ...newOnes].sort(
+                    (a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0)
+                );
+            });
+        } catch {
             setMessages(prev => prev.filter(m => m.id !== optId));
             showToast("Failed to send message");
         } finally {
@@ -204,24 +235,23 @@ export default function StudyRoom() {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
     };
 
-    // ── Leave room ──────────────────────────────────────────────────────────
     const handleLeave = () => setLeaveConfirm(true);
 
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
         try {
+            manualLeaveRef.current = true;
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
+            localStorage.removeItem(`messages_${roomId}`);
             navigate("/study-with-friends");
         } catch (err) {
-            console.error(err);
             setLeaving(false);
             showToast("Failed to leave room");
         }
     };
 
-    // ── Focus session ────────────────────────────────────────────────────────
     const handleStartFocus = async (durationMinutes = 25) => {
         try {
             const session = await startFocusSession(roomId, durationMinutes);
@@ -250,7 +280,6 @@ export default function StudyRoom() {
     };
 
     const handleToggleTask = async taskId => {
-        // Optimistic update
         setRoom(prev => {
             const updated = (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, isDone: !t.isDone } : t
@@ -258,18 +287,7 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await toggleTask(roomId, taskId);
-        } catch (err) {
-            // Rollback
-            setRoom(prev => {
-                const rolled = (prev.tasks ?? []).map(t =>
-                    t.id === taskId ? { ...t, isDone: !t.isDone } : t
-                );
-                tasksRef.current = rolled;
-                return { ...prev, tasks: rolled };
-            });
-        }
+        try { await toggleTask(roomId, taskId); } catch { fetchRoom(true); }
     };
 
     const handleDeleteTask = async taskId => {
@@ -279,18 +297,12 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await deleteTask(roomId, taskId);
-        } catch (err) {
-            setRoom(prev => {
-                tasksRef.current = backup;
-                return { ...prev, tasks: backup };
-            });
+        try { await deleteTask(roomId, taskId); } catch {
+            setRoom(prev => { tasksRef.current = backup; return { ...prev, tasks: backup }; });
         }
     };
 
     const handleUpdateTask = async (taskId, newTitle) => {
-        // Optimistic update
         setRoom(prev => {
             const updated = (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, title: newTitle } : t
@@ -298,16 +310,10 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await updateTask(roomId, taskId, newTitle);
-        } catch (err) {
-            console.error("Update task failed", err);
-            showToast("Failed to update task");
-        }
+        try { await updateTask(roomId, taskId, newTitle); } catch { showToast("Update failed"); }
     };
 
-    // ── Loading / Error ──────────────────────────────────────────────────────
-    if (loading) return (
+    if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -324,7 +330,8 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members ?? [];
+    // ✅ FIX: بنستخدم extractMembers هنا كمان عشان نضمن إن الـ members دايمًا موجودة
+    const members = extractMembers(room);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
@@ -333,7 +340,7 @@ export default function StudyRoom() {
                 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 50% { box-shadow: 0 0 0 5px rgba(52,211,153,0); } }
             `}</style>
 
-            {/* TOP BAR */}
+            {/* ── TOP BAR ── */}
             <div style={{ background: "#2C3E50", height: 60, flexShrink: 0, display: "flex", alignItems: "center", padding: "0 1.5rem", gap: "1rem", borderBottom: "1px solid rgba(0,0,0,.15)" }}>
                 <div style={{ flex: 1, display: "flex", alignItems: "center", gap: ".75rem" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -351,19 +358,45 @@ export default function StudyRoom() {
                     </span>
                 </div>
 
+                {/* ✅ FIX: الـ members avatars بتتعرض صح دلوقتي */}
                 <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
-                    {members.slice(0, 4).map((m, i) => (
-                        <div key={i} title={m.userName ?? m.name} style={{ width: 30, height: 30, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", ...getAvStyle(i), flexShrink: 0 }}>
-                            {getInitials(m.userName ?? m.name ?? "")}
+                    {members.slice(0, 4).map((m, i) => {
+                        const name = m.userName ?? m.name ?? m.displayName ?? m.username ?? "?";
+                        return (
+                            <div
+                                key={m.id ?? m.userId ?? i}
+                                title={name}
+                                style={{
+                                    width: 30, height: 30, borderRadius: "50%",
+                                    border: "2px solid rgba(255,255,255,.2)",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
+                                    ...getAvStyle(i), flexShrink: 0,
+                                    cursor: "default",
+                                }}
+                            >
+                                {getInitials(name)}
+                            </div>
+                        );
+                    })}
+                    {/* لو في أكتر من 4 members، بنعرض +X */}
+                    {members.length > 4 && (
+                        <div style={{
+                            width: 30, height: 30, borderRadius: "50%",
+                            border: "2px solid rgba(255,255,255,.2)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: ".55rem", fontWeight: 800, color: "#fff",
+                            background: "rgba(255,255,255,.15)", flexShrink: 0,
+                        }}>
+                            +{members.length - 4}
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 <button
-                    onClick={handleLeave} disabled={leaving}
+                    onClick={handleLeave}
+                    disabled={leaving}
                     style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1 }}
-                    onMouseEnter={e => { if (!leaving) e.currentTarget.style.background = "rgba(248,113,113,.28)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(248,113,113,.18)"; }}
                 >
                     {leaving ? "Leaving…" : (
                         <>
@@ -376,24 +409,13 @@ export default function StudyRoom() {
                 </button>
             </div>
 
-            {/* 3-COLUMN LAYOUT */}
+            {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
-                {/* LEFT — Timer + Todo */}
+                {/* LEFT — Timer + ToDo */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                    <TimerStudyRoom
-                        roomId={roomId}
-                        onStart={handleStartFocus}
-                        onStop={handleStopFocus}
-                        isActive={!!sessionId}
-                    />
-                    <ToDoStudyRoom
-                        tasks={room.tasks ?? []}
-                        onAdd={handleAddTask}
-                        onToggle={handleToggleTask}
-                        onUpdate={handleUpdateTask}
-                        onDelete={handleDeleteTask}
-                    />
+                    <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
+                    <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
                 </div>
 
                 {/* CENTER — Shared Workspace */}
@@ -401,7 +423,7 @@ export default function StudyRoom() {
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
                         Shared Workspace
                     </div>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: .3 }}>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: 0.3 }}>
                         <svg width={56} height={56} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? "#8FB7CC" : "#2C3E50"} strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
                         </svg>
@@ -409,8 +431,9 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* RIGHT — Chat */}
+                {/* RIGHT — CHAT SECTION */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                    {/* Chat Header */}
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
                             <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -428,17 +451,21 @@ export default function StudyRoom() {
                         <div style={{ textAlign: "center", fontSize: ".67rem", fontWeight: 600, color: muted, padding: "4px 0" }}>
                             Welcome to {room.name} · {room.subject}
                         </div>
-                        {messages.length === 0 && (
-                            <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: .6 }}>
+
+                        {messages.length === 0 && !loading && (
+                            <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: 0.6 }}>
                                 No messages yet. Say hi! 👋
                             </div>
                         )}
+
                         {messages.map((msg, i) => {
-                            const senderName = msg.senderName ?? msg.userName ?? "Member";
-                            const memberIndex = members.findIndex(m => (m.userName ?? m.name) === senderName);
+                            const senderName = msg.senderName ?? msg.userName ?? msg.displayName ?? "Member";
+                            const memberIndex = members.findIndex(m =>
+                                (m.userName ?? m.name ?? m.displayName ?? m.username) === senderName
+                            );
                             const avStyle = getAvStyle(memberIndex >= 0 ? memberIndex : i);
                             return (
-                                <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? .65 : 1, transition: "opacity .3s" }}>
+                                <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
                                     <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...avStyle }}>
                                         {getInitials(senderName)}
                                     </div>
@@ -458,7 +485,7 @@ export default function StudyRoom() {
                         <div ref={bottomRef} />
                     </div>
 
-                    {/* Chat input */}
+                    {/* Input */}
                     <div style={{ padding: ".75rem 1.25rem", borderTop: `1px solid ${border}`, flexShrink: 0 }}>
                         <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                             <textarea
@@ -468,22 +495,18 @@ export default function StudyRoom() {
                                 placeholder="Message the room…"
                                 rows={1}
                                 disabled={sending}
-                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, scrollbarWidth: "thin", transition: "border .2s", opacity: sending ? .7 : 1 }}
+                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s", opacity: sending ? 0.7 : 1 }}
                                 onFocus={e => e.currentTarget.style.borderColor = "#8FB7CC"}
                                 onBlur={e => e.currentTarget.style.borderColor = border}
                             />
                             <button
                                 onClick={sendMsg}
                                 disabled={sending || !input.trim()}
-                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background .2s", opacity: (sending || !input.trim()) ? .5 : 1 }}
-                                onMouseEnter={e => e.currentTarget.style.background = "#3D718D"}
-                                onMouseLeave={e => e.currentTarget.style.background = sendBtnBg}
+                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background 0.2s", opacity: (sending || !input.trim()) ? 0.5 : 1 }}
                             >
                                 {sending
-                                    ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", display: "block", animation: "spin .6s linear infinite" }} />
-                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                                    </svg>
+                                    ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.6s linear infinite" }} />
+                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
                                 }
                             </button>
                         </div>
@@ -491,7 +514,6 @@ export default function StudyRoom() {
                 </div>
             </div>
 
-            {/* Leave confirm */}
             <ConfirmModal
                 isOpen={leaveConfirm}
                 title="Leave Room"
@@ -502,7 +524,6 @@ export default function StudyRoom() {
                 onConfirm={confirmLeave}
                 onCancel={() => setLeaveConfirm(false)}
             />
-
             <Toast message={toast.msg} visible={toast.visible} />
         </div>
     );
