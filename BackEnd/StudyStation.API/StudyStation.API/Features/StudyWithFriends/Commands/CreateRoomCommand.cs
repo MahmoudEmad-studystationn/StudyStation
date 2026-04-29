@@ -33,6 +33,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
         {
             Name = request.Dto.Name,
             Subject = request.Dto.Subject,
+            Description = request.Dto.Description,
             IsPublic = request.Dto.IsPublic,
             RoomCode = generatedCode,
             OwnerId = request.UserId,
@@ -50,7 +51,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
 
         _context.StudyRooms.Add(room);
         _context.RoomParticipants.Add(participant);
-        
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return new StudyRoomDto
@@ -58,6 +59,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
             Id = room.Id,
             Name = room.Name,
             Subject = room.Subject,
+            Description = room.Description,
             IsPublic = room.IsPublic,
             RoomCode = room.RoomCode,
             OwnerId = room.OwnerId,
