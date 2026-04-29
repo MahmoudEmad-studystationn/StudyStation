@@ -29,7 +29,6 @@ const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-// ── Toast ──────────────────────────────────────────────────────────────────
 function Toast({ message, visible }) {
     return (
         <div style={{
@@ -49,7 +48,6 @@ function Toast({ message, visible }) {
     );
 }
 
-// ── Confirm Modal ───────────────────────────────────────────────────────────
 function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = false, onConfirm, onCancel, isDarkMode }) {
     if (!isOpen) return null;
     const surface = isDarkMode ? "#1f1f1f" : "#fff";
@@ -80,15 +78,11 @@ export default function StudyRoom() {
     const navigate = useNavigate();
     const { isDarkMode } = useThemeContext();
 
-    // ── Core state ─────────────────────────────────────────────────────────
     const [room, setRoom] = useState(null);
-
-    // الحل: تحميل الرسائل من الـ LocalStorage مبدئياً عشان ما تختفيش وقت الـ Refresh
     const [messages, setMessages] = useState(() => {
         const saved = localStorage.getItem(`messages_${roomId}`);
         return saved ? JSON.parse(saved) : [];
     });
-
     const [input, setInput] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -101,8 +95,9 @@ export default function StudyRoom() {
     const tasksRef = useRef([]);
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
+    // ✅ FIX 1: ref عشان نعرف لو اليوزر ضغط Leave بنفسه (مش navigation تلقائية)
+    const manualLeaveRef = useRef(false);
 
-    // ── Design tokens ──────────────────────────────────────────────────────
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#1e1e1e" : "#fff";
     const surface2 = isDarkMode ? "#252525" : "#EAECF0";
@@ -118,14 +113,11 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ── Fixed fetchRoom Logic ──────────────────────────────────────────────
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
             const data = await getRoomById(roomId);
-
-            // Update Room & Tasks
             setRoom(prev => {
                 if (!prev) {
                     const savedTasks = localStorage.getItem(`tasks_${roomId}`);
@@ -135,28 +127,18 @@ export default function StudyRoom() {
                 }
                 return { ...data, tasks: tasksRef.current };
             });
-
-            // FIXED: تحديث الرسائل بذكاء يعتمد على الـ IDs لمنع الحذف أو التكرار
             if (data.messages && Array.isArray(data.messages)) {
                 setMessages(prev => {
                     const incoming = data.messages;
-
-                    // نجمع كل الرسائل ونستخدم Set للـ IDs عشان نمنع التكرار
                     const existingIds = new Set(prev.map(m => m.id));
                     const newOnes = incoming.filter(m => !existingIds.has(m.id));
-
-                    // لو مفيش جديد والقديم موجود، ارجع بالقديم زي ما هو
                     if (newOnes.length === 0 && prev.length > 0) return prev;
-
-                    // ادمج القديم والجديد ورتبهم
                     const merged = [...prev, ...newOnes].sort(
                         (a, b) => new Date(a.sentAt || Date.now()) - new Date(b.sentAt || Date.now())
                     );
-
                     return merged;
                 });
             }
-
         } catch (err) {
             console.error("Fetch Error:", err);
             if (!silent) setError("Could not load room. Please try again.");
@@ -168,28 +150,35 @@ export default function StudyRoom() {
     useEffect(() => {
         fetchRoom();
         pollRef.current = setInterval(() => fetchRoom(true), 5000);
-        return () => clearInterval(pollRef.current);
-    }, [fetchRoom]);
+
+        // ✅ FIX 1: لما الكومبوننت يتدمر (اليوزر خرج من الصفحة بأي طريقة)
+        // نعمل leaveRoom تلقائي عشان نضمن إن الـ API يعرف إن اليوزر مش جوا
+        return () => {
+            clearInterval(pollRef.current);
+            if (!manualLeaveRef.current) {
+                // خرج من الصفحة من غير ما يضغط Leave → نعمل leave في الـ background
+                leaveRoom(roomId).catch(() => { });
+            }
+            localStorage.removeItem(`messages_${roomId}`);
+        };
+    }, [fetchRoom, roomId]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // حفظ المهام في الـ LocalStorage
     useEffect(() => {
         if (room?.tasks) {
             localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
         }
     }, [room?.tasks, roomId]);
 
-    // حفظ الرسائل في الـ LocalStorage (للحماية من الـ Refresh)
     useEffect(() => {
         if (messages.length > 0) {
             localStorage.setItem(`messages_${roomId}`, JSON.stringify(messages.filter(m => !m.isOptimistic)));
         }
     }, [messages, roomId]);
 
-    // ── Send message ────────────────────────────────────────────────────────
     const sendMsg = async () => {
         const text = input.trim();
         if (!text || sending) return;
@@ -204,18 +193,13 @@ export default function StudyRoom() {
             sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
-
-        // إضافة الرسالة "تفاؤلياً" للشاشة فوراً
         setMessages(prev => [...prev, optimisticMsg]);
 
         try {
             await apiSendMessage(roomId, text);
-            // بعد الإرسال، نحدث الرسائل من السيرفر للتأكد من وصولها ومسح الـ Optimistic
             const msgs = await getMessages(roomId);
             const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
-
             setMessages(prev => {
-                // شيل الرسالة المؤقتة وحط الداتا اللي جاية من السيرفر
                 const filtered = prev.filter(m => m.id !== optId);
                 const existingIds = new Set(filtered.map(m => m.id));
                 const newOnes = incoming.filter(m => !existingIds.has(m.id));
@@ -233,17 +217,20 @@ export default function StudyRoom() {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
     };
 
-    // ── Handlers ──────────────────────────────────────────────────────────
     const handleLeave = () => setLeaveConfirm(true);
+
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
         try {
+            // ✅ FIX 1: نحدد إن اليوزر ضغط Leave بنفسه عشان الـ cleanup مش يعمل leaveRoom تاني
+            manualLeaveRef.current = true;
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
-            localStorage.removeItem(`messages_${roomId}`); // مسح الكاش عند الخروج النهائي
+            localStorage.removeItem(`messages_${roomId}`);
             navigate("/study-with-friends");
         } catch (err) {
+            manualLeaveRef.current = false;
             setLeaving(false);
             showToast("Failed to leave room");
         }
@@ -395,7 +382,7 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* RIGHT — CHAT SECTION */}
+                {/* RIGHT — CHAT */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
@@ -461,7 +448,10 @@ export default function StudyRoom() {
                                 disabled={sending || !input.trim()}
                                 style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background 0.2s", opacity: (sending || !input.trim()) ? 0.5 : 1 }}
                             >
-                                {sending ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.6s linear infinite" }} /> : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>}
+                                {sending
+                                    ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.6s linear infinite" }} />
+                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                                }
                             </button>
                         </div>
                     </div>
