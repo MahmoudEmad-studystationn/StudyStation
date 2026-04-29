@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { useThemeContext } from "../Theme/ThemeContext";
 
-/**
- * ToDoStudyRoom
- * التاسكات بتيجي من الـ room state الموجود في StudyRoom.jsx
- * (اللي بيتجيب من الـ API بـ getRoomById)
- * مفيش localStorage — كل روم ليها تاسكاتها الخاصة من السيرفر
- */
-export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete }) {
+export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete, onUpdate }) {
     const { isDarkMode } = useThemeContext();
-    const [input,   setInput]   = useState("");
-    const [adding,  setAdding]  = useState(false);
+    const [input,      setInput]      = useState("");
+    const [adding,     setAdding]     = useState(false);
+    const [editingId,  setEditingId]  = useState(null);
+    const [editValue,  setEditValue]  = useState("");
+    const [savingId,   setSavingId]   = useState(null);
 
-    // ─── Tokens ──────────────────────────────────────────────────────────────
     const textPrimary = isDarkMode ? "#E5E7EB" : "#1C2B38";
     const mutedColor  = isDarkMode ? "#8A9BAA" : "#8A9BAA";
     const border      = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
@@ -25,11 +21,24 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
         const text = input.trim();
         if (text.length < 2) return;
         setAdding(true);
+        try { await onAdd(text); setInput(""); }
+        finally { setAdding(false); }
+    }
+
+    function startEdit(task) {
+        setEditingId(task.id);
+        setEditValue(task.title ?? task.text ?? task.content ?? "");
+    }
+
+    async function saveEdit(taskId) {
+        const val = editValue.trim();
+        if (!val || val.length < 2) { setEditingId(null); return; }
+        setSavingId(taskId);
         try {
-            await onAdd(text);
-            setInput("");
+            await onUpdate(taskId, val);
+            setEditingId(null);
         } finally {
-            setAdding(false);
+            setSavingId(null);
         }
     }
 
@@ -39,7 +48,7 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
     return (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", padding: "1.25rem" }}>
 
-            {/* Section label + counter */}
+            {/* Header */}
             <div style={{
                 fontSize: ".68rem", fontWeight: 800, letterSpacing: ".06em",
                 textTransform: "uppercase", color: mutedColor, marginBottom: "1rem",
@@ -53,10 +62,7 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
                     Tasks
                 </span>
                 {total > 0 && (
-                    <span style={{
-                        fontSize: ".65rem", fontWeight: 700, padding: "2px 8px",
-                        borderRadius: 999, background: surface2, color: mutedColor,
-                    }}>
+                    <span style={{ fontSize: ".65rem", fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: surface2, color: mutedColor }}>
                         {done}/{total}
                     </span>
                 )}
@@ -71,15 +77,12 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
                     placeholder="Add a task…"
                     disabled={adding}
                     style={{
-                        flex: 1, padding: "7px 10px",
-                        background: surface3,
-                        border: `1px solid ${border}`,
-                        borderRadius: 10, fontFamily: "inherit",
-                        fontSize: ".8rem", color: textPrimary,
-                        outline: "none",
+                        flex: 1, padding: "7px 10px", background: surface3,
+                        border: `1px solid ${border}`, borderRadius: 10,
+                        fontFamily: "inherit", fontSize: ".8rem", color: textPrimary, outline: "none",
                     }}
                     onFocus={e => e.currentTarget.style.borderColor = "#8FB7CC"}
-                    onBlur={e => e.currentTarget.style.borderColor = border}
+                    onBlur={e  => e.currentTarget.style.borderColor = border}
                 />
                 <button
                     onClick={handleAdd}
@@ -93,13 +96,10 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
                         flexShrink: 0, transition: "opacity .2s",
                     }}
                 >
-                    {adding ? (
-                        <span style={{ width: 10, height: 10, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", display: "block", animation: "todoSpin .6s linear infinite" }} />
-                    ) : (
-                        <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                    )}
+                    {adding
+                        ? <span style={{ width: 10, height: 10, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", display: "block", animation: "todoSpin .6s linear infinite" }} />
+                        : <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    }
                 </button>
             </div>
 
@@ -118,15 +118,15 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
                             display: "flex", alignItems: "center", gap: 8,
                             padding: "7px 10px", borderRadius: 10,
                             background: task.isDone ? doneBg : surface3,
-                            border: `1px solid ${border}`,
-                            transition: "background .2s",
+                            border: `1px solid ${border}`, transition: "background .2s",
                         }}
                     >
                         {/* Checkbox */}
                         <button
                             onClick={() => onToggle(task.id)}
                             style={{
-                                width: 18, height: 18, borderRadius: 5, border: `1.5px solid ${task.isDone ? "#34d399" : mutedColor}`,
+                                width: 18, height: 18, borderRadius: 5,
+                                border: `1.5px solid ${task.isDone ? "#34d399" : mutedColor}`,
                                 background: task.isDone ? "#34d399" : "transparent",
                                 cursor: "pointer", display: "flex", alignItems: "center",
                                 justifyContent: "center", flexShrink: 0, transition: "all .2s",
@@ -139,15 +139,64 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete })
                             )}
                         </button>
 
-                        {/* Text */}
-                        <span style={{
-                            flex: 1, fontSize: ".78rem", color: task.isDone ? mutedColor : textPrimary,
-                            textDecoration: task.isDone ? "line-through" : "none",
-                            lineHeight: 1.4, wordBreak: "break-word",
-                            transition: "color .2s",
-                        }}>
-                            {task.title ?? task.text ?? task.content}
-                        </span>
+                        {/* Text or edit input */}
+                        {editingId === task.id ? (
+                            <input
+                                autoFocus
+                                value={editValue}
+                                onChange={e => setEditValue(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === "Enter") saveEdit(task.id);
+                                    if (e.key === "Escape") setEditingId(null);
+                                }}
+                                onBlur={() => saveEdit(task.id)}
+                                disabled={savingId === task.id}
+                                style={{
+                                    flex: 1, padding: "3px 7px", background: surface3,
+                                    border: `1px solid #8FB7CC`, borderRadius: 7,
+                                    fontFamily: "inherit", fontSize: ".78rem",
+                                    color: textPrimary, outline: "none",
+                                    opacity: savingId === task.id ? .6 : 1,
+                                }}
+                            />
+                        ) : (
+                            <span
+                                onDoubleClick={() => !task.isDone && startEdit(task)}
+                                title={!task.isDone ? "Double-click to edit" : ""}
+                                style={{
+                                    flex: 1, fontSize: ".78rem",
+                                    color: task.isDone ? mutedColor : textPrimary,
+                                    textDecoration: task.isDone ? "line-through" : "none",
+                                    lineHeight: 1.4, wordBreak: "break-word",
+                                    transition: "color .2s",
+                                    cursor: !task.isDone ? "text" : "default",
+                                }}
+                            >
+                                {task.title ?? task.text ?? task.content}
+                            </span>
+                        )}
+
+                        {/* Edit icon (visible on hover) */}
+                        {!task.isDone && editingId !== task.id && (
+                            <button
+                                onClick={() => startEdit(task)}
+                                title="Edit task"
+                                style={{
+                                    width: 22, height: 22, borderRadius: 6, border: "none",
+                                    background: "transparent", color: mutedColor,
+                                    cursor: "pointer", display: "flex", alignItems: "center",
+                                    justifyContent: "center", flexShrink: 0,
+                                    transition: "background .15s, color .15s",
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.background = "rgba(61,113,141,.12)"; e.currentTarget.style.color = "#3D718D"; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = mutedColor; }}
+                            >
+                                <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                        )}
 
                         {/* Delete */}
                         <button
