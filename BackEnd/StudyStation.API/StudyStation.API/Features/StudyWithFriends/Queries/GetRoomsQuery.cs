@@ -25,6 +25,7 @@ public class GetRoomsQueryHandler : IRequestHandler<GetRoomsQuery, List<StudyRoo
                 Id = r.Id,
                 Name = r.Name,
                 Subject = r.Subject,
+                Description = r.Description,
                 IsPublic = r.IsPublic,
                 RoomCode = r.RoomCode,
                 CreatedAt = r.CreatedAt,

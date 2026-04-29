@@ -26,6 +26,7 @@ public class GetRoomDetailsQueryHandler : IRequestHandler<GetRoomDetailsQuery, S
                 Id = r.Id,
                 Name = r.Name,
                 Subject = r.Subject,
+                Description = r.Description,
                 IsPublic = r.IsPublic,
                 RoomCode = r.RoomCode,
                 CreatedAt = r.CreatedAt,
