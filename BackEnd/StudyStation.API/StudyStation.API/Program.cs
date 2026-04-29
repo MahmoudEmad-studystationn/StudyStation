@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     {
         policy
             // .AllowAnyOrigin()
-            .WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://study-station.runasp.net", "https://study-station-alpha.vercel.app", "https://study-station-51en40xbc-mariams-projects-2d4c7ff0.vercel.app/", "https://localhost:7152")
+            .WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:5177", "https://study-station.runasp.net", "https://study-station-alpha.vercel.app", "https://study-station-51en40xbc-mariams-projects-2d4c7ff0.vercel.app/", "https://localhost:7152")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
