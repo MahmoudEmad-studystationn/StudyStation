@@ -88,9 +88,7 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
 
 function normalizeRoom(apiRoom, currentUserId) {
   const currentCount = apiRoom.participantsCount ?? apiRoom.members?.length ?? 0;
-  const maxCount = apiRoom.maxParticipants ?? apiRoom.capacity ?? 8;
-  const fillPct = maxCount > 0 ? Math.round((currentCount / maxCount) * 100) : 0;
-
+  const maxCount = apiRoom.maxParticipants ?? apiRoom.capacity ?? null; const fillPct = maxCount > 0 ? Math.round((currentCount / maxCount) * 100) : 0;
   const membersArr = apiRoom.members ?? [];
   const participants = membersArr.length > 0
     ? membersArr.slice(0, 3).map(m =>
@@ -123,7 +121,7 @@ function normalizeRoom(apiRoom, currentUserId) {
     current: currentCount,
     max: maxCount,
     fill: fillPct,
-    full: currentCount >= maxCount,
+    full: maxCount != null && currentCount >= maxCount,
     participants,
     isMember,
     isOwner,
@@ -246,7 +244,11 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         WebkitBoxOrient: "vertical",
         minHeight: "2.5rem",
       }}>
-        {room.desc || <span style={{ opacity: 0.45 }}>No description provided.</span>}
+        {room.desc || (
+          <span style={{ opacity: 0.45, fontStyle: "italic" }}>
+            A {room.isPublic ? "public" : "private"} {room.subject} study room.
+          </span>
+        )}
       </div>
 
       {/* Participants + bar */}
@@ -259,7 +261,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: ".72rem", fontWeight: 600, color: titleColor }}>
-            <IconUsers /> {room.current}/{room.max}
+            <IconUsers /> {room.current}{room.max ? `/${room.max}` : ""}
           </div>
           <div style={{ width: 50, height: 3, background: surface2, borderRadius: "999px", overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${room.fill}%`, background: accent }} />
@@ -351,26 +353,26 @@ export default function StudyWithFriends() {
   ];
 
   async function fetchRooms() {
-  setLoading(true); setError(null);
-  try {
-    const data = await getAllRooms();
-    const list = Array.isArray(data) ? data : data?.rooms ?? [];
-    
-    const detailed = await Promise.all(
-      list.map(r => getRoomById(r.id).catch(() => r))
-    );
-    
-    // ← أضف السطر ده مؤقتاً
-    console.log("🔍 First room full details:", detailed[0]);
-    console.log("🔍 All keys:", Object.keys(detailed[0] || {}));
-    
-    setRooms(detailed.map(r => normalizeRoom(r, currentUserId)));
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
+    setLoading(true); setError(null);
+    try {
+      const data = await getAllRooms();
+      const list = Array.isArray(data) ? data : data?.rooms ?? [];
+
+      const detailed = await Promise.all(
+        list.map(r => getRoomById(r.id).catch(() => r))
+      );
+
+      // ← أضف السطر ده مؤقتاً
+      console.log("🔍 First room full details:", detailed[0]);
+      console.log("🔍 All keys:", Object.keys(detailed[0] || {}));
+
+      setRooms(detailed.map(r => normalizeRoom(r, currentUserId)));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   useEffect(() => { fetchRooms(); }, []);
 

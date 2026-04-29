@@ -11,6 +11,22 @@ export const SearchIcon = (props) => (
   </svg>
 );
 
+// ── Category map (ID → name) ───────────────────────────────
+const CATEGORY_MAP = {
+  1: "Frontend",
+  2: "Backend",
+  3: "AI / ML",
+  4: "Cyber Security",
+  5: "UI/UX",
+};
+
+// ── Resource Type map (ID → name) ─────────────────────────
+const RESOURCE_TYPE_MAP = {
+  1: "Videos",
+  2: "Articles",
+  3: "Books",
+};
+
 const TYPE_STYLES = {
   roadmap:  { color: "#8FB7CC", darkBg: "rgba(143,183,204,0.18)", bg: "rgba(143,183,204,0.15)", label: "Roadmap",   icon: "M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" },
   resource: { color: "#3D718D", darkBg: "rgba(61,113,141,0.2)",   bg: "rgba(61,113,141,0.12)",  label: "Resource",  icon: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" },
@@ -58,7 +74,7 @@ function SkeletonCard({ isDarkMode }) {
   );
 }
 
-// ── Resource Card — clicking navigates to /library/:id ────
+// ── Resource Card ─────────────────────────────────────────
 function ResourceCard({ resource, isDarkMode }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
@@ -71,18 +87,26 @@ function ResourceCard({ resource, isDarkMode }) {
   const arrowBg    = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
   const arrowColor = hovered ? "#ffffff" : mutedColor;
 
-  const catLabel = resource.categoryName || resource.category || null;
+  // Resolve category name
+  const catLabel = resource.categoryName
+    || CATEGORY_MAP[resource.categoryId]
+    || resource.category
+    || null;
 
-  const handleClick = () => {
-    // Navigate to the details page
-    navigate(`/library/${resource.id}`);
-  };
+  // Resolve resource type label
+  const resTypeLabel = resource.resourceTypeName
+    || RESOURCE_TYPE_MAP[resource.resourceTypeId]
+    || null;
+
+  // Free / Paid badge
+  const isPaid = resource.type?.toLowerCase() === "paid";
+  const isFree = resource.type?.toLowerCase() === "free";
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={handleClick}
+      onClick={() => navigate(`/library/${resource.id}`)}
       style={{
         background: cardBg,
         border: `1px solid ${cardBorder}`,
@@ -105,6 +129,7 @@ function ResourceCard({ resource, isDarkMode }) {
 
       {/* Badges row */}
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: ".65rem" }}>
+        {/* Content type badge (roadmap / video / resource) */}
         <span style={{
           display: "inline-flex", alignItems: "center", gap: "5px",
           padding: "3px 9px", borderRadius: "999px",
@@ -119,6 +144,21 @@ function ResourceCard({ resource, isDarkMode }) {
           {t.label}
         </span>
 
+        {/* Resource type (Videos / Articles / Books) */}
+        {resTypeLabel && (
+          <span style={{
+            display: "inline-flex", alignItems: "center",
+            padding: "3px 9px", borderRadius: "999px",
+            fontSize: ".68rem", fontWeight: 600,
+            textTransform: "uppercase", letterSpacing: ".05em",
+            background: isDarkMode ? "rgba(100,120,140,0.25)" : "rgba(100,120,140,0.1)",
+            color: isDarkMode ? "#a0b4c4" : "#4a6578",
+          }}>
+            {resTypeLabel}
+          </span>
+        )}
+
+        {/* Category badge */}
         {catLabel && (
           <span style={{
             display: "inline-flex", alignItems: "center",
@@ -129,6 +169,22 @@ function ResourceCard({ resource, isDarkMode }) {
             color: isDarkMode ? "#B0B0B0" : "#2C3E50",
           }}>
             {catLabel}
+          </span>
+        )}
+
+        {/* Free / Paid badge */}
+        {(isFree || isPaid) && (
+          <span style={{
+            display: "inline-flex", alignItems: "center",
+            padding: "3px 9px", borderRadius: "999px",
+            fontSize: ".68rem", fontWeight: 700,
+            textTransform: "uppercase", letterSpacing: ".05em",
+            background: isFree
+              ? (isDarkMode ? "rgba(34,197,94,0.15)" : "rgba(34,197,94,0.1)")
+              : (isDarkMode ? "rgba(251,191,36,0.15)" : "rgba(251,191,36,0.12)"),
+            color: isFree ? "#22c55e" : "#f59e0b",
+          }}>
+            {isFree ? "✦ Free" : "★ Paid"}
           </span>
         )}
       </div>
@@ -153,7 +209,7 @@ function ResourceCard({ resource, isDarkMode }) {
           background: isDarkMode ? t.darkBg : t.bg,
           padding: "2px 9px", borderRadius: "999px",
         }}>
-          {SECTIONS[getSectionKey(resource.type)].label}
+          {SECTIONS[getSectionKey(resource.type)]?.label || "Resource"}
         </span>
         <div style={{
           width: "26px", height: "26px", borderRadius: "7px",
@@ -195,7 +251,6 @@ function SectionHeader({ sectionKey, count, isDarkMode }) {
   );
 }
 
-// ── Empty / Error ──────────────────────────────────────────
 function EmptyState({ isDarkMode }) {
   return (
     <div style={{ textAlign: "center", padding: "4rem 2rem", color: isDarkMode ? "#9a9a9a" : "#6b6f76" }}>
@@ -248,12 +303,15 @@ export default function Library() {
 
   useEffect(() => { fetchResources(); }, []);
 
+  // Build category filter list from resolved names
   const categories = ["All", ...new Set(
-    resources.map(r => r.categoryName || r.category).filter(Boolean)
+    resources.map(r =>
+      r.categoryName || CATEGORY_MAP[r.categoryId] || r.category
+    ).filter(Boolean)
   )];
 
   const filtered = resources.filter(r => {
-    const cat = r.categoryName || r.category || "";
+    const cat = r.categoryName || CATEGORY_MAP[r.categoryId] || r.category || "";
     const matchCat = activeFilter === "All" || cat.toLowerCase() === activeFilter.toLowerCase();
     const q = searchQuery.toLowerCase();
     const matchQ = !q ||

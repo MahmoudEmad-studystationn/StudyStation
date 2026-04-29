@@ -22,12 +22,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContextProvider from "./context/AuthContext";
 import ShareResource from "./Components/Library/ShareResource";
+import ResourceDetail from "./Components/Library/ResourceDetail";
 import { AuthContext } from "./context/AuthContext";
 import { HeroUIProvider } from "@heroui/react";
 import StudyRoom from "./Components/StudyWithFriends/StudyRoom";
-
-// ✅ الصح بعد ما شفنا مكان الملف
 import ProfilePage from "./Components/Profile/Profile";
+import Dashboard from "./Components/AdminDashboard/Dashboad";
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
@@ -152,7 +152,7 @@ function AppContent() {
               path="/study-rooms/:roomId"
               element={
                 <ProtectedRoute>
-                    <StudyRoom/>
+                  <StudyRoom />
                 </ProtectedRoute>
               }
             />
@@ -177,6 +177,17 @@ function AppContent() {
             />
 
             <Route
+              path="/library/:id"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ResourceDetail/>
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/posts"
               element={
                 <ProtectedRoute>
@@ -195,6 +206,14 @@ function AppContent() {
                   <DashboardLayout>
                     <ProfilePage />
                   </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
                 </ProtectedRoute>
               }
             />
