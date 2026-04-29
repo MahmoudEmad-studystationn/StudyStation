@@ -29,6 +29,7 @@ const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
+// ── Toast ──────────────────────────────────────────────────────────────────
 function Toast({ message, visible }) {
     return (
         <div style={{
@@ -48,6 +49,7 @@ function Toast({ message, visible }) {
     );
 }
 
+// ── Confirm Modal ───────────────────────────────────────────────────────────
 function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = false, onConfirm, onCancel, isDarkMode }) {
     if (!isOpen) return null;
     const surface = isDarkMode ? "#1f1f1f" : "#fff";
@@ -75,18 +77,96 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
     );
 }
 
+// ── Online Members Panel ────────────────────────────────────────────────────
+function OnlineMembersPanel({ members, border, surface3, textPrimary, muted }) {
+    return (
+        <div style={{ borderTop: `1px solid ${border}`, flexShrink: 0 }}>
+            {/* Header */}
+            <div style={{
+                padding: ".65rem 1rem",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+                <span style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
+                    <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Members
+                </span>
+                {/* عدد المتصلين */}
+                <span style={{
+                    fontSize: ".6rem", fontWeight: 700,
+                    padding: "2px 7px", borderRadius: 999,
+                    background: "rgba(52,211,153,.12)",
+                    color: "#34d399",
+                    border: "1px solid rgba(52,211,153,.2)",
+                }}>
+                    {members.length} online
+                </span>
+            </div>
+
+            {/* List */}
+            <div style={{ padding: "0 .75rem .75rem", display: "flex", flexDirection: "column", gap: ".35rem", maxHeight: 200, overflowY: "auto", scrollbarWidth: "thin" }}>
+                {members.map((m, i) => {
+                    const name = m.userName ?? m.name ?? "Member";
+                    return (
+                        <div key={i} style={{
+                            display: "flex", alignItems: "center", gap: ".6rem",
+                            padding: ".45rem .6rem", borderRadius: 10,
+                            background: surface3,
+                            border: `1px solid ${border}`,
+                        }}>
+                            {/* Avatar + online dot */}
+                            <div style={{ position: "relative", flexShrink: 0 }}>
+                                <div style={{
+                                    width: 28, height: 28, borderRadius: "50%",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
+                                    ...getAvStyle(i),
+                                }}>
+                                    {getInitials(name)}
+                                </div>
+                                {/* Green online dot */}
+                                <span style={{
+                                    position: "absolute", bottom: 0, right: 0,
+                                    width: 8, height: 8, borderRadius: "50%",
+                                    background: "#34d399",
+                                    border: "1.5px solid var(--dot-border, #fff)",
+                                    animation: "pulse 2s infinite",
+                                }} />
+                            </div>
+                            {/* Name */}
+                            <span style={{ fontSize: ".76rem", fontWeight: 600, color: textPrimary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                {name}
+                            </span>
+                            {/* Online badge */}
+                            <span style={{ marginLeft: "auto", fontSize: ".6rem", fontWeight: 700, color: "#34d399", flexShrink: 0 }}>
+                                ● online
+                            </span>
+                        </div>
+                    );
+                })}
+
+                {members.length === 0 && (
+                    <div style={{ textAlign: "center", fontSize: ".73rem", color: muted, padding: ".5rem 0" }}>
+                        No members yet
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function StudyRoom() {
     const { roomId } = useParams();
     const navigate = useNavigate();
     const { isDarkMode } = useThemeContext();
 
+    // ── Core state ─────────────────────────────────────────────────────────
     const [room, setRoom] = useState(null);
-
-    const [messages, setMessages] = useState(() => {
-        const saved = localStorage.getItem(`messages_${roomId}`);
-        return saved ? JSON.parse(saved) : [];
-    });
-
+    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -99,8 +179,8 @@ export default function StudyRoom() {
     const tasksRef = useRef([]);
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
-    const manualLeaveRef = useRef(false);
 
+    // ── Design tokens ──────────────────────────────────────────────────────
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#1e1e1e" : "#fff";
     const surface2 = isDarkMode ? "#252525" : "#EAECF0";
@@ -116,45 +196,36 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ✅ FIX: استخراج الـ members من أي اسم ممكن يرجعه الـ API
-    const extractMembers = (data) => {
-        return data.members ?? data.participants ?? data.users ?? data.roomMembers ?? [];
-    };
-
+    // ── fetchRoom ──────────────────────────────────────────────────────────
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
-            const data = await getRoomById(roomId);
-
-            console.log("Room data from API:", data); // ← شايف إيه بييجي من السيرفر
-
-            // ✅ FIX: استخراج الـ members بشكل صحيح
-            const freshMembers = extractMembers(data);
+            const [data, msgs] = await Promise.all([
+                getRoomById(roomId),
+                getMessages(roomId),
+            ]);
 
             setRoom(prev => {
                 if (!prev) {
                     const savedTasks = localStorage.getItem(`tasks_${roomId}`);
                     const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
                     tasksRef.current = localTasks;
-                    return { ...data, tasks: localTasks, members: freshMembers };
+                    return { ...data, tasks: localTasks };
                 }
-                // ✅ FIX: محتفظين بالـ tasks المحلية بس بنحدث الـ members من السيرفر دايمًا
-                return { ...data, tasks: tasksRef.current, members: freshMembers };
+                return { ...data, tasks: tasksRef.current };
             });
 
-            if (data.messages && Array.isArray(data.messages)) {
-                setMessages(prev => {
-                    const incoming = data.messages;
-                    const existingIds = new Set(prev.map(m => m.id));
-                    const newOnes = incoming.filter(m => !existingIds.has(m.id));
-                    if (newOnes.length === 0 && prev.length > 0) return prev;
-                    const merged = [...prev, ...newOnes].sort(
-                        (a, b) => new Date(a.sentAt || Date.now()) - new Date(b.sentAt || Date.now())
-                    );
-                    return merged;
-                });
-            }
+            const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
+
+            setMessages(prev => {
+                const optimistic = prev.filter(m => m.isOptimistic);
+                const stillPending = optimistic.filter(
+                    opt => !incoming.some(s => s.content === opt.content)
+                );
+                return [...incoming, ...stillPending]
+                    .sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
+            });
 
         } catch (err) {
             console.error("Fetch Error:", err);
@@ -167,15 +238,8 @@ export default function StudyRoom() {
     useEffect(() => {
         fetchRoom();
         pollRef.current = setInterval(() => fetchRoom(true), 5000);
-
-        return () => {
-            clearInterval(pollRef.current);
-            if (!manualLeaveRef.current) {
-                leaveRoom(roomId).catch(() => { });
-            }
-            localStorage.removeItem(`messages_${roomId}`);
-        };
-    }, [fetchRoom, roomId]);
+        return () => clearInterval(pollRef.current);
+    }, [fetchRoom]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -187,12 +251,7 @@ export default function StudyRoom() {
         }
     }, [room?.tasks, roomId]);
 
-    useEffect(() => {
-        if (messages.length > 0) {
-            localStorage.setItem(`messages_${roomId}`, JSON.stringify(messages.filter(m => !m.isOptimistic)));
-        }
-    }, [messages, roomId]);
-
+    // ── Send message ────────────────────────────────────────────────────────
     const sendMsg = async () => {
         const text = input.trim();
         if (!text || sending) return;
@@ -213,7 +272,7 @@ export default function StudyRoom() {
         try {
             await apiSendMessage(roomId, text);
             const msgs = await getMessages(roomId);
-            const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
+            const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
 
             setMessages(prev => {
                 const filtered = prev.filter(m => m.id !== optId);
@@ -235,18 +294,17 @@ export default function StudyRoom() {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
     };
 
+    // ── Handlers ──────────────────────────────────────────────────────────
     const handleLeave = () => setLeaveConfirm(true);
 
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
         try {
-            manualLeaveRef.current = true;
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
-            localStorage.removeItem(`messages_${roomId}`);
             navigate("/study-with-friends");
-        } catch (err) {
+        } catch {
             setLeaving(false);
             showToast("Failed to leave room");
         }
@@ -313,6 +371,7 @@ export default function StudyRoom() {
         try { await updateTask(roomId, taskId, newTitle); } catch { showToast("Update failed"); }
     };
 
+    // ── Loading / Error ────────────────────────────────────────────────────
     if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
@@ -330,8 +389,7 @@ export default function StudyRoom() {
         </div>
     );
 
-    // ✅ FIX: بنستخدم extractMembers هنا كمان عشان نضمن إن الـ members دايمًا موجودة
-    const members = extractMembers(room);
+    const members = room.members ?? [];
 
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
@@ -358,39 +416,12 @@ export default function StudyRoom() {
                     </span>
                 </div>
 
-                {/* ✅ FIX: الـ members avatars بتتعرض صح دلوقتي */}
                 <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
-                    {members.slice(0, 4).map((m, i) => {
-                        const name = m.userName ?? m.name ?? m.displayName ?? m.username ?? "?";
-                        return (
-                            <div
-                                key={m.id ?? m.userId ?? i}
-                                title={name}
-                                style={{
-                                    width: 30, height: 30, borderRadius: "50%",
-                                    border: "2px solid rgba(255,255,255,.2)",
-                                    display: "flex", alignItems: "center", justifyContent: "center",
-                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
-                                    ...getAvStyle(i), flexShrink: 0,
-                                    cursor: "default",
-                                }}
-                            >
-                                {getInitials(name)}
-                            </div>
-                        );
-                    })}
-                    {/* لو في أكتر من 4 members، بنعرض +X */}
-                    {members.length > 4 && (
-                        <div style={{
-                            width: 30, height: 30, borderRadius: "50%",
-                            border: "2px solid rgba(255,255,255,.2)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: ".55rem", fontWeight: 800, color: "#fff",
-                            background: "rgba(255,255,255,.15)", flexShrink: 0,
-                        }}>
-                            +{members.length - 4}
+                    {members.slice(0, 4).map((m, i) => (
+                        <div key={i} title={m.userName ?? m.name} style={{ width: 30, height: 30, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", ...getAvStyle(i), flexShrink: 0 }}>
+                            {getInitials(m.userName ?? m.name ?? "")}
                         </div>
-                    )}
+                    ))}
                 </div>
 
                 <button
@@ -412,13 +443,22 @@ export default function StudyRoom() {
             {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
-                {/* LEFT — Timer + ToDo */}
+                {/* ── LEFT — Timer + ToDo + Members ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
                     <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
+
+                    {/* ── Online Members Panel ── */}
+                    <OnlineMembersPanel
+                        members={members}
+                        border={border}
+                        surface3={surface3}
+                        textPrimary={textPrimary}
+                        muted={muted}
+                    />
                 </div>
 
-                {/* CENTER — Shared Workspace */}
+                {/* ── CENTER — Shared Workspace ── */}
                 <div style={{ background: pageBg, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
                         Shared Workspace
@@ -431,7 +471,7 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* RIGHT — CHAT SECTION */}
+                {/* ── RIGHT — Chat ── */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     {/* Chat Header */}
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
@@ -459,10 +499,8 @@ export default function StudyRoom() {
                         )}
 
                         {messages.map((msg, i) => {
-                            const senderName = msg.senderName ?? msg.userName ?? msg.displayName ?? "Member";
-                            const memberIndex = members.findIndex(m =>
-                                (m.userName ?? m.name ?? m.displayName ?? m.username) === senderName
-                            );
+                            const senderName = msg.senderName ?? msg.userName ?? "Member";
+                            const memberIndex = members.findIndex(m => (m.userName ?? m.name) === senderName);
                             const avStyle = getAvStyle(memberIndex >= 0 ? memberIndex : i);
                             return (
                                 <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
