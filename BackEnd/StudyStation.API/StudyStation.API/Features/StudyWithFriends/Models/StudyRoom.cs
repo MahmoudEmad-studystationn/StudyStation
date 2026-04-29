@@ -13,9 +13,10 @@ public class StudyRoom
 
     [MaxLength(100)]
     public string Subject { get; set; } = string.Empty;
+    public string? Description { get; set; }
 
     public bool IsPublic { get; set; } = true;
-    
+
     [MaxLength(50)]
     public string? RoomCode { get; set; }
 
