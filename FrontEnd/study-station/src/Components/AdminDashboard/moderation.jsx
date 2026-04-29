@@ -37,19 +37,17 @@ export default function ModerationPage() {
     const [items, setItems] = useState(INITIAL_ITEMS);
     const [fadingId, setFadingId] = useState(null);
 
-    // ── Theme tokens ──
-    const bgColor     = isDarkMode ? "#111820" : "#F3F4F6";
-    const surface     = isDarkMode ? "#1a2330" : "#ffffff";
-    const surface3    = isDarkMode ? "#162030" : "#f5f6f8";
-    const border      = isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(44,62,80,0.08)";
-    const border2     = isDarkMode ? "rgba(143,183,204,0.06)" : "rgba(44,62,80,0.05)";
-    const textPrimary = isDarkMode ? "#e8edf2" : "#1C2B38";
-    const text2       = isDarkMode ? "#9eb4c4" : "#4A5568";
-    const muted       = isDarkMode ? "#5a7a8e" : "#8A9BAA";
-    const shadow      = isDarkMode
-        ? "0 1px 3px rgba(0,0,0,0.3), 0 3px 10px rgba(0,0,0,0.2)"
-        : "0 1px 3px rgba(44,62,80,0.06), 0 3px 10px rgba(44,62,80,0.06)";
-
+    const bgColor = isDarkMode ? "#171717" : "#F3F4F6";
+    const surface = isDarkMode ? "#2A2A2A" : "#ffffff";
+    const surface3 = isDarkMode ? "#363636" : "#eef1f4";
+    const border = isDarkMode ? "#404040" : "rgba(44,62,80,0.08)";
+    const border2 = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(44,62,80,0.05)";
+    const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
+    const text2 = isDarkMode ? "#B0B0B0" : "#4A5568";
+    const muted = isDarkMode ? "#B0B0B0" : "#6b6f76";
+    const shadow = isDarkMode
+        ? "0 8px 16px rgba(0,0,0,0.3)"
+        : "0 8px 16px rgba(0,0,0,0.07)";
     const handleDelete = (id) => {
         setFadingId(id);
         setTimeout(() => {

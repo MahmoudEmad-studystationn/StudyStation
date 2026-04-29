@@ -13,11 +13,11 @@ const getRoleFromToken = (token) => {
 };
 
 export default function AdminProtectedRoute({ children }) {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isLoggedIn } = useContext(AuthContext); // ← غير isAuthenticated لـ isLoggedIn
     const token = localStorage.getItem("accessToken");
     const role = getRoleFromToken(token);
 
-    if (!isAuthenticated) return <Navigate to="/login" />;
+    if (!isLoggedIn) return <Navigate to="/login" />;
     if (role !== "Admin") return <Navigate to="/home" />;
     
     return children;

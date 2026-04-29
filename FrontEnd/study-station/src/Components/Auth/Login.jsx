@@ -32,8 +32,8 @@ const tippyStyles = `
 const getRoleFromToken = (token) => {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.role || payload.Role || 
-               payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
+        return payload.role || payload.Role ||
+            payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
     } catch {
         return null;
     }
@@ -192,25 +192,24 @@ export default function LoginPage({ switchToSignUp }) {
         const response = await loginApi(formData);
 
         if (response.success) {
-    sessionStorage.setItem("creds", JSON.stringify({
-        email: formData.email,
-        password: formData.password
-    }));
+            const token = localStorage.getItem("accessToken");
+            loginSuccess(token);
+            toast.success("Logged in successfully! Welcome back!");
 
-    const token = localStorage.getItem("accessToken");
-    const firstName = response.data?.firstName || response.data?.FirstName || "";
-    if (firstName) localStorage.setItem("firstName", firstName);
+            // جرب تاخد الـ role من الـ response مباشرة
+            const roleFromResponse = response.data?.role || response.data?.Role;
+            // أو من الـ token
+            const roleFromToken = getRoleFromToken(token);
 
-    loginSuccess(token);
-    toast.success("Logged in successfully! Welcome back!");
+            const role = roleFromResponse || roleFromToken;
+            console.log("Role detected:", role); // ← شوف إيه اللي بيطلع
 
-    const role = getRoleFromToken(token);
-    if (role === "Admin") {
-        setTimeout(() => navigate("/dashboard"), 1000);
-    } else {
-        setTimeout(() => navigate("/home"), 1000);
-    }
-}
+            if (role === "Admin") {
+                setTimeout(() => navigate("/dashboard"), 1000);
+            } else {
+                setTimeout(() => navigate("/home"), 1000);
+            }
+        }
 
         setLoading(false);
     };
