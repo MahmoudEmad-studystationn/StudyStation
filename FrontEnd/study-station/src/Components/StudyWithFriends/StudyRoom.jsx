@@ -82,7 +82,13 @@ export default function StudyRoom() {
 
     // ── Core state ─────────────────────────────────────────────────────────
     const [room, setRoom] = useState(null);
-    const [messages, setMessages] = useState([]);
+
+    // الحل: تحميل الرسائل من الـ LocalStorage مبدئياً عشان ما تختفيش وقت الـ Refresh
+    const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem(`messages_${roomId}`);
+        return saved ? JSON.parse(saved) : [];
+    });
+
     const [input, setInput] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -93,7 +99,6 @@ export default function StudyRoom() {
     const [leaveConfirm, setLeaveConfirm] = useState(false);
 
     const tasksRef = useRef([]);
-
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
 
@@ -113,47 +118,47 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ضيف ده جوه الـ StudyRoom component فوق الـ state declarations
-    const currentUserId = (() => {
-        try {
-            const token = localStorage.getItem("accessToken");
-            if (!token) return null;
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload?.sub ?? null;
-        } catch { return null; }
-    })();
-
+    // ── Fixed fetchRoom Logic ──────────────────────────────────────────────
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
             const data = await getRoomById(roomId);
 
+            // Update Room & Tasks
             setRoom(prev => {
                 if (!prev) {
-                    tasksRef.current = data.tasks ?? [];
-                    return data;
+                    const savedTasks = localStorage.getItem(`tasks_${roomId}`);
+                    const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
+                    tasksRef.current = localTasks;
+                    return { ...data, tasks: localTasks };
                 }
                 return { ...data, tasks: tasksRef.current };
             });
 
-            setMessages(prev => {
-                const incoming = data.messages ?? [];
-                if (prev.length === 0) {
-                    return incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
-                }
-                const confirmedIds = new Set(
-                    prev.filter(m => !m.isOptimistic).map(m => m.id)
-                );
-                const newOnes = incoming.filter(m => !confirmedIds.has(m.id));
-                if (!newOnes.length) return prev;
-                const confirmed = prev.filter(m => !m.isOptimistic);
-                return [...confirmed, ...newOnes].sort(
-                    (a, b) => new Date(a.sentAt) - new Date(b.sentAt)
-                );
-            });
+            // FIXED: تحديث الرسائل بذكاء يعتمد على الـ IDs لمنع الحذف أو التكرار
+            if (data.messages && Array.isArray(data.messages)) {
+                setMessages(prev => {
+                    const incoming = data.messages;
+
+                    // نجمع كل الرسائل ونستخدم Set للـ IDs عشان نمنع التكرار
+                    const existingIds = new Set(prev.map(m => m.id));
+                    const newOnes = incoming.filter(m => !existingIds.has(m.id));
+
+                    // لو مفيش جديد والقديم موجود، ارجع بالقديم زي ما هو
+                    if (newOnes.length === 0 && prev.length > 0) return prev;
+
+                    // ادمج القديم والجديد ورتبهم
+                    const merged = [...prev, ...newOnes].sort(
+                        (a, b) => new Date(a.sentAt || Date.now()) - new Date(b.sentAt || Date.now())
+                    );
+
+                    return merged;
+                });
+            }
 
         } catch (err) {
+            console.error("Fetch Error:", err);
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
             if (!silent) setLoading(false);
@@ -170,6 +175,20 @@ export default function StudyRoom() {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    // حفظ المهام في الـ LocalStorage
+    useEffect(() => {
+        if (room?.tasks) {
+            localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
+        }
+    }, [room?.tasks, roomId]);
+
+    // حفظ الرسائل في الـ LocalStorage (للحماية من الـ Refresh)
+    useEffect(() => {
+        if (messages.length > 0) {
+            localStorage.setItem(`messages_${roomId}`, JSON.stringify(messages.filter(m => !m.isOptimistic)));
+        }
+    }, [messages, roomId]);
+
     // ── Send message ────────────────────────────────────────────────────────
     const sendMsg = async () => {
         const text = input.trim();
@@ -185,13 +204,23 @@ export default function StudyRoom() {
             sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
+
+        // إضافة الرسالة "تفاؤلياً" للشاشة فوراً
         setMessages(prev => [...prev, optimisticMsg]);
 
         try {
             await apiSendMessage(roomId, text);
+            // بعد الإرسال، نحدث الرسائل من السيرفر للتأكد من وصولها ومسح الـ Optimistic
             const msgs = await getMessages(roomId);
             const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
-            setMessages(incoming.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt)));
+
+            setMessages(prev => {
+                // شيل الرسالة المؤقتة وحط الداتا اللي جاية من السيرفر
+                const filtered = prev.filter(m => m.id !== optId);
+                const existingIds = new Set(filtered.map(m => m.id));
+                const newOnes = incoming.filter(m => !existingIds.has(m.id));
+                return [...filtered, ...newOnes].sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
+            });
         } catch (err) {
             setMessages(prev => prev.filter(m => m.id !== optId));
             showToast("Failed to send message");
@@ -204,24 +233,22 @@ export default function StudyRoom() {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
     };
 
-    // ── Leave room ──────────────────────────────────────────────────────────
+    // ── Handlers ──────────────────────────────────────────────────────────
     const handleLeave = () => setLeaveConfirm(true);
-
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
         try {
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
+            localStorage.removeItem(`messages_${roomId}`); // مسح الكاش عند الخروج النهائي
             navigate("/study-with-friends");
         } catch (err) {
-            console.error(err);
             setLeaving(false);
             showToast("Failed to leave room");
         }
     };
 
-    // ── Focus session ────────────────────────────────────────────────────────
     const handleStartFocus = async (durationMinutes = 25) => {
         try {
             const session = await startFocusSession(roomId, durationMinutes);
@@ -250,7 +277,6 @@ export default function StudyRoom() {
     };
 
     const handleToggleTask = async taskId => {
-        // Optimistic update
         setRoom(prev => {
             const updated = (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, isDone: !t.isDone } : t
@@ -258,18 +284,7 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await toggleTask(roomId, taskId);
-        } catch (err) {
-            // Rollback
-            setRoom(prev => {
-                const rolled = (prev.tasks ?? []).map(t =>
-                    t.id === taskId ? { ...t, isDone: !t.isDone } : t
-                );
-                tasksRef.current = rolled;
-                return { ...prev, tasks: rolled };
-            });
-        }
+        try { await toggleTask(roomId, taskId); } catch (err) { fetchRoom(true); }
     };
 
     const handleDeleteTask = async taskId => {
@@ -279,18 +294,12 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await deleteTask(roomId, taskId);
-        } catch (err) {
-            setRoom(prev => {
-                tasksRef.current = backup;
-                return { ...prev, tasks: backup };
-            });
+        try { await deleteTask(roomId, taskId); } catch (err) {
+            setRoom(prev => { tasksRef.current = backup; return { ...prev, tasks: backup }; });
         }
     };
 
     const handleUpdateTask = async (taskId, newTitle) => {
-        // Optimistic update
         setRoom(prev => {
             const updated = (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, title: newTitle } : t
@@ -298,16 +307,10 @@ export default function StudyRoom() {
             tasksRef.current = updated;
             return { ...prev, tasks: updated };
         });
-        try {
-            await updateTask(roomId, taskId, newTitle);
-        } catch (err) {
-            console.error("Update task failed", err);
-            showToast("Failed to update task");
-        }
+        try { await updateTask(roomId, taskId, newTitle); } catch (err) { showToast("Update failed"); }
     };
 
-    // ── Loading / Error ──────────────────────────────────────────────────────
-    if (loading) return (
+    if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -359,12 +362,7 @@ export default function StudyRoom() {
                     ))}
                 </div>
 
-                <button
-                    onClick={handleLeave} disabled={leaving}
-                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1 }}
-                    onMouseEnter={e => { if (!leaving) e.currentTarget.style.background = "rgba(248,113,113,.28)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(248,113,113,.18)"; }}
-                >
+                <button onClick={handleLeave} disabled={leaving} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1 }}>
                     {leaving ? "Leaving…" : (
                         <>
                             <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -378,30 +376,18 @@ export default function StudyRoom() {
 
             {/* 3-COLUMN LAYOUT */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
-
-                {/* LEFT — Timer + Todo */}
+                {/* LEFT */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                    <TimerStudyRoom
-                        roomId={roomId}
-                        onStart={handleStartFocus}
-                        onStop={handleStopFocus}
-                        isActive={!!sessionId}
-                    />
-                    <ToDoStudyRoom
-                        tasks={room.tasks ?? []}
-                        onAdd={handleAddTask}
-                        onToggle={handleToggleTask}
-                        onUpdate={handleUpdateTask}
-                        onDelete={handleDeleteTask}
-                    />
+                    <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
+                    <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
                 </div>
 
-                {/* CENTER — Shared Workspace */}
+                {/* CENTER */}
                 <div style={{ background: pageBg, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
                         Shared Workspace
                     </div>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: .3 }}>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: 0.3 }}>
                         <svg width={56} height={56} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? "#8FB7CC" : "#2C3E50"} strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
                         </svg>
@@ -409,7 +395,7 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* RIGHT — Chat */}
+                {/* RIGHT — CHAT SECTION */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
@@ -423,13 +409,12 @@ export default function StudyRoom() {
                         </span>
                     </div>
 
-                    {/* Messages */}
                     <div style={{ flex: 1, overflowY: "auto", padding: ".75rem 1.25rem", display: "flex", flexDirection: "column", gap: ".65rem", scrollbarWidth: "thin" }}>
                         <div style={{ textAlign: "center", fontSize: ".67rem", fontWeight: 600, color: muted, padding: "4px 0" }}>
                             Welcome to {room.name} · {room.subject}
                         </div>
-                        {messages.length === 0 && (
-                            <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: .6 }}>
+                        {messages.length === 0 && !loading && (
+                            <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: 0.6 }}>
                                 No messages yet. Say hi! 👋
                             </div>
                         )}
@@ -438,7 +423,7 @@ export default function StudyRoom() {
                             const memberIndex = members.findIndex(m => (m.userName ?? m.name) === senderName);
                             const avStyle = getAvStyle(memberIndex >= 0 ? memberIndex : i);
                             return (
-                                <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? .65 : 1, transition: "opacity .3s" }}>
+                                <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
                                     <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...avStyle }}>
                                         {getInitials(senderName)}
                                     </div>
@@ -458,7 +443,6 @@ export default function StudyRoom() {
                         <div ref={bottomRef} />
                     </div>
 
-                    {/* Chat input */}
                     <div style={{ padding: ".75rem 1.25rem", borderTop: `1px solid ${border}`, flexShrink: 0 }}>
                         <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                             <textarea
@@ -468,41 +452,23 @@ export default function StudyRoom() {
                                 placeholder="Message the room…"
                                 rows={1}
                                 disabled={sending}
-                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, scrollbarWidth: "thin", transition: "border .2s", opacity: sending ? .7 : 1 }}
+                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s", opacity: sending ? 0.7 : 1 }}
                                 onFocus={e => e.currentTarget.style.borderColor = "#8FB7CC"}
                                 onBlur={e => e.currentTarget.style.borderColor = border}
                             />
                             <button
                                 onClick={sendMsg}
                                 disabled={sending || !input.trim()}
-                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background .2s", opacity: (sending || !input.trim()) ? .5 : 1 }}
-                                onMouseEnter={e => e.currentTarget.style.background = "#3D718D"}
-                                onMouseLeave={e => e.currentTarget.style.background = sendBtnBg}
+                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background 0.2s", opacity: (sending || !input.trim()) ? 0.5 : 1 }}
                             >
-                                {sending
-                                    ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", display: "block", animation: "spin .6s linear infinite" }} />
-                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                                    </svg>
-                                }
+                                {sending ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.6s linear infinite" }} /> : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Leave confirm */}
-            <ConfirmModal
-                isOpen={leaveConfirm}
-                title="Leave Room"
-                body={`Are you sure you want to leave "${room.name}"?`}
-                confirmLabel="Leave"
-                danger
-                isDarkMode={isDarkMode}
-                onConfirm={confirmLeave}
-                onCancel={() => setLeaveConfirm(false)}
-            />
-
+            <ConfirmModal isOpen={leaveConfirm} title="Leave Room" body={`Are you sure you want to leave "${room.name}"?`} confirmLabel="Leave" danger isDarkMode={isDarkMode} onConfirm={confirmLeave} onCancel={() => setLeaveConfirm(false)} />
             <Toast message={toast.msg} visible={toast.visible} />
         </div>
     );
