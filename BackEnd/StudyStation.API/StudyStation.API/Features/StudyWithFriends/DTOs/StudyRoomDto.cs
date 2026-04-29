@@ -12,5 +12,6 @@ public class StudyRoomDto
     public string? RoomCode { get; set; }
     public DateTime CreatedAt { get; set; }
     public int OwnerId { get; set; }
+    public List<RoomParticipantDto> Participants { get; set; } = new();
     public int ParticipantsCount { get; set; }
 }

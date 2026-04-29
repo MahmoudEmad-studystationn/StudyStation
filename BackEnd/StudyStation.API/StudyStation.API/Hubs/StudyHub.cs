@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using StudyStation.API.Features.StudyWithFriends.DTOs;
 using StudyStation.API.Features.StudyWithFriends.Models;
 
 namespace StudyStation.API.Hubs;
@@ -16,6 +17,7 @@ public interface IStudyClient
     Task TaskDeleted(int taskId);
     Task FocusSessionStarted(object session);
     Task FocusSessionStopped(int sessionId);
+    Task UserJoined(RoomParticipantDto participant);
 }
 
 [Authorize]
