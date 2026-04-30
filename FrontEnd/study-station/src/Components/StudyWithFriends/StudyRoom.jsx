@@ -24,12 +24,13 @@ const AV_PALETTE = [
     { background: "linear-gradient(135deg,#2C3E50,#658FA5)" },
 ];
 const getAvStyle = i => AV_PALETTE[i % AV_PALETTE.length];
-const getInitials = (name = "") => name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+const getInitials = (name = "") =>
+    name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "?";
 const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-// ✅ دالة مركزية لاستخراج اسم الـ member من أي شكل API
+// استخراج اسم الـ member من أي شكل API
 const getMemberName = (m) =>
     m?.userName ||
     m?.name ||
@@ -42,7 +43,7 @@ const getMemberName = (m) =>
     m?.profile?.userName ||
     "Unknown";
 
-// ✅ دالة مركزية لاستخراج اسم المُرسِل من رسالة
+// استخراج اسم المُرسِل من رسالة
 const getSenderName = (msg) =>
     msg?.senderName ||
     msg?.userName ||
@@ -295,6 +296,7 @@ export default function StudyRoom() {
         try { await updateTask(roomId, taskId, newTitle); } catch { showToast("Update failed"); }
     };
 
+    // ── Early returns ──
     if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
@@ -312,8 +314,16 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members || room.participants || room.activeUsers || [];
-
+    const members = room.members ||
+        room.participants ||
+        room.activeUsers ||
+        room.onlineUsers ||
+        [];
+    const onlineCount = room.onlineCount ||
+        members.length ||
+        room.participantsCount ||
+        room.current ||
+        0;
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
             <style>{`
@@ -322,71 +332,138 @@ export default function StudyRoom() {
             `}</style>
 
             {/* ── TOP BAR ── */}
-            <div style={{ background: "#2C3E50", height: 60, flexShrink: 0, display: "flex", alignItems: "center", padding: "0 1.5rem", gap: "1rem", borderBottom: "1px solid rgba(0,0,0,.15)" }}>
-                <div style={{ flex: 1, display: "flex", alignItems: "center", gap: ".75rem" }}>
+            <div style={{
+                background: "#2C3E50",
+                height: 60,
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                padding: "0 1.5rem",
+                gap: "1rem",
+                borderBottom: "1px solid rgba(0,0,0,.15)"
+            }}>
+                {/* اسم الروم والسبجكت */}
+                <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                        <span style={{ fontSize: ".95rem", fontWeight: 800, letterSpacing: "-.02em", color: "#fff" }}>{room.name}</span>
-                        <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "rgba(255,255,255,.45)" }}>{room.subject}</span>
+                        <span style={{ fontSize: ".95rem", fontWeight: 800, letterSpacing: "-.02em", color: "#fff" }}>
+                            {room.name}
+                        </span>
+                        <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "rgba(255,255,255,.45)" }}>
+                            {room.subject}
+                        </span>
                     </div>
                     {room.roomCode && (
                         <span style={{ padding: "2px 8px", borderRadius: 7, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".04em", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", color: "rgba(255,255,255,.65)" }}>
                             {room.roomCode}
                         </span>
                     )}
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 11px", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, background: "rgba(52,211,153,.15)", color: "#34d399", border: "1px solid rgba(52,211,153,.2)" }}>
+                    {/* Badge عدد الأونلاين */}
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 11px", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, background: "rgba(52,211,153,.15)", color: "#34d399", border: "1px solid rgba(52,211,153,.2)", flexShrink: 0 }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399", animation: "pulse 2s infinite" }} />
-                        {members.length} Online
+                        {onlineCount} Online
                     </span>
                 </div>
 
-                {/* عرض أسماء المستخدمين (مثل مريم وغيرها) في الـ Top Bar */}
-                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "nowrap", overflow: "hidden" }}>
-                    {members.slice(0, 4).map((m, i) => {
-                        const name = m.userName || m.name || m.user?.userName || "Member";
-                        return (
-                            <div key={i} title={name} style={{
-                                display: "flex", alignItems: "center", gap: "6px",
-                                padding: "4px 10px 4px 4px",
-                                borderRadius: 999,
-                                background: "rgba(255,255,255,.1)",
-                                border: "1px solid rgba(255,255,255,.15)",
-                                flexShrink: 0,
-                            }}>
-                                <div style={{
-                                    width: 28, height: 28, borderRadius: "50%",
-                                    border: "2px solid rgba(255,255,255,.2)",
-                                    display: "flex", alignItems: "center", justifyContent: "center",
-                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
-                                    ...getAvStyle(i), flexShrink: 0,
-                                }}>
-                                    {getInitials(name)}
-                                </div>
-                                <span style={{
-                                    fontSize: ".72rem", fontWeight: 700,
-                                    color: "rgba(255,255,255,.85)",
-                                    whiteSpace: "nowrap",
-                                }}>
-                                    {name}
-                                </span>
-                            </div>
-                        );
-                    })}
-                    {members.length > 4 && (
-                        <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.5)", flexShrink: 0 }}>
-                            +{members.length - 4}
+                <div style={{ flex: 1, display: "flex", alignItems: "center", gap: ".5rem", overflow: "hidden", flexWrap: "nowrap" }}>
+                    {members.length === 0 ? (
+                        <span style={{ fontSize: ".72rem", color: "rgba(255,255,255,.35)", fontStyle: "italic" }}>
+                            No members yet
                         </span>
+                    ) : (
+                        <>
+                            {members.slice(0, 5).map((m, i) => {
+                                const name = getMemberName(m);
+                                return (
+                                    <div
+                                        key={m?.id ?? i}
+                                        title={name}
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "6px",
+                                            padding: "4px 10px 4px 4px",
+                                            borderRadius: 999,
+                                            background: "rgba(255,255,255,.1)",
+                                            border: "1px solid rgba(255,255,255,.15)",
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <div style={{
+                                            width: 26,
+                                            height: 26,
+                                            borderRadius: "50%",
+                                            border: "2px solid rgba(255,255,255,.2)",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: ".52rem",
+                                            fontWeight: 800,
+                                            color: "#fff",
+                                            flexShrink: 0,
+                                            ...getAvStyle(i),
+                                        }}>
+                                            {getInitials(name)}
+                                        </div>
+                                        <span style={{
+                                            fontSize: ".72rem",
+                                            fontWeight: 700,
+                                            color: "rgba(255,255,255,.85)",
+                                            whiteSpace: "nowrap",
+                                            maxWidth: 90,
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                        }}>
+                                            {name}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                            {members.length > 5 && (
+                                <span style={{
+                                    fontSize: ".72rem",
+                                    fontWeight: 700,
+                                    color: "rgba(255,255,255,.5)",
+                                    flexShrink: 0,
+                                    padding: "4px 10px",
+                                    borderRadius: 999,
+                                    background: "rgba(255,255,255,.08)",
+                                    border: "1px solid rgba(255,255,255,.12)",
+                                }}>
+                                    +{members.length - 5} more
+                                </span>
+                            )}
+                        </>
                     )}
                 </div>
 
+                {/* زرار Leave */}
                 <button
                     onClick={handleLeave}
                     disabled={leaving}
-                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1 }}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "7px 15px",
+                        borderRadius: 10,
+                        border: "none",
+                        background: "rgba(248,113,113,.18)",
+                        color: "#fca5a5",
+                        fontFamily: "inherit",
+                        fontSize: ".78rem",
+                        fontWeight: 700,
+                        cursor: leaving ? "not-allowed" : "pointer",
+                        transition: "background .2s",
+                        opacity: leaving ? .6 : 1,
+                        flexShrink: 0,
+                    }}
                 >
                     {leaving ? "Leaving…" : (
                         <>
                             <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
                             </svg>
                             Leave Room
                         </>
@@ -397,11 +474,21 @@ export default function StudyRoom() {
             {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
-                {/* ── LEFT — Panel ── */}
+                {/* ── LEFT — Timer + ToDo ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                    <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
-                    {/* تم حذف OnlineMembersPanel من هنا */}
-                    <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
+                    <TimerStudyRoom
+                        roomId={roomId}
+                        onStart={handleStartFocus}
+                        onStop={handleStopFocus}
+                        isActive={!!sessionId}
+                    />
+                    <ToDoStudyRoom
+                        tasks={room.tasks ?? []}
+                        onAdd={handleAddTask}
+                        onToggle={handleToggleTask}
+                        onUpdate={handleUpdateTask}
+                        onDelete={handleDeleteTask}
+                    />
                 </div>
 
                 {/* ── CENTER — Shared Workspace ── */}
@@ -411,7 +498,9 @@ export default function StudyRoom() {
                     </div>
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: ".75rem", opacity: 0.3 }}>
                         <svg width={56} height={56} viewBox="0 0 24 24" fill="none" stroke={isDarkMode ? "#8FB7CC" : "#2C3E50"} strokeWidth={1} strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="9" y1="21" x2="9" y2="9" />
                         </svg>
                         <span style={{ fontSize: ".82rem", fontWeight: 600, color: muted }}>Shared whiteboard coming soon</span>
                     </div>
@@ -427,7 +516,7 @@ export default function StudyRoom() {
                             Room Chat
                         </span>
                         <span style={{ fontSize: ".65rem", fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "rgba(52,211,153,.1)", color: "#34d399", border: "1px solid rgba(52,211,153,.2)" }}>
-                            ● {members.length} online
+                            ● {onlineCount} online
                         </span>
                     </div>
 
@@ -442,9 +531,8 @@ export default function StudyRoom() {
                             </div>
                         )}
 
-                        {/* ✅ الرسائل — باستخدام getSenderName */}
                         {messages.map((msg, i) => {
-                            const senderName = msg.senderName || msg.userName || "Member";
+                            const senderName = getSenderName(msg);
                             return (
                                 <div key={msg.id || i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
                                     <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...getAvStyle(i) }}>
@@ -482,14 +570,29 @@ export default function StudyRoom() {
                                 disabled={sending || !input.trim()}
                                 style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
                             >
-                                {sending ? <div style={{ width: 12, height: 12, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .6s linear infinite" }} /> : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>}
+                                {sending
+                                    ? <div style={{ width: 12, height: 12, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .6s linear infinite" }} />
+                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                }
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ConfirmModal isOpen={leaveConfirm} title="Leave Room" body={`Are you sure you want to leave "${room.name}"?`} confirmLabel="Leave" danger isDarkMode={isDarkMode} onConfirm={confirmLeave} onCancel={() => setLeaveConfirm(false)} />
+            <ConfirmModal
+                isOpen={leaveConfirm}
+                title="Leave Room"
+                body={`Are you sure you want to leave "${room.name}"?`}
+                confirmLabel="Leave"
+                danger
+                isDarkMode={isDarkMode}
+                onConfirm={confirmLeave}
+                onCancel={() => setLeaveConfirm(false)}
+            />
             <Toast message={toast.msg} visible={toast.visible} />
         </div>
     );

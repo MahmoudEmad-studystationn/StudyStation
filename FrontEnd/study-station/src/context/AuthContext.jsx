@@ -25,7 +25,8 @@ export default function AuthContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userData, setUserData]     = useState(null);
     const [loading, setLoading]       = useState(true);
-    const timerRef = useRef(null);
+    const timerRef           = useRef(null);
+    const scheduleReLoginRef = useRef(null);
 
     const clearTimer = () => {
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -50,23 +51,24 @@ export default function AuthContextProvider({ children }) {
 
         const doReLogin = async () => {
             const raw = sessionStorage.getItem("creds");
-            if (!raw) return;
+            if (!raw) return logout();
             const creds = JSON.parse(raw);
             const res = await loginApi(creds);
             if (res.success) {
                 const newToken = localStorage.getItem("accessToken");
                 const userId = getUserIdFromToken(newToken);
                 if (userId) setUserData({ _id: userId });
-                scheduleReLogin(newToken);
+                scheduleReLoginRef.current?.(newToken);
+            } else {
+                logout();
             }
         };
 
-        if (msLeft <= 0) {
-            doReLogin();
-        } else {
-            timerRef.current = setTimeout(doReLogin, msLeft);
-        }
-    }, []);
+        if (msLeft <= 0) doReLogin();
+        else timerRef.current = setTimeout(doReLogin, msLeft);
+    }, [logout]);
+
+    scheduleReLoginRef.current = scheduleReLogin;
 
     const loginSuccess = useCallback((token, credentials = null) => {
         const userId = getUserIdFromToken(token);
@@ -83,6 +85,12 @@ export default function AuthContextProvider({ children }) {
         if (accessToken) loginSuccess(accessToken);
         setLoading(false);
     }, [loginSuccess]);
+
+    useEffect(() => {
+        const handleLogout = () => logout();
+        window.addEventListener("auth:logout", handleLogout);
+        return () => window.removeEventListener("auth:logout", handleLogout);
+    }, [logout]);
 
     useEffect(() => {
         return () => clearTimer();

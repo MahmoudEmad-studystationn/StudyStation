@@ -188,25 +188,26 @@ export default function LoginPage({ switchToSignUp }) {
             return;
         }
         sessionStorage.setItem("test", "hello");
-        console.log("test:", sessionStorage.getItem("test"));
         const response = await loginApi(formData);
 
         if (response.success) {
             const token = localStorage.getItem("accessToken");
-            loginSuccess(token);
+            loginSuccess(token, formData);
             toast.success("Logged in successfully! Welcome back!");
 
             const roleFromResponse = response.data?.role || response.data?.Role;
             const roleFromToken = getRoleFromToken(token);
 
             const role = roleFromResponse || roleFromToken;
-            console.log("Role detected:", role); // ← شوف إيه اللي بيطلع
+            // console.log("Role detected:", role);
 
             if (role === "Admin") {
                 setTimeout(() => navigate("/dashboard"), 1000);
             } else {
                 setTimeout(() => navigate("/home"), 1000);
             }
+        } else {
+            toast.error(response.message || "Invalid email or password");
         }
 
         setLoading(false);
