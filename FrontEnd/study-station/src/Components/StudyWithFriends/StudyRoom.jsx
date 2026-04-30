@@ -143,12 +143,6 @@ export default function StudyRoom() {
                 getMessages(roomId),
             ]);
 
-            // ✅ DEBUG مؤقت — اشيل السطرين دول لما تتأكد الأسماء بتظهر صح
-            const rawMembers = data.members || data.participants || data.activeUsers || [];
-            if (rawMembers.length > 0) {
-                console.log("🔍 Member object shape:", JSON.stringify(rawMembers[0], null, 2));
-            }
-
             setRoom(prev => {
                 const savedTasks = localStorage.getItem(`tasks_${roomId}`);
                 const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
@@ -345,12 +339,12 @@ export default function StudyRoom() {
                     </span>
                 </div>
 
-                {/* ✅ Members في الـ Top Bar — باستخدام getMemberName */}
+                {/* عرض أسماء المستخدمين (مثل مريم وغيرها) في الـ Top Bar */}
                 <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "nowrap", overflow: "hidden" }}>
                     {members.slice(0, 4).map((m, i) => {
-                        const name = getMemberName(m);
+                        const name = m.userName || m.name || m.user?.userName || "Member";
                         return (
-                            <div key={m?.id || m?.userId || i} title={name} style={{
+                            <div key={i} title={name} style={{
                                 display: "flex", alignItems: "center", gap: "6px",
                                 padding: "4px 10px 4px 4px",
                                 borderRadius: 999,
@@ -406,6 +400,7 @@ export default function StudyRoom() {
                 {/* ── LEFT — Panel ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
+                    {/* تم حذف OnlineMembersPanel من هنا */}
                     <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
                 </div>
 
@@ -449,7 +444,7 @@ export default function StudyRoom() {
 
                         {/* ✅ الرسائل — باستخدام getSenderName */}
                         {messages.map((msg, i) => {
-                            const senderName = getSenderName(msg);
+                            const senderName = msg.senderName || msg.userName || "Member";
                             return (
                                 <div key={msg.id || i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
                                     <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...getAvStyle(i) }}>

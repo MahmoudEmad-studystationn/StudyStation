@@ -28,12 +28,16 @@ import { HeroUIProvider } from "@heroui/react";
 import StudyRoom from "./Components/StudyWithFriends/StudyRoom";
 import ProfilePage from "./Components/Profile/Profile";
 import Dashboard from "./Components/AdminDashboard/Dashboad";
+import Users from "./Components/AdminDashboard/UserDashoard";
+import Resources from "./Components/AdminDashboard/Reasourses";
+import Moderation from "./Components/AdminDashboard/Moderarion";
+import AdminProtectedRoute from "./Components/ProtectedRoute/AdminProtectedRoute";
+
 
 function AppContent() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
   const [appLoading, setAppLoading] = useState(true);
-
   const { loading: authLoading } = useContext(AuthContext);
 
   useEffect(() => {
@@ -64,7 +68,7 @@ function AppContent() {
           />
 
           <Routes>
-            {/* Public */}
+            {/* ── Public ── */}
             <Route path="/" element={<WelcomePage />} />
 
             <Route
@@ -114,7 +118,7 @@ function AppContent() {
               }
             />
 
-            {/* Protected */}
+            {/* ── Protected (User) ── */}
             <Route
               path="/home"
               element={
@@ -156,6 +160,7 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/library"
               element={
@@ -181,7 +186,7 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <ResourceDetail/>
+                    <ResourceDetail />
                   </DashboardLayout>
                 </ProtectedRoute>
               }
@@ -198,7 +203,6 @@ function AppContent() {
               }
             />
 
-            {/* ✅ Profile */}
             <Route
               path="/profile"
               element={
@@ -209,12 +213,40 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
+
+            {/* ── Protected (Admin) ── */}
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute>
+                <AdminProtectedRoute>
                   <Dashboard />
-                </ProtectedRoute>
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/users"
+              element={
+                <AdminProtectedRoute>
+                  <Users />
+                </AdminProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/resources"
+              element={
+                <AdminProtectedRoute>
+                  <Resources />
+                </AdminProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/moderation"
+              element={
+                <AdminProtectedRoute>
+                  <Moderation />
+                </AdminProtectedRoute>
               }
             />
           </Routes>

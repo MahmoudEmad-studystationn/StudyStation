@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const NAV_ITEMS = [
     {
@@ -6,12 +8,14 @@ const NAV_ITEMS = [
         items: [
             {
                 label: "Dashboard",
-                href: "dashboard.html",
-                active: false,
+                path: "/dashboard",
                 icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
                     </svg>
                 ),
             },
@@ -22,10 +26,10 @@ const NAV_ITEMS = [
         items: [
             {
                 label: "Users",
-                href: "users.html",
-                badge: "128",
+                path: "/dashboard/users",
                 icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -35,10 +39,10 @@ const NAV_ITEMS = [
             },
             {
                 label: "Resources",
-                href: "resources.html",
-                badge: "47",
+                path: "/dashboard/resources",
                 icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                         <line x1="16" y1="13" x2="8" y2="13" />
@@ -48,10 +52,10 @@ const NAV_ITEMS = [
             },
             {
                 label: "Moderation",
-                href: "moderation.html",
-                badge: "6",
+                path: "/dashboard/moderation",
                 icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     </svg>
                 ),
@@ -60,11 +64,14 @@ const NAV_ITEMS = [
     },
 ];
 
-export default function SidebarDashboard({ activePage = "Dashboard" }) {
+export default function SidebarDashboard() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleLogout = () => {
-        if (window.confirm("Are you sure you want to logout?")) {
-            alert("Logged out successfully!");
-        }
+        localStorage.clear();
+        toast.success("Logged out successfully!");
+        navigate("/", { replace: true });
     };
 
     return (
@@ -72,7 +79,9 @@ export default function SidebarDashboard({ activePage = "Dashboard" }) {
             {/* Logo */}
             <div style={styles.sidebarLogo}>
                 <div style={styles.logoIcon}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, color: "#fff" }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        style={{ width: 16, height: 16, color: "#fff" }}>
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                     </svg>
@@ -89,11 +98,11 @@ export default function SidebarDashboard({ activePage = "Dashboard" }) {
                     <div key={group.section}>
                         <div style={styles.navSectionLabel}>{group.section}</div>
                         {group.items.map((item) => {
-                            const isActive = activePage === item.label;
+                            const isActive = location.pathname === item.path;
                             return (
-                                <a
+                                <div
                                     key={item.label}
-                                    href={item.href}
+                                    onClick={() => navigate(item.path)}
                                     style={{
                                         ...styles.navItem,
                                         ...(isActive ? styles.navItemActive : {}),
@@ -111,30 +120,22 @@ export default function SidebarDashboard({ activePage = "Dashboard" }) {
                                         }
                                     }}
                                 >
-                                    <span style={{ width: 16, height: 16, flexShrink: 0 }}>{item.icon}</span>
+                                    <span style={{ width: 16, height: 16, flexShrink: 0 }}>
+                                        {item.icon}
+                                    </span>
                                     {item.label}
-                                    {item.badge && (
-                                        <span style={{ ...styles.badge, ...(isActive ? styles.badgeActive : {}) }}>
-                                            {item.badge}
-                                        </span>
-                                    )}
-                                </a>
+                                </div>
                             );
                         })}
                     </div>
                 ))}
             </nav>
 
-            {/* Footer */}
+            {/* Footer - Logout Only */}
             <div style={styles.sidebarFooter}>
-                <div style={styles.sidebarAdmin}>
-                    <div style={styles.adminAv}>MM</div>
-                    <div>
-                        <div style={styles.adminName}>Mariam Mohammed</div>
-                        <div style={styles.adminRole}>Super Admin</div>
-                    </div>
-                </div>
-                <button style={styles.sidebarLogout} onClick={handleLogout}
+                <button
+                    style={styles.sidebarLogout}
+                    onClick={handleLogout}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.background = "rgba(248,113,113,0.1)";
                         e.currentTarget.style.color = "#f87171";
@@ -144,7 +145,9 @@ export default function SidebarDashboard({ activePage = "Dashboard" }) {
                         e.currentTarget.style.color = "rgba(255,255,255,0.4)";
                     }}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14, flexShrink: 0 }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        style={{ width: 14, height: 14, flexShrink: 0 }}>
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                         <polyline points="16 17 21 12 16 7" />
                         <line x1="21" y1="12" x2="9" y2="12" />
@@ -167,6 +170,7 @@ const styles = {
         display: "flex",
         flexDirection: "column",
         zIndex: 200,
+        fontFamily: "'Sora', sans-serif",
     },
     sidebarLogo: {
         height: 60,
@@ -229,63 +233,16 @@ const styles = {
         cursor: "pointer",
         transition: "all 0.2s",
         border: "1px solid transparent",
-        textDecoration: "none",
         userSelect: "none",
     },
     navItemActive: {
-    background: "rgba(255,255,255,0.2)",   
-    color: "#fff",
-    borderColor: "rgba(255,255,255,0.15)",
-},
-    badge: {
-        marginLeft: "auto",
-        background: "rgba(255,255,255,0.15)",
-        color: "rgba(255,255,255,0.8)",
-        fontSize: "0.6rem",
-        fontWeight: 700,
-        padding: "2px 7px",
-        borderRadius: 999,
-    },
-    badgeActive: {
-        background: "rgba(255,255,255,0.25)",
+        background: "rgba(255,255,255,0.2)",
+        color: "#fff",
+        borderColor: "rgba(255,255,255,0.15)",
     },
     sidebarFooter: {
         padding: "0.75rem",
         borderTop: "1px solid rgba(255,255,255,0.07)",
-    },
-    sidebarAdmin: {
-        display: "flex",
-        alignItems: "center",
-        gap: "0.65rem",
-        padding: "0.5rem 0.75rem",
-        borderRadius: 10,
-    },
-    adminAv: {
-        width: 36,
-        height: 36,
-        background: "#3D718D",
-        borderRadius: "50%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "0.7rem",
-        fontWeight: 800,
-        color: "#fff",
-        flexShrink: 0,
-        border: "2px solid rgba(255,255,255,0.2)",
-    },
-    adminName: {
-        fontSize: "0.78rem",
-        fontWeight: 700,
-        color: "#fff",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-    },
-    adminRole: {
-        fontSize: "0.62rem",
-        color: "rgba(255,255,255,0.35)",
-        fontWeight: 500,
     },
     sidebarLogout: {
         display: "flex",
@@ -297,11 +254,10 @@ const styles = {
         background: "transparent",
         border: "none",
         color: "rgba(255,255,255,0.4)",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
         fontSize: "0.78rem",
         fontWeight: 600,
         cursor: "pointer",
         transition: "all 0.2s",
-        marginTop: "0.35rem",
+        fontFamily: "'Sora', sans-serif",
     },
 };

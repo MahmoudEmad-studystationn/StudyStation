@@ -29,6 +29,16 @@ const tippyStyles = `
   }
 `;
 
+const getRoleFromToken = (token) => {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role || payload.Role ||
+            payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
+    } catch {
+        return null;
+    }
+};
+
 const MailIcon = (props) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="4" ry="4"></rect>
@@ -182,18 +192,21 @@ export default function LoginPage({ switchToSignUp }) {
         const response = await loginApi(formData);
 
         if (response.success) {
-            sessionStorage.setItem("creds", JSON.stringify({
-                email: formData.email,
-                password: formData.password
-            }));
-
             const token = localStorage.getItem("accessToken");
-            const firstName = response.data?.firstName || response.data?.FirstName || "";
-            if (firstName) localStorage.setItem("firstName", firstName);
-
             loginSuccess(token);
             toast.success("Logged in successfully! Welcome back!");
-            setTimeout(() => navigate("/home"), 1000);
+
+            const roleFromResponse = response.data?.role || response.data?.Role;
+            const roleFromToken = getRoleFromToken(token);
+
+            const role = roleFromResponse || roleFromToken;
+            console.log("Role detected:", role); // ← شوف إيه اللي بيطلع
+
+            if (role === "Admin") {
+                setTimeout(() => navigate("/dashboard"), 1000);
+            } else {
+                setTimeout(() => navigate("/home"), 1000);
+            }
         }
 
         setLoading(false);
