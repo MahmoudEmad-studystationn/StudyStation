@@ -81,13 +81,7 @@ export default function StudyRoom() {
     const { isDarkMode } = useThemeContext();
 
     const [room, setRoom] = useState(null);
-
-    // الحل: تحميل الرسائل من الـ LocalStorage مبدئياً عشان ما تختفيش وقت الـ Refresh
-    const [messages, setMessages] = useState(() => {
-        const saved = localStorage.getItem(`messages_${roomId}`);
-        return saved ? JSON.parse(saved) : [];
-    });
-
+    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -100,8 +94,6 @@ export default function StudyRoom() {
     const tasksRef = useRef([]);
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
-    // ✅ FIX 1: ref عشان نعرف لو اليوزر ضغط Leave بنفسه (مش navigation تلقائية)
-    const manualLeaveRef = useRef(false);
 
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#1e1e1e" : "#fff";
@@ -118,44 +110,32 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ── Fixed fetchRoom Logic ──────────────────────────────────────────────
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
-            const data = await getRoomById(roomId);
+            const [data, msgs] = await Promise.all([
+                getRoomById(roomId),
+                getMessages(roomId),
+            ]);
 
-            // Update Room & Tasks
             setRoom(prev => {
-                if (!prev) {
-                    const savedTasks = localStorage.getItem(`tasks_${roomId}`);
-                    const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
-                    tasksRef.current = localTasks;
-                    return { ...data, tasks: localTasks };
-                }
-                return { ...data, tasks: tasksRef.current };
+                const savedTasks = localStorage.getItem(`tasks_${roomId}`);
+                const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
+                tasksRef.current = localTasks;
+                return { ...data, tasks: localTasks };
             });
 
-            // FIXED: تحديث الرسائل بذكاء يعتمد على الـ IDs لمنع الحذف أو التكرار
-            if (data.messages && Array.isArray(data.messages)) {
-                setMessages(prev => {
-                    const incoming = data.messages;
+            const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
 
-                    // نجمع كل الرسائل ونستخدم Set للـ IDs عشان نمنع التكرار
-                    const existingIds = new Set(prev.map(m => m.id));
-                    const newOnes = incoming.filter(m => !existingIds.has(m.id));
-
-                    // لو مفيش جديد والقديم موجود، ارجع بالقديم زي ما هو
-                    if (newOnes.length === 0 && prev.length > 0) return prev;
-
-                    // ادمج القديم والجديد ورتبهم
-                    const merged = [...prev, ...newOnes].sort(
-                        (a, b) => new Date(a.sentAt || Date.now()) - new Date(b.sentAt || Date.now())
-                    );
-
-                    return merged;
-                });
-            }
+            setMessages(prev => {
+                const optimistic = prev.filter(m => m.isOptimistic);
+                const stillPending = optimistic.filter(
+                    opt => !incoming.some(s => s.content === opt.content)
+                );
+                return [...incoming, ...stillPending]
+                    .sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
+            });
 
         } catch (err) {
             console.error("Fetch Error:", err);
@@ -168,37 +148,18 @@ export default function StudyRoom() {
     useEffect(() => {
         fetchRoom();
         pollRef.current = setInterval(() => fetchRoom(true), 5000);
+        return () => clearInterval(pollRef.current);
+    }, [fetchRoom]);
 
-        // ✅ FIX 1: لما الكومبوننت يتدمر (اليوزر خرج من الصفحة بأي طريقة)
-        // نعمل leaveRoom تلقائي عشان نضمن إن الـ API يعرف إن اليوزر مش جوا
-        return () => {
-            clearInterval(pollRef.current);
-            if (!manualLeaveRef.current) {
-                // خرج من الصفحة من غير ما يضغط Leave → نعمل leave في الـ background
-                leaveRoom(roomId).catch(() => { });
-            }
-            localStorage.removeItem(`messages_${roomId}`);
-        };
-    }, [fetchRoom, roomId]);
-
-    // Scroll to bottom لما الرسائل تتحدث
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // حفظ المهام في الـ LocalStorage
     useEffect(() => {
         if (room?.tasks) {
             localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
         }
     }, [room?.tasks, roomId]);
-
-    // حفظ الرسائل في الـ LocalStorage (للحماية من الـ Refresh)
-    useEffect(() => {
-        if (messages.length > 0) {
-            localStorage.setItem(`messages_${roomId}`, JSON.stringify(messages.filter(m => !m.isOptimistic)));
-        }
-    }, [messages, roomId]);
 
     const sendMsg = async () => {
         const text = input.trim();
@@ -215,26 +176,14 @@ export default function StudyRoom() {
             isOptimistic: true,
         };
 
-        // إضافة الرسالة "تفاؤلياً" للشاشة فوراً
         setMessages(prev => [...prev, optimisticMsg]);
 
         try {
             await apiSendMessage(roomId, text);
-            // بعد الإرسال، نحدث الرسائل من السيرفر للتأكد من وصولها ومسح الـ Optimistic
             const msgs = await getMessages(roomId);
-            const incoming = Array.isArray(msgs) ? msgs : msgs?.messages ?? [];
-
-            setMessages(prev => {
-                // شيل الرسالة المؤقتة وحط الداتا اللي جاية من السيرفر
-                const filtered = prev.filter(m => m.id !== optId);
-                const existingIds = new Set(filtered.map(m => m.id));
-                const newOnes = incoming.filter(m => !existingIds.has(m.id));
-                return [...filtered, ...newOnes].sort(
-                    (a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0)
-                );
-            });
+            const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
+            setMessages(incoming.sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0)));
         } catch {
-            // لو فشل الإرسال، شيل الرسالة المؤقتة
             setMessages(prev => prev.filter(m => m.id !== optId));
             showToast("Failed to send message");
         } finally {
@@ -246,20 +195,16 @@ export default function StudyRoom() {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
     };
 
-    // ── Handlers ──────────────────────────────────────────────────────────
     const handleLeave = () => setLeaveConfirm(true);
 
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
         try {
-            // ✅ FIX 1: نحدد إن اليوزر ضغط Leave بنفسه عشان الـ cleanup مش يعمل leaveRoom تاني
-            manualLeaveRef.current = true;
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
-            localStorage.removeItem(`messages_${roomId}`); // مسح الكاش عند الخروج النهائي
             navigate("/study-with-friends");
-        } catch (err) {
+        } catch {
             setLeaving(false);
             showToast("Failed to leave room");
         }
@@ -326,7 +271,6 @@ export default function StudyRoom() {
         try { await updateTask(roomId, taskId, newTitle); } catch { showToast("Update failed"); }
     };
 
-    // ── Loading / Error states ─────────────────────────────────────────────
     if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
@@ -344,7 +288,7 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members ?? [];
+    const members = room.members || room.participants || room.activeUsers || [];
 
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
@@ -371,12 +315,43 @@ export default function StudyRoom() {
                     </span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: ".45rem" }}>
-                    {members.slice(0, 4).map((m, i) => (
-                        <div key={i} title={m.userName ?? m.name} style={{ width: 30, height: 30, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", ...getAvStyle(i), flexShrink: 0 }}>
-                            {getInitials(m.userName ?? m.name ?? "")}
-                        </div>
-                    ))}
+                {/* عرض أسماء المستخدمين (مثل مريم وغيرها) في الـ Top Bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: ".5rem", flexWrap: "nowrap", overflow: "hidden" }}>
+                    {members.slice(0, 4).map((m, i) => {
+                        const name = m.userName || m.name || m.user?.userName || "Member";
+                        return (
+                            <div key={i} title={name} style={{
+                                display: "flex", alignItems: "center", gap: "6px",
+                                padding: "4px 10px 4px 4px",
+                                borderRadius: 999,
+                                background: "rgba(255,255,255,.1)",
+                                border: "1px solid rgba(255,255,255,.15)",
+                                flexShrink: 0,
+                            }}>
+                                <div style={{
+                                    width: 28, height: 28, borderRadius: "50%",
+                                    border: "2px solid rgba(255,255,255,.2)",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: ".55rem", fontWeight: 800, color: "#fff",
+                                    ...getAvStyle(i), flexShrink: 0,
+                                }}>
+                                    {getInitials(name)}
+                                </div>
+                                <span style={{
+                                    fontSize: ".72rem", fontWeight: 700,
+                                    color: "rgba(255,255,255,.85)",
+                                    whiteSpace: "nowrap",
+                                }}>
+                                    {name}
+                                </span>
+                            </div>
+                        );
+                    })}
+                    {members.length > 4 && (
+                        <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.5)", flexShrink: 0 }}>
+                            +{members.length - 4}
+                        </span>
+                    )}
                 </div>
 
                 <button
@@ -398,13 +373,14 @@ export default function StudyRoom() {
             {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
-                {/* LEFT — Timer + ToDo */}
+                {/* ── LEFT — Panel ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                     <TimerStudyRoom roomId={roomId} onStart={handleStartFocus} onStop={handleStopFocus} isActive={!!sessionId} />
+                    {/* تم حذف OnlineMembersPanel من هنا */}
                     <ToDoStudyRoom tasks={room.tasks ?? []} onAdd={handleAddTask} onToggle={handleToggleTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />
                 </div>
 
-                {/* CENTER — Shared Workspace */}
+                {/* ── CENTER — Shared Workspace ── */}
                 <div style={{ background: pageBg, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
                         Shared Workspace
@@ -417,9 +393,8 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* RIGHT — CHAT SECTION */}
+                {/* ── RIGHT — Chat ── */}
                 <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                    {/* Chat Header */}
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
                             <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -432,7 +407,6 @@ export default function StudyRoom() {
                         </span>
                     </div>
 
-                    {/* Messages */}
                     <div style={{ flex: 1, overflowY: "auto", padding: ".75rem 1.25rem", display: "flex", flexDirection: "column", gap: ".65rem", scrollbarWidth: "thin" }}>
                         <div style={{ textAlign: "center", fontSize: ".67rem", fontWeight: 600, color: muted, padding: "4px 0" }}>
                             Welcome to {room.name} · {room.subject}
@@ -445,12 +419,10 @@ export default function StudyRoom() {
                         )}
 
                         {messages.map((msg, i) => {
-                            const senderName = msg.senderName ?? msg.userName ?? "Member";
-                            const memberIndex = members.findIndex(m => (m.userName ?? m.name) === senderName);
-                            const avStyle = getAvStyle(memberIndex >= 0 ? memberIndex : i);
+                            const senderName = msg.senderName || msg.userName || "Member";
                             return (
-                                <div key={msg.id ?? i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
-                                    <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...avStyle }}>
+                                <div key={msg.id || i} style={{ display: "flex", gap: 8, opacity: msg.isOptimistic ? 0.65 : 1, transition: "opacity 0.3s" }}>
+                                    <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".55rem", fontWeight: 800, color: "#fff", marginTop: 1, ...getAvStyle(i) }}>
                                         {getInitials(senderName)}
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -469,7 +441,6 @@ export default function StudyRoom() {
                         <div ref={bottomRef} />
                     </div>
 
-                    {/* Input */}
                     <div style={{ padding: ".75rem 1.25rem", borderTop: `1px solid ${border}`, flexShrink: 0 }}>
                         <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                             <textarea
@@ -479,35 +450,21 @@ export default function StudyRoom() {
                                 placeholder="Message the room…"
                                 rows={1}
                                 disabled={sending}
-                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s", opacity: sending ? 0.7 : 1 }}
-                                onFocus={e => e.currentTarget.style.borderColor = "#8FB7CC"}
-                                onBlur={e => e.currentTarget.style.borderColor = border}
+                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s" }}
                             />
                             <button
                                 onClick={sendMsg}
                                 disabled={sending || !input.trim()}
-                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (sending || !input.trim()) ? "not-allowed" : "pointer", flexShrink: 0, transition: "background 0.2s", opacity: (sending || !input.trim()) ? 0.5 : 1 }}
+                                style={{ width: 38, height: 38, borderRadius: 11, border: "none", background: sendBtnBg, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
                             >
-                                {sending
-                                    ? <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.6s linear infinite" }} />
-                                    : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-                                }
+                                {sending ? <div style={{ width: 12, height: 12, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .6s linear infinite" }} /> : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ConfirmModal
-                isOpen={leaveConfirm}
-                title="Leave Room"
-                body={`Are you sure you want to leave "${room.name}"?`}
-                confirmLabel="Leave"
-                danger
-                isDarkMode={isDarkMode}
-                onConfirm={confirmLeave}
-                onCancel={() => setLeaveConfirm(false)}
-            />
+            <ConfirmModal isOpen={leaveConfirm} title="Leave Room" body={`Are you sure you want to leave "${room.name}"?`} confirmLabel="Leave" danger isDarkMode={isDarkMode} onConfirm={confirmLeave} onCancel={() => setLeaveConfirm(false)} />
             <Toast message={toast.msg} visible={toast.visible} />
         </div>
     );

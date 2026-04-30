@@ -126,8 +126,7 @@ export default function UsersPage() {
 
             {/* Shared layout — same as Dashboard */}
             <SidebarDashboard />
-            <TopbarDashboard />
-
+            <TopbarDashboard breadcrumb="Users" />
             {/* ── Main ── */}
             <main style={{
                 marginLeft: 230, marginTop: 60,

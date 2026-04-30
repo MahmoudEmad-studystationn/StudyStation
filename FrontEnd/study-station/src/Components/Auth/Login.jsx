@@ -196,9 +196,7 @@ export default function LoginPage({ switchToSignUp }) {
             loginSuccess(token);
             toast.success("Logged in successfully! Welcome back!");
 
-            // جرب تاخد الـ role من الـ response مباشرة
             const roleFromResponse = response.data?.role || response.data?.Role;
-            // أو من الـ token
             const roleFromToken = getRoleFromToken(token);
 
             const role = roleFromResponse || roleFromToken;
