@@ -55,5 +55,8 @@ namespace StudyStation.API.Models
         public ICollection<StudyStation.API.Features.Profile.Models.StudyTask> ProfileStudyTasks { get; set; } = new List<StudyStation.API.Features.Profile.Models.StudyTask>();
         public ICollection<StudyStation.API.Features.Profile.Models.StudySession> StudySessions { get; set; } = new List<StudyStation.API.Features.Profile.Models.StudySession>();
         public ICollection<StudyStation.API.Features.Profile.Models.ActivityLog> ActivityLogs { get; set; } = new List<StudyStation.API.Features.Profile.Models.ActivityLog>();
+
+        // Saved Items
+        public ICollection<StudyStation.API.Features.SavedItems.Models.SavedItem> SavedItems { get; set; } = new List<StudyStation.API.Features.SavedItems.Models.SavedItem>();
     }
 }
