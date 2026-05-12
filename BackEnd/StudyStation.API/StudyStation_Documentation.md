@@ -243,6 +243,20 @@ Id, ContentType ("Post"/"Resource"/"Room"), ContentId, ReporterId (FK), Reason, 
 
 ---
 
+### Notifications Models (`Features/Notifications/Models/`)
+
+#### `Notification`
+| Property | Type | Notes |
+|---|---|---|
+| Id | int (PK) | |
+| RecipientId | int (FK) | User receiving notification |
+| SenderId | int (FK) | User who triggered the action |
+| Type | string (Enum) | Like, Comment, Reply, System, StudyRoomInvite, Follow |
+| ReferenceId | int? | ID of the related entity |
+| TargetTitle | string | Denormalized title for UI |
+| IsRead | bool | Default: false |
+| CreatedAt | DateTime | |
+
 ## 5. DatabaseContext Configuration
 
 - Inherits `IdentityDbContext<ApplicationUser, IdentityRole<int>, int>`
@@ -411,6 +425,22 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 
 ---
 
+### 6.10 Notification System (`/api/Notifications`)
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/Notifications` | ✅ | Get user notifications (paginated, supports unreadOnly filter) |
+| GET | `/api/Notifications/unread-count` | ✅ | Get unread notifications count |
+| PUT | `/api/Notifications/mark-all-read` | ✅ | Mark all notifications as read |
+| PUT | `/api/Notifications/{id}/mark-read` | ✅ | Mark a specific notification as read |
+| DELETE | `/api/Notifications/{id}` | ✅ | Delete a specific notification |
+
+**CQRS Commands/Queries**: GetUserNotificationsQuery, GetUnreadNotificationsCountQuery, MarkAllNotificationsAsReadCommand, MarkNotificationAsReadCommand, DeleteNotificationCommand, CreateNotificationCommand
+
+**Real-time**: Triggered via `NotificationHub` upon `CreateNotificationCommand`.
+
+---
+
 ## 7. Services
 
 ### JwtService
@@ -437,7 +467,9 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 - `LeaveRoomGroup(string roomId)` — Leave SignalR group
 
 ### NotificationHub (`/Hubs/NotificationHub`)
-- Placeholder for future push notifications
+- Pushes real-time notifications to users
+- Client listens for the `ReceiveNotification` event
+- Payload: `NotificationDto`
 
 ---
 
@@ -522,6 +554,7 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | 2026-04-29 | updateStrudyWithFriend2 | Further room fixes |
 | 2026-04-29 | AddAdminPanelEndpoints | Admin endpoints support |
 | 2026-05-12 | AddSavedItemsFeature | Saved items functionality |
+| 2026-05-12 | AddNotifications | Notification system |
 
 ---
 
