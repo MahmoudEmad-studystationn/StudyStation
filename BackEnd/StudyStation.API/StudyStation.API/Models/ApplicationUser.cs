@@ -58,5 +58,8 @@ namespace StudyStation.API.Models
 
         // Saved Items
         public ICollection<StudyStation.API.Features.SavedItems.Models.SavedItem> SavedItems { get; set; } = new List<StudyStation.API.Features.SavedItems.Models.SavedItem>();
+
+        // Notifications
+        public ICollection<StudyStation.API.Features.Notifications.Models.Notification> Notifications { get; set; } = new List<StudyStation.API.Features.Notifications.Models.Notification>();
     }
 }
