@@ -21,12 +21,17 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
     const [showImageModal, setShowImageModal] = useState(false);
     const [localComments, setLocalComments] = useState(post.comments || []);
 
-    const cardBg = isDarkMode ? "#2A2A2A" : "white";
-    const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
-    const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-    const placeholderBg = isDarkMode ? "#363636" : "#e4e6eb";
-    const inputBg = isDarkMode ? "#363636" : "#f0f2f5";
-    const borderColor = isDarkMode ? "#404040" : "#e4e6eb";
+    // ── Library-matching design tokens ──
+    const navy = "#2C3E50";
+    const steel = "#8FB7CC";
+    const cardBg = isDarkMode ? "#1f1f1f" : "#ffffff";
+    const bgPage = isDarkMode ? "#171717" : "#F3F4F6";
+    const textPrimary = isDarkMode ? "#f0f0f0" : "#1a1a2e";
+    const textSecondary = isDarkMode ? "#9a9a9a" : "#686868";
+    const borderColor = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)";
+    const inputBg = isDarkMode ? "#2a2a2a" : "#F3F4F6";
+    const placeholderBg = isDarkMode ? "#2a2a2a" : "#e8eaed";
+    const accentSoft = isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(143,183,204,0.18)";
 
     const authorName = post.author
         ? `${post.author.firstName} ${post.author.lastName}`
@@ -51,7 +56,6 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
     async function createComment(e) {
         e.preventDefault();
         if (!commentContent.trim()) return;
-
         const response = await createCommentApi(commentContent, post.id);
         if (response?.message === 'success') {
             const newComment = {
@@ -76,190 +80,446 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
     }
 
     return (
-        <div className="rounded-xl shadow-md p-5 sm:p-6 md:p-7 transition-colors duration-300" style={{ backgroundColor: cardBg }}>
-            <header className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                    <FontAwesomeIcon icon={faUser} className="text-lg sm:text-xl" style={{ color: textSecondary }} />
-                </div>
-                <div className="flex-1">
-                    <div className="text-sm sm:text-base font-bold" style={{ color: textPrimary }}>{authorName}</div>
-                    <div className="text-[10px] sm:text-xs mt-0.5" style={{ color: textSecondary }}>
-                        {post.createdAt && new Date(post.createdAt).toLocaleString()}
-                    </div>
-                </div>
-                {isMyPost && (
-                    <button onClick={() => onDeletePost(post.id)} className="p-2 rounded-lg transition-all hover:bg-red-500/10 group" title="Delete post">
-                        <FontAwesomeIcon icon={faTrash} className="text-base sm:text-lg transition-colors group-hover:text-red-500" style={{ color: textSecondary }} />
-                    </button>
-                )}
-            </header>
+        <>
+            {/* Google Fonts - Noto Sans Arabic */}
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+            <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet" />
 
-            {/* Post Body */}
-            <div className="mb-4 sm:mb-5">
-                {post.title && (
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1" style={{ color: textPrimary }}>{post.title}</h3>
-                )}
-                {post.content && (
-                    <p className="text-sm sm:text-base md:text-lg leading-relaxed" style={{ color: textPrimary, wordBreak: "break-word", overflowWrap: "break-word", whiteSpace: "pre-wrap" }}>
-                        {post.content}
-                    </p>
-                )}
-                {post.imageUrl && (
-                    <>
-                        <img
-                            src={post.imageUrl}
-                            alt={post.title || "Post image"}
-                            className="w-full h-48 sm:h-56 md:h-64 rounded-lg object-cover mt-3 cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => setShowImageModal(true)}
-                            onError={(e) => { e.target.style.display = "none"; }}
-                        />
-                        {showImageModal && (
-                            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.85)" }} onClick={() => setShowImageModal(false)}>
-                                <div className="relative max-w-4xl max-h-[90vh] w-full">
-                                    <img src={post.imageUrl} alt={post.title || "Post image"} className="w-full h-full object-contain rounded-lg" style={{ maxHeight: "90vh" }} onClick={(e) => e.stopPropagation()} />
-                                    <button onClick={() => setShowImageModal(false)} className="absolute cursor-pointer top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>✕</button>
+            <style>{`
+                .post-card {
+                    background: ${cardBg};
+                    border: 1px solid ${borderColor};
+                    border-radius: 14px;
+                    padding: 1.4rem;
+                    position: relative;
+                    overflow: visible;
+                    /* تم إزالة الـ hover بالكامل */
+                }
+
+                /* خط Noto Sans Arabic لكل النصوص العربية */
+                .post-card,
+                .post-author-name,
+                .post-title,
+                .post-content,
+                .post-date,
+                .comment-author,
+                .comment-text,
+                .post-action-btn {
+                    font-family: 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;
+                }
+
+                .post-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; right: 0;
+                    height: 3px;
+                    border-radius: 14px 14px 0 0;
+                    background: linear-gradient(90deg, ${navy}, ${steel});
+                    opacity: 0;
+                }
+
+                .post-avatar {
+                    width: 40px; height: 40px;
+                    border-radius: 50%;
+                    background: ${placeholderBg};
+                    display: flex; align-items: center; justify-content: center;
+                    flex-shrink: 0;
+                    border: 1.5px solid ${borderColor};
+                }
+
+                .post-author-name {
+                    font-weight: 700;
+                    font-size: .875rem;
+                    color: ${textPrimary};
+                }
+
+                .post-date {
+                    font-size: .72rem;
+                    color: ${textSecondary};
+                    margin-top: 2px;
+                }
+
+                .post-title {
+                    font-weight: 700;
+                    font-size: 1rem;
+                    color: ${textPrimary};
+                    margin-bottom: .35rem;
+                    line-height: 1.3;
+                }
+
+                .post-content {
+                    font-size: .875rem;
+                    color: ${textSecondary};
+                    line-height: 1.65;
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                    white-space: pre-wrap;
+                }
+
+                .post-divider {
+                    border: none;
+                    border-top: 1px solid ${borderColor};
+                    margin: .75rem 0;
+                }
+
+                .post-action-btn {
+                    display: inline-flex; align-items: center; gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    border: 1px solid ${borderColor};
+                    background: transparent;
+                    font-size: .78rem; font-weight: 500;
+                    color: ${textSecondary};
+                    cursor: pointer;
+                    transition: all .2s;
+                }
+
+                .post-action-btn:hover {
+                    border-color: ${steel};
+                    color: ${textPrimary};
+                    background: ${accentSoft};
+                }
+
+                .post-action-btn.reacted {
+                    border-color: ${steel};
+                    color: ${steel};
+                    background: ${accentSoft};
+                }
+
+                /* باقي الستايلات بدون تغيير */
+                .reaction-picker {
+                    position: absolute;
+                    bottom: calc(100% + 8px);
+                    left: 0;
+                    display: flex; align-items: center; gap: 4px;
+                    padding: 8px 12px;
+                    background: ${cardBg};
+                    border: 1px solid ${borderColor};
+                    border-radius: 999px;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+                    z-index: 50;
+                    animation: slideUp .15s ease-out;
+                }
+
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(6px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .reaction-btn {
+                    width: 38px; height: 38px;
+                    border-radius: 50%;
+                    border: none; background: transparent;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    transition: transform .15s;
+                    display: flex; align-items: center; justify-content: center;
+                    position: relative;
+                }
+
+                .reaction-btn:hover { transform: scale(1.35); }
+
+                .reaction-tooltip {
+                    position: absolute;
+                    bottom: calc(100% + 4px);
+                    left: 50%; transform: translateX(-50%);
+                    background: ${navy};
+                    color: white;
+                    font-size: .65rem; font-weight: 500;
+                    padding: 2px 7px;
+                    border-radius: 5px;
+                    white-space: nowrap;
+                    pointer-events: none;
+                }
+
+                .delete-btn {
+                    width: 32px; height: 32px;
+                    border-radius: 8px;
+                    border: 1px solid ${borderColor};
+                    background: transparent;
+                    color: ${textSecondary};
+                    cursor: pointer;
+                    display: flex; align-items: center; justify-content: center;
+                    transition: all .2s;
+                }
+
+                .delete-btn:hover { 
+                    border-color: #ef4444; 
+                    color: #ef4444; 
+                    background: rgba(239,68,68,.08); 
+                }
+
+                .comment-input-wrap {
+                    display: flex; align-items: center; gap: 10px;
+                    padding-top: .75rem;
+                }
+
+                .comment-input {
+                    flex: 1;
+                    padding: 8px 38px 8px 14px;
+                    border-radius: 999px;
+                    border: 1px solid ${borderColor};
+                    background: ${inputBg};
+                    font-size: .82rem;
+                    color: ${textPrimary};
+                    outline: none;
+                    transition: border .2s, box-shadow .2s;
+                }
+
+                .comment-input::placeholder { color: ${textSecondary}; }
+
+                .comment-input:focus {
+                    border-color: ${steel};
+                    box-shadow: 0 0 0 3px rgba(143,183,204,.15);
+                }
+
+                .comment-submit {
+                    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+                    background: none; border: none; cursor: pointer;
+                    color: ${textSecondary}; font-size: .8rem;
+                    transition: color .2s;
+                }
+
+                .comment-submit.active { color: ${steel}; }
+                .comment-submit:disabled { cursor: not-allowed; }
+
+                .comment-bubble {
+                    background: ${inputBg};
+                    border: 1px solid ${borderColor};
+                    border-radius: 12px;
+                    padding: .65rem .9rem;
+                    position: relative;
+                }
+
+                .comment-author {
+                    font-weight: 700;
+                    font-size: .8rem;
+                    color: ${textPrimary};
+                }
+
+                .comment-text {
+                    font-size: .82rem;
+                    color: ${textSecondary};
+                    margin-top: 3px;
+                    padding-right: 1.5rem;
+                    line-height: 1.5;
+                }
+
+                .reaction-badge {
+                    display: inline-flex; align-items: center; justify-content: center;
+                    width: 26px; height: 26px; border-radius: 50%;
+                    background: ${inputBg};
+                    border: 1px solid ${borderColor};
+                    font-size: .85rem;
+                }
+            `}</style>
+
+            <div className="post-card">
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1rem" }}>
+                    <div className="post-avatar">
+                        <FontAwesomeIcon icon={faUser} style={{ fontSize: ".85rem", color: textSecondary }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div className="post-author-name">{authorName}</div>
+                        <div className="post-date">
+                            {post.createdAt && new Date(post.createdAt).toLocaleString()}
+                        </div>
+                    </div>
+                    {isMyPost && (
+                        <button className="delete-btn" onClick={() => onDeletePost(post.id)} title="Delete post">
+                            <FontAwesomeIcon icon={faTrash} style={{ fontSize: ".75rem" }} />
+                        </button>
+                    )}
+                </div>
+
+                {/* Body */}
+                <div style={{ marginBottom: "1rem" }}>
+                    {post.title && <div className="post-title">{post.title}</div>}
+                    {post.content && <p className="post-content">{post.content}</p>}
+                    {post.imageUrl && (
+                        <>
+                            <img
+                                src={post.imageUrl}
+                                alt={post.title || "Post image"}
+                                style={{
+                                    width: "100%", height: "220px", objectFit: "cover",
+                                    borderRadius: "10px", marginTop: "12px", cursor: "pointer",
+                                    border: `1px solid ${borderColor}`, transition: "opacity .2s"
+                                }}
+                                onClick={() => setShowImageModal(true)}
+                                onError={(e) => { e.target.style.display = "none"; }}
+                                onMouseEnter={e => e.target.style.opacity = .88}
+                                onMouseLeave={e => e.target.style.opacity = 1}
+                            />
+                            {showImageModal && (
+                                <div
+                                    style={{
+                                        position: "fixed", inset: 0, zIndex: 50,
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        padding: "1rem", backgroundColor: "rgba(0,0,0,0.88)"
+                                    }}
+                                    onClick={() => setShowImageModal(false)}
+                                >
+                                    <div style={{ position: "relative", maxWidth: "900px", width: "100%" }}>
+                                        <img
+                                            src={post.imageUrl} alt=""
+                                            style={{ width: "100%", maxHeight: "90vh", objectFit: "contain", borderRadius: "12px" }}
+                                            onClick={e => e.stopPropagation()}
+                                        />
+                                        <button
+                                            onClick={() => setShowImageModal(false)}
+                                            style={{
+                                                position: "absolute", top: "12px", right: "12px",
+                                                width: "34px", height: "34px", borderRadius: "50%",
+                                                background: "rgba(0,0,0,0.55)", border: "none",
+                                                color: "white", fontSize: "1rem", cursor: "pointer",
+                                                display: "flex", alignItems: "center", justifyContent: "center"
+                                            }}
+                                        >✕</button>
+                                    </div>
                                 </div>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {/* Reaction count */}
+                {totalReactions > 0 && (
+                    <div style={{
+                        display: "flex", alignItems: "center", gap: "8px",
+                        marginBottom: ".65rem", paddingBottom: ".65rem",
+                        borderBottom: `1px solid ${borderColor}`
+                    }}>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                            {Object.entries(reactionCounts).slice(0, 3).map(([type]) => {
+                                const emojiInfo = emojiReactions.find(rt => rt.type === type);
+                                return (
+                                    <span key={type} className="reaction-badge">{emojiInfo?.emoji || "👍"}</span>
+                                );
+                            })}
+                        </div>
+                        <span style={{ fontSize: ".75rem", fontWeight: 500, color: textSecondary }}>{totalReactions}</span>
+                    </div>
+                )}
+
+                {/* Actions */}
+                <div style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    paddingBottom: ".75rem", borderBottom: `1px solid ${borderColor}`
+                }}>
+                    {/* Like button */}
+                    <div style={{ position: "relative" }}>
+                        <button
+                            className={`post-action-btn${myReaction ? " reacted" : ""}`}
+                            onClick={() => setShowReactions(!showReactions)}
+                            onMouseEnter={() => setShowReactions(true)}
+                            onMouseLeave={() => { setTimeout(() => { if (!hoveredReaction) setShowReactions(false); }, 120); }}
+                        >
+                            {myReaction && emojiReactions.find(r => r.type === myReaction.type)
+                                ? <span style={{ fontSize: "1rem" }}>{emojiReactions.find(r => r.type === myReaction.type).emoji}</span>
+                                : <FontAwesomeIcon icon={faThumbsUp} style={{ fontSize: ".8rem" }} />
+                            }
+                            {myReaction ? myReaction.type : "Like"}
+                        </button>
+
+                        {showReactions && (
+                            <div
+                                className="reaction-picker"
+                                onMouseEnter={() => { setShowReactions(true); setHoveredReaction(true); }}
+                                onMouseLeave={() => { setShowReactions(false); setHoveredReaction(null); }}
+                            >
+                                {emojiReactions.map(reaction => (
+                                    <button
+                                        key={reaction.type}
+                                        className="reaction-btn"
+                                        onClick={() => handleReactionClick(reaction.type)}
+                                        onMouseEnter={() => setHoveredReaction(reaction.type)}
+                                        onMouseLeave={() => setHoveredReaction(null)}
+                                        style={{ transform: hoveredReaction === reaction.type ? "scale(1.35)" : "scale(1)" }}
+                                    >
+                                        {reaction.emoji}
+                                        {hoveredReaction === reaction.type && (
+                                            <span className="reaction-tooltip">{reaction.type}</span>
+                                        )}
+                                    </button>
+                                ))}
                             </div>
                         )}
-                    </>
-                )}
-            </div>
+                    </div>
 
-            {/* Reactions Count */}
-            {totalReactions > 0 && (
-                <div className="flex items-center gap-2 mb-3 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                    <div className="flex items-center gap-1">
-                        {Object.entries(reactionCounts).slice(0, 3).map(([type]) => {
-                            const emojiInfo = emojiReactions.find((rt) => rt.type === type);
+                    {/* Comment button */}
+                    <button className="post-action-btn" onClick={() => onOpenComments(post.id)}>
+                        <FontAwesomeIcon icon={faComment} style={{ fontSize: ".8rem" }} />
+                        Comment ({localComments.length})
+                    </button>
+                </div>
+
+                {/* Add comment */}
+                <div className="comment-input-wrap" style={{ paddingBottom: ".75rem", borderBottom: `1px solid ${borderColor}` }}>
+                    <div className="post-avatar" style={{ width: "34px", height: "34px" }}>
+                        <FontAwesomeIcon icon={faUser} style={{ fontSize: ".75rem", color: textSecondary }} />
+                    </div>
+                    <div style={{ flex: 1, position: "relative" }}>
+                        <form onSubmit={createComment}>
+                            <input
+                                type="text"
+                                className="comment-input"
+                                value={commentContent}
+                                onChange={e => setCommentContent(e.target.value)}
+                                placeholder="Write a comment…"
+                            />
+                            <button
+                                type="submit"
+                                className={`comment-submit${commentContent.length >= 2 ? " active" : ""}`}
+                                disabled={commentContent.length < 2}
+                            >
+                                <FontAwesomeIcon icon={faPaperPlane} />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                {/* Comments preview */}
+                {localComments.length > 0 && (
+                    <div style={{ paddingTop: ".9rem", display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {localComments.slice(0, commentLimit).map(comment => {
+                            const commentAuthor = comment.author
+                                ? `${comment.author.firstName ?? ""} ${comment.author.lastName ?? ""}`.trim()
+                                : myFullName;
+                            const isMyComment = currentUserId && (!comment.author || comment.author?.id?.toString() === currentUserId);
+
                             return (
-                                <div key={type} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: isDarkMode ? "#363636" : "#f3f4f6" }}>
-                                    {emojiInfo?.emoji || "👍"}
+                                <div key={comment.id} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                                    <div className="post-avatar" style={{ width: "32px", height: "32px", flexShrink: 0 }}>
+                                        <FontAwesomeIcon icon={faUser} style={{ fontSize: ".7rem", color: textSecondary }} />
+                                    </div>
+                                    <div className="comment-bubble" style={{ flex: 1 }}>
+                                        <div className="comment-author">{commentAuthor}</div>
+                                        <div className="comment-text">{comment.content}</div>
+                                        {isMyComment && (
+                                            <button
+                                                onClick={() => handleDeleteComment(comment.id)}
+                                                style={{
+                                                    position: "absolute", top: "10px", right: "10px",
+                                                    background: "none", border: "none", cursor: "pointer",
+                                                    color: textSecondary, fontSize: ".7rem", padding: "2px",
+                                                    transition: "color .2s"
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.color = "#ef4444"}
+                                                onMouseLeave={e => e.currentTarget.style.color = textSecondary}
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
                     </div>
-                    <span className="text-xs sm:text-sm font-medium" style={{ color: textSecondary }}>{totalReactions}</span>
-                </div>
-            )}
-
-            {/* Footer Actions */}
-            <footer className="flex items-center gap-4 sm:gap-6 pt-2 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <div className="relative">
-                    <button
-                        onClick={() => setShowReactions(!showReactions)}
-                        onMouseEnter={() => setShowReactions(true)}
-                        onMouseLeave={() => { setTimeout(() => { if (!hoveredReaction) setShowReactions(false); }, 100); }}
-                        className="flex items-center gap-2 transition-all duration-200"
-                        style={{ color: myReaction ? emojiReactions.find((r) => r.type === myReaction.type)?.color || textSecondary : textSecondary }}
-                    >
-                        {myReaction && emojiReactions.find(r => r.type === myReaction.type) ? (
-                            <span className="text-lg sm:text-xl">{emojiReactions.find(r => r.type === myReaction.type).emoji}</span>
-                        ) : (
-                            <FontAwesomeIcon icon={faThumbsUp} className="text-sm sm:text-base" />
-                        )}
-                        <span className="text-xs sm:text-sm font-medium">{myReaction ? myReaction.type : "Like"}</span>
-                    </button>
-
-                    {showReactions && (
-                        <div
-                            className="absolute bottom-full left-0 mb-2 flex items-center gap-1 px-3 py-2 rounded-full shadow-2xl z-50"
-                            style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, animation: "slideUp 0.2s ease-out" }}
-                            onMouseEnter={() => { setShowReactions(true); setHoveredReaction(true); }}
-                            onMouseLeave={() => { setShowReactions(false); setHoveredReaction(null); }}
-                        >
-                            {emojiReactions.map((reaction) => (
-                                <button
-                                    key={reaction.type}
-                                    onClick={() => handleReactionClick(reaction.type)}
-                                    className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full transition-all duration-200 relative group"
-                                    style={{ transform: hoveredReaction === reaction.type ? "scale(1.3)" : "scale(1)" }}
-                                    onMouseEnter={() => setHoveredReaction(reaction.type)}
-                                    onMouseLeave={() => setHoveredReaction(null)}
-                                >
-                                    <span className="text-2xl">{reaction.emoji}</span>
-                                    <div className="absolute bottom-full mb-1 px-2 py-1 rounded text-[10px] whitespace-nowrap pointer-events-none transition-opacity duration-200" style={{ backgroundColor: isDarkMode ? "#404040" : "#1f2937", color: "#fff", opacity: hoveredReaction === reaction.type ? 1 : 0 }}>
-                                        {reaction.type}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <button
-                    onClick={() => onOpenComments(post.id)}
-                    className="flex items-center gap-2 transition-colors"
-                    style={{ color: textSecondary }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = textPrimary)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = textSecondary)}
-                >
-                    <FontAwesomeIcon icon={faComment} className="text-sm sm:text-base" />
-                    <span className="text-xs sm:text-sm font-medium">Comment ({localComments.length})</span>
-                </button>
-            </footer>
-
-            {/* Add Comment */}
-            <div className="pt-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <form onSubmit={createComment} className="flex items-center gap-3 pb-3">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                        <FontAwesomeIcon icon={faUser} className="text-sm" style={{ color: textSecondary }} />
-                    </div>
-                    <div className="flex-1 relative">
-                        <input
-                            type="text"
-                            value={commentContent}
-                            onChange={(e) => setCommentContent(e.target.value)}
-                            placeholder="Write a comment..."
-                            className="w-full rounded-full px-4 py-2 pr-10 text-sm outline-none transition-colors duration-300"
-                            style={{ backgroundColor: inputBg, color: textPrimary, border: `1px solid ${borderColor}` }}
-                        />
-                        <button
-                            type="submit"
-                            disabled={commentContent.length < 2}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed transition-colors"
-                            style={{ color: commentContent.length >= 2 ? "#7daebd" : textSecondary }}
-                        >
-                            <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-                        </button>
-                    </div>
-                </form>
+                )}
             </div>
-
-            {/* Comments Preview */}
-            {localComments.length > 0 && (
-                <div className="pt-4 space-y-3">
-                    {localComments.slice(0, commentLimit).map((comment) => {
-                        const commentAuthor = comment.author
-                            ? `${comment.author.firstName ?? ""} ${comment.author.lastName ?? ""}`.trim()
-                            : myFullName;
-
-                        const isMyComment = currentUserId && (!comment.author || comment.author?.id?.toString() === currentUserId);
-
-                        return (
-                            <div key={comment.id} className="flex items-start gap-3">
-                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                                    <FontAwesomeIcon icon={faUser} className="text-sm" style={{ color: textSecondary }} />
-                                </div>
-                                <div className="flex-1 rounded-xl px-4 py-3 relative" style={{ backgroundColor: inputBg }}>
-                                    {isMyComment && (
-                                        <div className="absolute top-2 right-2">
-                                            <button
-                                                onClick={() => handleDeleteComment(comment.id)}
-                                                className="p-1 rounded transition-all hover:bg-red-500/10 group"
-                                                title="Delete comment"
-                                            >
-                                                <FontAwesomeIcon icon={faTrash} className="text-sm transition-colors group-hover:text-red-500" style={{ color: textSecondary }} />
-                                            </button>
-                                        </div>
-                                    )}
-                                    <p className="font-semibold text-sm sm:text-base" style={{ color: textPrimary }}>{commentAuthor}</p>
-                                    <p className="text-sm mt-1 pr-8" style={{ color: textSecondary }}>{comment.content}</p>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
+        </>
     );
 }

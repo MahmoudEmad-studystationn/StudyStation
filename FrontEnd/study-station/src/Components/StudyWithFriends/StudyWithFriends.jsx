@@ -59,20 +59,15 @@ function normalizeRoom(apiRoom, currentUserId) {
     || 0;
   const maxCount = apiRoom.maxParticipants || null;
   const fillPct = maxCount > 0 ? Math.round((currentCount / maxCount) * 100) : 0;
-  const description = apiRoom.description || "No description available";
-
-  const placeholderCount = Math.min(currentCount, 4);
-  const participants = Array.from({ length: placeholderCount }, (_, i) => i);
-
+  const members = apiRoom.members || apiRoom.participants || [];
   const myId = currentUserId ? String(currentUserId) : null;
-  const isMember = myId && (apiRoom.currentUserIsMember || apiRoom.isMember || false);
-  const isOwner = myId && String(apiRoom.ownerId) === myId;
+  const isMember = !!(apiRoom.currentUserIsMember || apiRoom.isMember); const isOwner = myId && String(apiRoom.ownerId) === myId;
 
   return {
     id: apiRoom.id,
     name: apiRoom.name,
     subject: apiRoom.subject || "General",
-    desc: description,
+    desc: apiRoom.description || "No description available",
     createdAt: apiRoom.createdAt || null,
     isPublic: apiRoom.isPublic !== undefined ? apiRoom.isPublic : true,
     roomCode: apiRoom.roomCode || null,
@@ -80,10 +75,9 @@ function normalizeRoom(apiRoom, currentUserId) {
     max: maxCount,
     fill: fillPct,
     full: maxCount ? currentCount >= maxCount : false,
-    participants,
+    members: members,
     isMember: !!isMember,
     isOwner: !!isOwner,
-    members: [],
   };
 }
 
@@ -208,47 +202,62 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         >
           {room.current > 0 ? (
             <>
-              {room.participants.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: "50%",
-                    border: `3px solid ${cardBg}`,
-                    marginLeft: i === 0 ? 0 : -10,
-                    flexShrink: 0,
-                    background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
-                    zIndex: room.participants.length - i,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                  }}
-                />
-              ))}
-              {/* لو في أكتر من 4 نعرض +N */}
+              {/* عرض أول 4 members بأسمائهم */}
+              {(room.members.length > 0
+                ? room.members.slice(0, 4)
+                : Array.from({ length: Math.min(room.current, 4) }, (_, i) => ({ _placeholder: true, _index: i }))
+              ).map((member, i) => {
+                const isPlaceholder = !member || member._placeholder;
+                const name = isPlaceholder
+                  ? null
+                  : (member.userName || member.name || member.displayName || member.user?.userName || null);
+                const initials = name
+                  ? name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
+                  : null;  // لو مفيش اسم، خلي الـ div فاضي
+
+                return (
+                  <div
+                    key={i}
+                    title={name || undefined}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      border: `3px solid ${cardBg}`,
+                      marginLeft: i === 0 ? 0 : -10,
+                      flexShrink: 0,
+                      background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
+                      zIndex: 5 - i,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: ".48rem",
+                      fontWeight: 800,
+                      color: "#fff",
+                    }}
+                  >
+                    {initials}
+                  </div>
+                );
+              })}
+
+              {/* لو في أكتر من 4 */}
               {room.current > 4 && (
                 <div style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  border: `3px solid ${cardBg}`,
-                  marginLeft: -10,
-                  flexShrink: 0,
+                  width: 28, height: 28, borderRadius: "50%",
+                  border: `3px solid ${cardBg}`, marginLeft: -10, flexShrink: 0,
                   background: isDarkMode ? "#2a2a2a" : "#e0e4e8",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: ".55rem",
-                  fontWeight: 700,
-                  color: mutedColor,
-                  zIndex: 0,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: ".55rem", fontWeight: 700, color: mutedColor, zIndex: 0,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
                 }}>
                   +{room.current - 4}
                 </div>
               )}
             </>
           ) : (
-            <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: 'italic' }}>
+            <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: "italic" }}>
               No members yet
             </span>
           )}
@@ -256,22 +265,40 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
           {/* Tooltip */}
           {showMembersTooltip && room.current > 0 && (
             <div style={{
-              position: 'absolute',
-              bottom: '35px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: isDarkMode ? '#2a2a2a' : '#fff',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-              fontSize: '.7rem',
-              color: isDarkMode ? '#e0e0e0' : '#333',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-              zIndex: 10,
-              pointerEvents: 'none'
+              position: "absolute", bottom: "35px", left: "50%",
+              transform: "translateX(-50%)",
+              background: isDarkMode ? "#2a2a2a" : "#fff",
+              padding: "8px 12px", borderRadius: "8px",
+              border: `1px solid ${isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+              fontSize: ".7rem", color: isDarkMode ? "#e0e0e0" : "#333",
+              whiteSpace: "nowrap", boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              zIndex: 10, pointerEvents: "none",
+              display: "flex", flexDirection: "column", gap: 4,
+              minWidth: 120,
             }}>
-              {room.current} {room.current === 1 ? 'member' : 'members'}
+              <div style={{ fontWeight: 700, marginBottom: 4, opacity: 0.6, fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".05em" }}>
+                {room.current} {room.current === 1 ? "member" : "members"}
+                {room.max ? ` / ${room.max} max` : ""}
+              </div>
+              {room.members.slice(0, 6).map((m, i) => {
+                const name = m?.userName || m?.name || m?.displayName || m?.user?.userName || "Unknown";
+                return (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{
+                      width: 16, height: 16, borderRadius: "50%",
+                      background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
+                      flexShrink: 0, fontSize: ".45rem", fontWeight: 800, color: "#fff",
+                      display: "flex", alignItems: "center", justifyContent: "center"
+                    }}>
+                      {name[0]?.toUpperCase()}
+                    </div>
+                    <span>{name}</span>
+                  </div>
+                );
+              })}
+              {room.current > 6 && (
+                <div style={{ opacity: 0.5, fontSize: ".65rem" }}>+{room.current - 6} more</div>
+              )}
             </div>
           )}
         </div>
@@ -279,11 +306,20 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         {/* العداد والـ progress bar */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: ".72rem", fontWeight: 600, color: titleColor }}>
-            <IconUsers /> {room.current}{room.max != null ? ` / ${room.max}` : ""}
+            <IconUsers />
+            <span>{room.current}</span>
+            {room.max != null && (
+              <span>
+                <span style={{ opacity: 0.4 }}> / </span>
+                <span style={{ opacity: 0.7 }}>{room.max}</span>
+              </span>
+            )}
           </div>
-          <div style={{ width: 50, height: 3, background: surface2, borderRadius: "999px", overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${room.fill}%`, background: accent }} />
-          </div>
+          {room.max != null && (
+            <div style={{ width: 50, height: 3, background: surface2, borderRadius: "999px", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${room.fill}%`, background: accent }} />
+            </div>
+          )}
         </div>
       </div>
 

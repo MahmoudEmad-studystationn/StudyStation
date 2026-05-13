@@ -11,27 +11,30 @@ export const createRoom = (data) =>
 export const getRoomById = (id) =>
     axiosInstance.get(`${BASE}/${id}`).then(r => r.data);
 
-export const joinRoom = (id, roomCode) =>
-    axiosInstance.post(
-        roomCode
-            ? `${BASE}/${id}/join?roomCode=${encodeURIComponent(roomCode)}`
-            : `${BASE}/${id}/join`
-    ).then(r => r.data);
+export const joinRoom = (id, roomCode) => {
+    const config = {
+        params: roomCode ? { roomCode } : {},
+        headers: { "Content-Type": "application/json" }
+    };
+    return axiosInstance.post(`${BASE}/${id}/join`, null, config).then(r => r.data);
+};
 
 export const leaveRoom = (id) =>
-    axiosInstance.post(`${BASE}/${id}/leave`).then(r => r.data);
+    axiosInstance.post(`${BASE}/${id}/leave`, null).then(r => r.data);
 
 export const addTask = (id, taskText) =>
     axiosInstance.post(
         `${BASE}/${id}/tasks`,
-        JSON.stringify(taskText),
+        { title: taskText },
         { headers: { "Content-Type": "application/json" } }
     ).then(r => r.data);
+
+export const getTasks = (id) =>
+    axiosInstance.get(`${BASE}/${id}/tasks`).then(r => r.data);
 
 export const toggleTask = (id, taskId) =>
     axiosInstance.patch(`${BASE}/${id}/tasks/${taskId}/toggle`).then(r => r.data);
 
-// ✅ جديد — edit task title
 export const updateTask = (id, taskId, title) =>
     axiosInstance.put(
         `${BASE}/${id}/tasks/${taskId}`,

@@ -8,36 +8,57 @@ function loadState(roomId) {
     try {
         const saved = sessionStorage.getItem(STORAGE_KEY(roomId));
         if (saved) return JSON.parse(saved);
-    } catch {}
+    } catch { }
     return null;
 }
 
 function saveState(roomId, state) {
     try {
         sessionStorage.setItem(STORAGE_KEY(roomId), JSON.stringify(state));
-    } catch {}
+    } catch { }
 }
 
-export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
+export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, sharedTimer }) {
     const { isDarkMode } = useThemeContext();
 
     const DURATIONS = {
-        focus:      25 * 60,
-        shortBreak:  5 * 60,
-        longBreak:  15 * 60,
+        focus: 25 * 60,
+        shortBreak: 5 * 60,
+        longBreak: 15 * 60,
     };
 
-    // ─── Load saved state on first render ────────────────────────────────────
     const saved = loadState(roomId);
 
-    const [timeLeft,       setTimeLeft]       = useState(saved?.timeLeft       ?? DURATIONS.focus);
-    const [mode,           setMode]           = useState(saved?.mode           ?? "focus");
+    const [timeLeft, setTimeLeft] = useState(saved?.timeLeft ?? DURATIONS.focus);
+    const [mode, setMode] = useState(saved?.mode ?? "focus");
     const [currentSession, setCurrentSession] = useState(saved?.currentSession ?? 1);
-    const [isRunning,      setIsRunning]      = useState(false); // دايمًا false عند refresh
-
+    const [isRunning, setIsRunning] = useState(false);
     const prevRoomRef = useRef(roomId);
 
-    // ─── Save state on every change ──────────────────────────────────────────
+    // ─── Sync مع الـ sharedTimer الجاي من الباك ──────────────────────────────
+    useEffect(() => {
+        if (!sharedTimer) {
+            setIsRunning(false);
+            return;
+        }
+
+        setTimeLeft(sharedTimer.remaining);
+        setIsRunning(sharedTimer.isRunning);
+
+        if (!sharedTimer.isRunning) return;
+
+        // local countdown للـ smoothness بين الـ polls
+        const id = setInterval(() => {
+            setTimeLeft(t => {
+                if (t <= 1) { clearInterval(id); return 0; }
+                return t - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(id);
+    }, [sharedTimer]);
+
+    // ─── Save state ──────────────────────────────────────────────────────────
     useEffect(() => {
         saveState(roomId, { timeLeft, mode, currentSession });
     }, [timeLeft, mode, currentSession, roomId]);
@@ -47,22 +68,23 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
         if (prevRoomRef.current !== roomId) {
             prevRoomRef.current = roomId;
             const newSaved = loadState(roomId);
-            setTimeLeft(newSaved?.timeLeft       ?? DURATIONS.focus);
-            setMode(    newSaved?.mode           ?? "focus");
+            setTimeLeft(newSaved?.timeLeft ?? DURATIONS.focus);
+            setMode(newSaved?.mode ?? "focus");
             setCurrentSession(newSaved?.currentSession ?? 1);
             setIsRunning(false);
         }
     }, [roomId]);
 
-    // ─── Tick ────────────────────────────────────────────────────────────────
+    // ─── Local tick — بس لو مفيش sharedTimer ────────────────────────────────
     useEffect(() => {
+        if (sharedTimer) return;
         if (!isRunning) return;
         if (timeLeft <= 0) { handleSwitch(); return; }
         const id = setInterval(() => setTimeLeft(t => t - 1), 1000);
         return () => clearInterval(id);
-    }, [isRunning, timeLeft]);
+    }, [isRunning, timeLeft, sharedTimer]);
 
-    // ─── Auto-switch after mode ends ─────────────────────────────────────────
+    // ─── Auto-switch (local mode فقط) ────────────────────────────────────────
     function handleSwitch() {
         setIsRunning(false);
         if (mode === "focus") {
@@ -81,14 +103,15 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
         }
     }
 
-    // ─── Toggle run ───────────────────────────────────────────────────────────
+    // ─── Toggle ───────────────────────────────────────────────────────────────
     function toggleRun() {
         if (!isRunning) {
             if (onStart) onStart(Math.floor(timeLeft / 60));
         } else {
             if (onStop) onStop();
         }
-        setIsRunning(r => !r);
+        // local mode بس لو مفيش sharedTimer
+        if (!sharedTimer) setIsRunning(r => !r);
     }
 
     // ─── Restart ──────────────────────────────────────────────────────────────
@@ -98,8 +121,7 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
         setTimeLeft(DURATIONS.focus);
         setMode("focus");
         setCurrentSession(1);
-        // امسح الـ saved state عشان يبدأ من الأول
-        try { sessionStorage.removeItem(STORAGE_KEY(roomId)); } catch {}
+        try { sessionStorage.removeItem(STORAGE_KEY(roomId)); } catch { }
     }
 
     // ─── Format ───────────────────────────────────────────────────────────────
@@ -107,12 +129,12 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
         `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
     // ─── Tokens ───────────────────────────────────────────────────────────────
-    const textPrimary = isDarkMode ? "#E5E7EB"     : "#1C2B38";
-    const mutedColor  = isDarkMode ? "#8A9BAA"     : "#8A9BAA";
-    const border      = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
-    const btnBg       = isDarkMode ? "#3D718D"     : "#2C3E50";
-    const restartBg   = isDarkMode ? "#252525"     : "#EAECF0";
-    const restartClr  = isDarkMode ? "#A0AEC0"     : "#4A5568";
+    const textPrimary = isDarkMode ? "#E5E7EB" : "#1C2B38";
+    const mutedColor = isDarkMode ? "#8A9BAA" : "#8A9BAA";
+    const border = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.08)";
+    const btnBg = isDarkMode ? "#3D718D" : "#2C3E50";
+    const restartBg = isDarkMode ? "#252525" : "#EAECF0";
+    const restartClr = isDarkMode ? "#A0AEC0" : "#4A5568";
 
     const modeLabel = mode === "focus" ? "Focus" : mode === "shortBreak" ? "Short Break" : "Long Break";
 
@@ -125,7 +147,7 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
                 display: "flex", alignItems: "center", gap: 6,
             }}>
                 <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                 </svg>
                 Pomodoro Timer
             </div>
@@ -172,12 +194,12 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
                 >
                     {isRunning ? (
                         <>
-                            <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></svg>
                             Pause
                         </>
                     ) : (
                         <>
-                            <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                             {timeLeft === DURATIONS[mode === "shortBreak" ? "shortBreak" : mode === "longBreak" ? "longBreak" : "focus"] ? "Start" : "Resume"}
                         </>
                     )}
@@ -194,8 +216,8 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive }) {
                     }}
                 >
                     <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                     </svg>
                 </button>
             </div>

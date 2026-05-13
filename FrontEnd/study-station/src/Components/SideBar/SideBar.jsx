@@ -12,9 +12,18 @@ import { IoBookSharp } from "react-icons/io5";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
+const API_BASE = "https://study-station.runasp.net/api";
+
+function getInitials(firstName, lastName) {
+  const f = (firstName || "").trim()[0] || "";
+  const l = (lastName  || "").trim()[0] || "";
+  return (f + l).toUpperCase() || "??";
+}
+
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
 
@@ -27,6 +36,17 @@ export default function Sidebar() {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Fetch profile for the sidebar avatar + name
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken") || "";
+    fetch(`${API_BASE}/Profile`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setProfile(data); })
+      .catch(() => {});
   }, []);
 
   const items = [
@@ -43,9 +63,14 @@ export default function Sidebar() {
     navigate("/", { replace: true });
   };
 
+  const firstName = profile?.firstName || "";
+  const lastName  = profile?.lastName  || "";
+  const fullName  = [firstName, lastName].filter(Boolean).join(" ") || "Student";
+  const initials  = getInitials(firstName, lastName);
+  const track     = profile?.track || "Student";
+
   return (
     <>
-      
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
 
@@ -56,7 +81,7 @@ export default function Sidebar() {
           position: sticky; 
           top: 20px;
           z-index: 10;
-                    height: calc(100vh - 40px); 
+          height: calc(100vh - 40px); 
           margin: 20px;
           border-radius: 20px;
           background: #2C3E50;
@@ -97,7 +122,6 @@ export default function Sidebar() {
           letter-spacing: 0.02em;
           white-space: nowrap;
           overflow: hidden;
-          
           transition: opacity 0.3s ease, max-width 0.35s ease;
         }
 
@@ -202,9 +226,127 @@ export default function Sidebar() {
           display: block;
         }
 
+        /* ── Profile Card in Sidebar ── */
+        .sidebar-profile-card {
+          margin: 0 12px 12px;
+          border-radius: 14px;
+          background: transparent;
+          border: 1px solid transparent;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+          overflow: hidden;
+        }
+
+        .sidebar-profile-card:hover {
+          background: rgba(255,255,255,0.07);
+          border-color: rgba(255,255,255,0.1);
+          transform: translateY(-1px);
+        }
+
+        .sidebar-profile-inner {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 12px;
+        }
+
+        .sidebar-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #658FA5, #2C3E50);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 800;
+          color: white;
+          flex-shrink: 0;
+          border: 2px solid rgba(255,255,255,0.2);
+          letter-spacing: 0.02em;
+        }
+
+        .sidebar-profile-info {
+          overflow: hidden;
+          white-space: nowrap;
+          transition: opacity 0.3s ease, max-width 0.35s ease;
+        }
+
+        .sidebar-profile-name {
+          font-size: 13px;
+          font-weight: 700;
+          color: white;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .sidebar-profile-track {
+          font-size: 10px;
+          font-weight: 500;
+          color: rgba(255,255,255,0.45);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-top: 1px;
+        }
+
+        .sidebar-profile-chevron {
+          margin-left: auto;
+          color: rgba(255,255,255,0.35);
+          flex-shrink: 0;
+          transition: opacity 0.3s ease, max-width 0.35s ease;
+        }
+
+        /* collapsed: show only avatar centered */
+        .sidebar-desktop.collapsed .sidebar-profile-inner {
+          justify-content: center;
+          padding: 10px 0;
+        }
+
+        .sidebar-desktop.collapsed .sidebar-profile-info {
+          max-width: 0;
+          opacity: 0;
+        }
+
+        .sidebar-desktop.collapsed .sidebar-profile-chevron {
+          max-width: 0;
+          opacity: 0;
+        }
+
+        /* tooltip for collapsed profile */
+        .sidebar-desktop.collapsed .sidebar-profile-card:hover::after {
+          content: attr(data-name);
+          position: absolute;
+          left: calc(84px + 12px);
+          background: #1e3a4f;
+          color: white;
+          font-size: 12px;
+          font-weight: 500;
+          padding: 6px 12px;
+          border-radius: 8px;
+          white-space: nowrap;
+          border: 1px solid rgba(255,255,255,0.1);
+          box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+          pointer-events: none;
+          z-index: 9999;
+          font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar-desktop.collapsed .sidebar-profile-card {
+          position: relative;
+        }
+
         .bottom-area {
-          padding: 16px 12px;
+          padding: 0 0 16px;
           border-top: 1px solid rgba(255,255,255,0.06);
+          padding-top: 12px;
+        }
+
+        .logout-row {
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
         }
 
         .logout-btn {
@@ -325,13 +467,45 @@ export default function Sidebar() {
         }
 
         .mobile-logout-btn:hover { color: #f87171; }
+
+        /* Mobile profile button */
+        .mobile-profile-btn {
+          background: transparent;
+          border: none;
+          color: rgba(255,255,255,0.4);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding: 8px 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          font-family: 'Sora', sans-serif;
+          transition: all 0.2s ease;
+          text-decoration: none;
+        }
+
+        .mobile-profile-btn.active { color: white; }
+
+        .mobile-profile-avatar {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #658FA5, #2C3E50);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 8px;
+          font-weight: 800;
+          color: white;
+          border: 1.5px solid rgba(255,255,255,0.3);
+        }
       `}</style>
 
       {/* DESKTOP */}
       {!isMobile && (
         <aside
           className={`sidebar-root sidebar-desktop${collapsed ? " collapsed" : ""}`}
-          
           style={{ width: collapsed ? "84px" : "260px" }}
         >
           <div>
@@ -345,7 +519,6 @@ export default function Sidebar() {
               <div className="brand-icon-wrap">
                 <IoBookSharp />
               </div>
-              
               <div
                 className="brand-text"
                 style={{
@@ -369,7 +542,6 @@ export default function Sidebar() {
                     style={{ justifyContent: collapsed ? "center" : "flex-start" }}
                   >
                     <span className="nav-icon">{item.icon}</span>
-                    
                     <span
                       className="nav-label"
                       style={{
@@ -386,8 +558,47 @@ export default function Sidebar() {
             </ul>
           </div>
 
+          {/* BOTTOM AREA */}
           <div className="bottom-area">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between" }}>
+
+            {/* ── Profile Card ── */}
+            <div
+              className="sidebar-profile-card"
+              data-name={fullName}
+              onClick={() => navigate("/profile")}
+            >
+              <div className="sidebar-profile-inner">
+                <div className="sidebar-avatar">{initials}</div>
+
+                <div
+                  className="sidebar-profile-info"
+                  style={{
+                    maxWidth: collapsed ? "0px" : "160px",
+                    opacity: collapsed ? 0 : 1,
+                  }}
+                >
+                  <div className="sidebar-profile-name">{fullName}</div>
+                  <div className="sidebar-profile-track">{track}</div>
+                </div>
+
+                <div
+                  className="sidebar-profile-chevron"
+                  style={{
+                    maxWidth: collapsed ? "0px" : "20px",
+                    opacity: collapsed ? 0 : 1,
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    width={13} height={13}>
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Logout + Toggle */}
+            <div className="logout-row" style={{ justifyContent: collapsed ? "center" : "space-between", marginTop: 8 }}>
               <button
                 className="logout-btn"
                 onClick={handleLogout}
@@ -400,6 +611,7 @@ export default function Sidebar() {
                   overflow: "hidden",
                 }}
               >
+                <FaSignOutAlt />
                 Logout
               </button>
               <button
@@ -407,12 +619,12 @@ export default function Sidebar() {
                 onClick={() => setCollapsed(!collapsed)}
                 title="Toggle Sidebar"
               >
-                <FaSignOutAlt
-                  style={{
-                    transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.35s ease",
-                  }}
-                />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  width={14} height={14}
+                  style={{ transform: collapsed ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.35s ease" }}>
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
             </div>
           </div>
@@ -434,6 +646,17 @@ export default function Sidebar() {
                 </NavLink>
               </li>
             ))}
+
+            {/* Profile button in mobile nav */}
+            <li>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) => `mobile-nav-link${isActive ? " active" : ""}`}
+              >
+                <div className="mobile-profile-avatar">{initials}</div>
+                <span className="mobile-label">Profile</span>
+              </NavLink>
+            </li>
           </ul>
 
           <button className="mobile-logout-btn" onClick={handleLogout}>

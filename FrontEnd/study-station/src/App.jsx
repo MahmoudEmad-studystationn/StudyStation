@@ -32,6 +32,8 @@ import Users from "./Components/AdminDashboard/UserDashoard";
 import Resources from "./Components/AdminDashboard/Reasourses";
 import Moderation from "./Components/AdminDashboard/Moderarion";
 import AdminProtectedRoute from "./Components/ProtectedRoute/AdminProtectedRoute";
+import NotificationsPage from "./Pages/Notificationspage";
+import SavedPage from "./Pages/Savedpage";
 
 
 function AppContent() {
@@ -210,6 +212,24 @@ function AppContent() {
                   <DashboardLayout>
                     <ProfilePage />
                   </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/saved"
+              element={
+                <ProtectedRoute>
+                  <SavedPage />
                 </ProtectedRoute>
               }
             />

@@ -15,31 +15,31 @@ function Home() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
 
-const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+  const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 
-const getFirstName = () => {
-  try {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return "User";
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const raw = payload.given_name || payload.firstName || payload.name || "User";
-    return capitalize(raw); 
-  } catch {
-    return "User";
-  }
-};
+  const getFirstName = () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return "User";
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const raw = payload.given_name || payload.firstName || payload.name || "User";
+      return capitalize(raw);
+    } catch {
+      return "User";
+    }
+  };
   const firstName = getFirstName();
 
-  const bgColor       = isDarkMode ? "#171717" : "#F3F4F6";
-  const cardBg        = isDarkMode ? "#2A2A2A" : "white";
-  const textPrimary   = isDarkMode ? "#E0E0E0" : "#2f3b48";
+  const bgColor = isDarkMode ? "#171717" : "#F3F4F6";
+  const cardBg = isDarkMode ? "#2A2A2A" : "white";
+  const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
   const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-  const textAccent    = isDarkMode ? "#8FB7CC" : "#4e87a8";
-  const borderColor   = isDarkMode ? "#404040" : "#d1d5db";
-  const iconBg        = isDarkMode ? "#363636" : "#eef1f4";
-  const iconBorder    = isDarkMode ? "#505050" : "#d5d9de";
-  const buttonBg      = "#2c3e50";
-  const buttonHover   = "#3a4958";
+  const textAccent = isDarkMode ? "#8FB7CC" : "#4e87a8";
+  const borderColor = isDarkMode ? "#404040" : "#d1d5db";
+  const iconBg = isDarkMode ? "#363636" : "#eef1f4";
+  const iconBorder = isDarkMode ? "#505050" : "#d5d9de";
+  const buttonBg = "#2c3e50";
+  const buttonHover = "#3a4958";
 
   const cardStyle = {
     backgroundColor: cardBg,
@@ -247,8 +247,12 @@ const getFirstName = () => {
                 <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
                   Your go-to spot for everything you've marked to check later.
                 </p>
-                <Btn style={{ paddingLeft: 28, paddingRight: 28 }}>Open Saved</Btn>
-              </div>
+                <Btn
+                  onClick={() => navigate("/saved")}
+                  style={{ paddingLeft: 28, paddingRight: 28 }}
+                >
+                  Open Saved
+                </Btn>              </div>
             </div>
           </section>
 

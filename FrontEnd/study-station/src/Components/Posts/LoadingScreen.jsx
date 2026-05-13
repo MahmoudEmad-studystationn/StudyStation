@@ -3,7 +3,7 @@ import { useThemeContext } from "../Theme/ThemeContext";
 
 export default function LoadingScreen() {
     const { isDarkMode } = useThemeContext();
-    
+
     const cardBg = isDarkMode ? "#2A2A2A" : "white";
     const skeletonBg = isDarkMode ? "#363636" : "#e4e6eb";
 

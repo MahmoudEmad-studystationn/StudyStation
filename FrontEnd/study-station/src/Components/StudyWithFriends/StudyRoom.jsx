@@ -8,6 +8,7 @@ import {
     leaveRoom,
     sendMessage as apiSendMessage,
     getMessages,
+    getTasks,
     addTask,
     toggleTask,
     updateTask,
@@ -30,7 +31,6 @@ const fmtTime = iso => iso
     ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-// استخراج اسم الـ member من أي شكل API
 const getMemberName = (m) =>
     m?.userName ||
     m?.name ||
@@ -115,6 +115,7 @@ export default function StudyRoom() {
     const [sending, setSending] = useState(false);
     const [toast, setToast] = useState({ visible: false, msg: "" });
     const [leaveConfirm, setLeaveConfirm] = useState(false);
+    const [sharedTimer, setSharedTimer] = useState(null);
 
     const tasksRef = useRef([]);
     const bottomRef = useRef(null);
@@ -139,20 +140,35 @@ export default function StudyRoom() {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
-            const [data, msgs] = await Promise.all([
+            const [data, msgs, tasks] = await Promise.all([
                 getRoomById(roomId),
                 getMessages(roomId),
+                getTasks(roomId),
             ]);
 
-            setRoom(prev => {
-                const savedTasks = localStorage.getItem(`tasks_${roomId}`);
-                const localTasks = savedTasks ? JSON.parse(savedTasks) : (data.tasks ?? []);
-                tasksRef.current = localTasks;
-                return { ...data, tasks: localTasks };
-            });
+            const taskList = Array.isArray(tasks) ? tasks : (tasks?.tasks ?? []);
+            setRoom(prev => ({
+                ...data,
+                tasks: taskList.map(t =>
+                    pendingToggles.current.has(t.id)
+                        ? { ...t, isDone: !t.isDone }
+                        : t
+                )
+            }));
+
+            const activeSession = data.activeFocusSession ?? data.currentSession ?? null;
+            if (activeSession?.id && activeSession?.startedAt) {
+                const elapsed = Math.floor((Date.now() - new Date(activeSession.startedAt)) / 1000);
+                const duration = (activeSession.durationMinutes ?? 25) * 60;
+                const remaining = Math.max(0, duration - elapsed);
+                setSessionId(activeSession.id);
+                setSharedTimer({ remaining, duration, isRunning: remaining > 0 });
+            } else {
+                setSessionId(null);
+                setSharedTimer(null);
+            }
 
             const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
-
             setMessages(prev => {
                 const optimistic = prev.filter(m => m.isOptimistic);
                 const stillPending = optimistic.filter(
@@ -163,7 +179,6 @@ export default function StudyRoom() {
             });
 
         } catch (err) {
-            console.error("Fetch Error:", err);
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
             if (!silent) setLoading(false);
@@ -179,12 +194,6 @@ export default function StudyRoom() {
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
-
-    useEffect(() => {
-        if (room?.tasks) {
-            localStorage.setItem(`tasks_${roomId}`, JSON.stringify(room.tasks));
-        }
-    }, [room?.tasks, roomId]);
 
     const sendMsg = async () => {
         const text = input.trim();
@@ -250,27 +259,35 @@ export default function StudyRoom() {
         } catch (err) { console.error("Stop focus failed", err); }
     };
 
-    const handleAddTask = async taskText => {
+    const handleAddTask = async (taskText) => {
         if (!taskText?.trim()) return;
         try {
-            const task = await addTask(roomId, taskText.trim());
-            setRoom(prev => {
-                const updated = [...(prev.tasks ?? []), task];
-                tasksRef.current = updated;
-                return { ...prev, tasks: updated };
-            });
-        } catch (err) { console.error("Add task failed", err); }
+            await addTask(roomId, taskText.trim());
+            await fetchRoom(true);
+        } catch (err) {
+            console.error("Add task failed", err);
+        }
     };
 
-    const handleToggleTask = async taskId => {
-        setRoom(prev => {
-            const updated = (prev.tasks ?? []).map(t =>
+    const pendingToggles = useRef(new Set());
+
+    const handleToggleTask = async (taskId) => {
+        pendingToggles.current.add(taskId);
+
+        setRoom(prev => ({
+            ...prev,
+            tasks: (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, isDone: !t.isDone } : t
-            );
-            tasksRef.current = updated;
-            return { ...prev, tasks: updated };
-        });
-        try { await toggleTask(roomId, taskId); } catch { fetchRoom(true); }
+            )
+        }));
+
+        try {
+            await toggleTask(roomId, taskId);
+        } catch {
+            fetchRoom(true);
+        } finally {
+            pendingToggles.current.delete(taskId);
+        }
     };
 
     const handleDeleteTask = async taskId => {
@@ -481,6 +498,7 @@ export default function StudyRoom() {
                         onStart={handleStartFocus}
                         onStop={handleStopFocus}
                         isActive={!!sessionId}
+                        sharedTimer={sharedTimer}
                     />
                     <ToDoStudyRoom
                         tasks={room.tasks ?? []}

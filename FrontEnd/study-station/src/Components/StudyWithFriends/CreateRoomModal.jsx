@@ -168,9 +168,10 @@ export default function CreateRoomModal({ isOpen, onClose, onCreated, isDarkMode
             description: description.trim() || null,
             subject,
             isPublic: roomType === "public",
-            roomCode: roomType === "private" ? roomCode.trim() : null,
             maxParticipants: Number(maxParticipants),
+            ...(roomType === "private" && { roomCode: roomCode.trim() }),
         };
+
         try {
             const newRoom = await createRoom(payload);
             onCreated(newRoom.name ?? roomName, newRoom.id ?? newRoom.roomId);
