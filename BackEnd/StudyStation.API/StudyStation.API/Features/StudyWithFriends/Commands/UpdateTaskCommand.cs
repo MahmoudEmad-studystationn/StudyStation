@@ -32,7 +32,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Study
         await _context.SaveChangesAsync(cancellationToken);
 
         await _hubContext.Clients.Group(request.RoomId.ToString())
-    .TaskCreated(new StudyTaskDto
+    .TaskUpdated(new StudyTaskDto
     {
         Id = task.Id,
         RoomId = task.RoomId,

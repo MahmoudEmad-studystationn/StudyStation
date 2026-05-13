@@ -28,6 +28,16 @@ public class JoinRoomCommandHandler : IRequestHandler<JoinRoomCommand, bool>
         
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
         if (user == null) return false;
+        var participantsCount = await _context.RoomParticipants
+    .CountAsync(p => p.RoomId == request.RoomId, cancellationToken);
+
+        if (participantsCount >= room.MaxParticipants)
+        {
+            await _hubContext.Clients.Group(request.RoomId.ToString())
+                .RoomFull(room.Id);
+
+            return false;
+        }
 
         if (!room.IsPublic && room.RoomCode != request.RoomCode)
         {

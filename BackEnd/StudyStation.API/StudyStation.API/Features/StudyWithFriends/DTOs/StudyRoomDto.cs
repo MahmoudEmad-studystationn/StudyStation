@@ -14,4 +14,7 @@ public class StudyRoomDto
     public int OwnerId { get; set; }
     public List<RoomParticipantDto> Participants { get; set; } = new();
     public int ParticipantsCount { get; set; }
+    public int MaxParticipants { get; set; }
+
+    public List<StudyTaskDto> Tasks { get; set; } = new();
 }

@@ -24,6 +24,7 @@ public class StudyRoom
 
     public int OwnerId { get; set; }
     public ApplicationUser Owner { get; set; } = null!;
+    public int MaxParticipants { get; set; } = 10;
 
     public ICollection<RoomParticipant> Participants { get; set; } = new List<RoomParticipant>();
     public ICollection<StudyTask> Tasks { get; set; } = new List<StudyTask>();

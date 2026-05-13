@@ -21,6 +21,7 @@ public class GetRoomDetailsQueryHandler : IRequestHandler<GetRoomDetailsQuery, S
         var room = await _context.StudyRooms
             .Include(r => r.Participants)
             .ThenInclude(p => p.User)
+            .Include(r => r.Tasks)
             .Where(r => r.Id == request.RoomId)
             .Select(r => new StudyRoomDto
             {
@@ -39,6 +40,17 @@ public class GetRoomDetailsQueryHandler : IRequestHandler<GetRoomDetailsQuery, S
                     FullName = p.User.FirstName + " " + p.User.LastName,
                     Role = p.Role,
                     JoinedAt = p.JoinedAt
+                }).ToList(),
+                MaxParticipants = r.MaxParticipants,
+
+                Tasks = r.Tasks.Select(t => new StudyTaskDto
+                {
+                    Id = t.Id,
+                    RoomId = t.RoomId,
+                    Title = t.Title,
+                    IsCompleted = t.IsCompleted,
+                    CreatedAt = t.CreatedAt,
+                    CreatedById = t.CreatedById
                 }).ToList()
             })
             .FirstOrDefaultAsync(cancellationToken);

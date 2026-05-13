@@ -20,6 +20,8 @@ public class GetRoomsQueryHandler : IRequestHandler<GetRoomsQuery, List<StudyRoo
     {
         var rooms = await _context.StudyRooms
             .Include(r => r.Participants)
+                .ThenInclude(p => p.User)
+            .Include(r => r.Tasks)
             .Select(r => new StudyRoomDto
             {
                 Id = r.Id,
@@ -30,7 +32,29 @@ public class GetRoomsQueryHandler : IRequestHandler<GetRoomsQuery, List<StudyRoo
                 RoomCode = r.RoomCode,
                 CreatedAt = r.CreatedAt,
                 OwnerId = r.OwnerId,
-                ParticipantsCount = r.Participants.Count
+
+                // الجديد
+                MaxParticipants = r.MaxParticipants,
+
+                ParticipantsCount = r.Participants.Count,
+
+                Participants = r.Participants.Select(p => new RoomParticipantDto
+                {
+                    UserId = p.UserId,
+                    FullName = p.User.FirstName + " " + p.User.LastName,
+                    Role = p.Role,
+                    JoinedAt = p.JoinedAt
+                }).ToList(),
+
+                Tasks = r.Tasks.Select(t => new StudyTaskDto
+                {
+                    Id = t.Id,
+                    RoomId = t.RoomId,
+                    Title = t.Title,
+                    IsCompleted = t.IsCompleted,
+                    CreatedAt = t.CreatedAt,
+                    CreatedById = t.CreatedById
+                }).ToList()
             })
             .ToListAsync(cancellationToken);
 

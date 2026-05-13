@@ -31,7 +31,7 @@ public class ToggleTaskCommandHandler : IRequestHandler<ToggleTaskCommand, Study
         await _context.SaveChangesAsync(cancellationToken);
 
         await _hubContext.Clients.Group(request.RoomId.ToString())
-    .TaskCreated(new StudyTaskDto
+    .TaskUpdated(new StudyTaskDto
     {
         Id = task.Id,
         RoomId = task.RoomId,

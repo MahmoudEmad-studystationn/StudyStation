@@ -10,7 +10,6 @@ namespace StudyStation.API.Hubs;
 public interface IStudyClient
 {
     Task ReceiveMessage(object message);
-    Task UserJoined(int userId, string name);
     Task UserLeft(int userId, string name);
     Task TaskCreated(object task);
     Task TaskUpdated(object task);
@@ -18,6 +17,9 @@ public interface IStudyClient
     Task FocusSessionStarted(object session);
     Task FocusSessionStopped(int sessionId);
     Task UserJoined(RoomParticipantDto participant);
+    Task RoomCreated(object room);
+
+    Task RoomFull(int roomId);
 }
 
 [Authorize]

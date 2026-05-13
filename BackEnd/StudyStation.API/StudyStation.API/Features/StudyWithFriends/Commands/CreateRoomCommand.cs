@@ -1,7 +1,9 @@
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using StudyStation.API.Data;
 using StudyStation.API.Features.StudyWithFriends.DTOs;
 using StudyStation.API.Features.StudyWithFriends.Models;
+using StudyStation.API.Hubs;
 
 namespace StudyStation.API.Features.StudyWithFriends.Commands;
 
@@ -10,10 +12,12 @@ public record CreateRoomCommand(CreateRoomDto Dto, int UserId) : IRequest<StudyR
 public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, StudyRoomDto>
 {
     private readonly DatabaseContext _context;
+    private readonly IHubContext<StudyHub, IStudyClient> _hubContext;
 
-    public CreateRoomCommandHandler(DatabaseContext context)
+    public CreateRoomCommandHandler(DatabaseContext context, IHubContext<StudyHub, IStudyClient> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     public async Task<StudyRoomDto> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
@@ -37,6 +41,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
             IsPublic = request.Dto.IsPublic,
             RoomCode = generatedCode,
             OwnerId = request.UserId,
+            MaxParticipants = request.Dto.MaxParticipants,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -54,6 +59,14 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        await _hubContext.Clients.All.RoomCreated(new
+        {
+            room.Id,
+            room.Name,
+            room.Subject,
+            room.MaxParticipants
+        });
+
         return new StudyRoomDto
         {
             Id = room.Id,
@@ -63,6 +76,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Study
             IsPublic = room.IsPublic,
             RoomCode = room.RoomCode,
             OwnerId = room.OwnerId,
+            MaxParticipants = room.MaxParticipants,
             CreatedAt = room.CreatedAt,
             ParticipantsCount = 1
         };

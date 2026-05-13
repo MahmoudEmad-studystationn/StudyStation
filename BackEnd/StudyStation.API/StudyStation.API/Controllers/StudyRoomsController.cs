@@ -77,10 +77,13 @@ public class StudyRoomsController : ControllerBase
     }
 
     [HttpPost("{id}/tasks")]
-    public async Task<IActionResult> CreateTask(int id, [FromBody] string title)
+    public async Task<IActionResult> CreateTask(int id, [FromBody] CreateTaskDto dto)
     {
         var userId = GetCurrentUserId();
-        var result = await _mediator.Send(new CreateTaskCommand(id, title, userId));
+
+        var result = await _mediator.Send(
+            new CreateTaskCommand(id, dto.Title, userId));
+
         return Ok(result);
     }
 
@@ -141,5 +144,15 @@ public class StudyRoomsController : ControllerBase
         var result = await _mediator.Send(new GetRoomMessagesQuery(id, userId));
         if (result == null) return Forbid();
         return Ok(result);
+    }
+    [HttpGet("{id}/tasks")]
+    public async Task<IActionResult> GetTasks(int id)
+    {
+        var room = await _mediator.Send(new GetRoomDetailsQuery(id));
+
+        if (room == null)
+            return NotFound();
+
+        return Ok(room.Tasks);
     }
 }
