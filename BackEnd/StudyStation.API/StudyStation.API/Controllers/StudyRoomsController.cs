@@ -155,4 +155,15 @@ public class StudyRoomsController : ControllerBase
 
         return Ok(room.Tasks);
     }
+    [HttpGet("{id}/focus/current")]
+    public async Task<IActionResult> GetCurrentFocusSession(int id)
+    {
+        var result = await _mediator.Send(
+            new GetCurrentFocusSessionQuery(id));
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
 }
