@@ -31,6 +31,34 @@
     font-style: italic;
 }
 
+body.dark-mode ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #171717;       
+    border-radius: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #4b5563;        
+    border-radius: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+body.dark-mode {
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #171717;
+}
+
+body.dark-mode ::-webkit-scrollbar {
+    width: 6px;
+}
+
 body {
     font-family: "Open Sans", sans-serif;
     background-color: #ffffff;
