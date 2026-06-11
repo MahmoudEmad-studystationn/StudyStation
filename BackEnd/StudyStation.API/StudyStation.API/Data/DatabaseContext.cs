@@ -36,6 +36,12 @@ namespace StudyStation.API.Data
         // Admin features
         public DbSet<StudyStation.API.Features.Admin.Models.FlaggedItem> FlaggedItems { get; set; }
 
+        // Saved Items
+        public DbSet<StudyStation.API.Features.SavedItems.Models.SavedItem> SavedItems { get; set; }
+
+        // Notifications
+        public DbSet<StudyStation.API.Features.Notifications.Models.Notification> Notifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -110,6 +116,38 @@ namespace StudyStation.API.Data
                 .HasOne(f => f.Reporter)
                 .WithMany() // No reverse navigation property
                 .HasForeignKey(f => f.ReporterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Saved Items Configuration
+            modelBuilder.Entity<StudyStation.API.Features.SavedItems.Models.SavedItem>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.SavedItems)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StudyStation.API.Features.SavedItems.Models.SavedItem>()
+                .HasOne(s => s.Post)
+                .WithMany()
+                .HasForeignKey(s => s.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StudyStation.API.Features.SavedItems.Models.SavedItem>()
+                .HasOne(s => s.LibraryResource)
+                .WithMany()
+                .HasForeignKey(s => s.LibraryResourceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Notifications Configuration
+            modelBuilder.Entity<StudyStation.API.Features.Notifications.Models.Notification>()
+                .HasOne(n => n.Recipient)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.RecipientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StudyStation.API.Features.Notifications.Models.Notification>()
+                .HasOne(n => n.Sender)
+                .WithMany()
+                .HasForeignKey(n => n.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 

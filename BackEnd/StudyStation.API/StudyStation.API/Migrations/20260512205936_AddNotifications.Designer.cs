@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudyStation.API.Data;
 
@@ -11,9 +12,11 @@ using StudyStation.API.Data;
 namespace StudyStation.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260512205936_AddNotifications")]
+    partial class AddNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -547,9 +550,6 @@ namespace StudyStation.API.Migrations
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
-
-                    b.Property<int>("MaxParticipants")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

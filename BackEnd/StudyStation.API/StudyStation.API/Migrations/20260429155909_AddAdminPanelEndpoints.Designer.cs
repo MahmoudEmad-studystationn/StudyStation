@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudyStation.API.Data;
 
@@ -11,9 +12,11 @@ using StudyStation.API.Data;
 namespace StudyStation.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260429155909_AddAdminPanelEndpoints")]
+    partial class AddAdminPanelEndpoints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -276,45 +279,6 @@ namespace StudyStation.API.Migrations
                     b.ToTable("ResourceTypes");
                 });
 
-            modelBuilder.Entity("StudyStation.API.Features.Notifications.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RecipientId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReferenceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TargetTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipientId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Notifications");
-                });
-
             modelBuilder.Entity("StudyStation.API.Features.Profile.Models.ActivityLog", b =>
                 {
                     b.Property<int>("Id")
@@ -412,40 +376,6 @@ namespace StudyStation.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ProfileStudyTasks", (string)null);
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.SavedItems.Models.SavedItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ItemType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LibraryResourceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SavedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LibraryResourceId");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SavedItems");
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.FocusSession", b =>
@@ -547,9 +477,6 @@ namespace StudyStation.API.Migrations
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
-
-                    b.Property<int>("MaxParticipants")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -944,25 +871,6 @@ namespace StudyStation.API.Migrations
                     b.Navigation("ResourceType");
                 });
 
-            modelBuilder.Entity("StudyStation.API.Features.Notifications.Models.Notification", b =>
-                {
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "Recipient")
-                        .WithMany("Notifications")
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Recipient");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("StudyStation.API.Features.Profile.Models.ActivityLog", b =>
                 {
                     b.HasOne("StudyStation.API.Models.ApplicationUser", "User")
@@ -992,31 +900,6 @@ namespace StudyStation.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StudyStation.API.Features.SavedItems.Models.SavedItem", b =>
-                {
-                    b.HasOne("StudyStation.API.Features.Library.Models.LibraryResource", "LibraryResource")
-                        .WithMany()
-                        .HasForeignKey("LibraryResourceId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("StudyStation.API.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("StudyStation.API.Models.ApplicationUser", "User")
-                        .WithMany("SavedItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("LibraryResource");
-
-                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
@@ -1205,8 +1088,6 @@ namespace StudyStation.API.Migrations
 
                     b.Navigation("Comments");
 
-                    b.Navigation("Notifications");
-
                     b.Navigation("OwnedStudyRooms");
 
                     b.Navigation("Posts");
@@ -1218,8 +1099,6 @@ namespace StudyStation.API.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("RoomParticipations");
-
-                    b.Navigation("SavedItems");
 
                     b.Navigation("StudySessions");
                 });
