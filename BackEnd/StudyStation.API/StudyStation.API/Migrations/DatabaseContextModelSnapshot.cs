@@ -189,7 +189,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("ReporterId");
 
-                    b.ToTable("FlaggedItems");
+                    b.ToTable("FlaggedItems", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Library.Models.LibraryCategory", b =>
@@ -210,7 +210,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LibraryCategories");
+                    b.ToTable("LibraryCategories", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Library.Models.LibraryResource", b =>
@@ -256,7 +256,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("ResourceTypeId");
 
-                    b.ToTable("LibraryResources");
+                    b.ToTable("LibraryResources", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Library.Models.ResourceType", b =>
@@ -273,7 +273,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ResourceTypes");
+                    b.ToTable("ResourceTypes", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Notifications.Models.Notification", b =>
@@ -312,7 +312,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Profile.Models.ActivityLog", b =>
@@ -343,7 +343,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ActivityLogs");
+                    b.ToTable("ActivityLogs", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudySession", b =>
@@ -375,7 +375,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("StudySessions");
+                    b.ToTable("StudySessions", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.Profile.Models.StudyTask", b =>
@@ -445,7 +445,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavedItems");
+                    b.ToTable("SavedItems", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.FocusSession", b =>
@@ -477,7 +477,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("StartedById");
 
-                    b.ToTable("FocusSessions");
+                    b.ToTable("FocusSessions", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.RoomMessage", b =>
@@ -507,7 +507,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("RoomMessages");
+                    b.ToTable("RoomMessages", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.RoomParticipant", b =>
@@ -528,7 +528,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RoomParticipants");
+                    b.ToTable("RoomParticipants", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.StudyRoom", b =>
@@ -573,7 +573,7 @@ namespace StudyStation.API.Migrations
                         .IsUnique()
                         .HasFilter("[RoomCode] IS NOT NULL");
 
-                    b.ToTable("StudyRooms");
+                    b.ToTable("StudyRooms", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Features.StudyWithFriends.Models.StudyTask", b =>
@@ -607,7 +607,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("StudyTasks");
+                    b.ToTable("StudyTasks", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Models.ApplicationUser", b =>
@@ -757,7 +757,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Models.Post", b =>
@@ -797,7 +797,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Models.Reaction", b =>
@@ -829,7 +829,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reactions");
+                    b.ToTable("Reactions", (string)null);
                 });
 
             modelBuilder.Entity("StudyStation.API.Models.RefreshToken", b =>
@@ -857,7 +857,7 @@ namespace StudyStation.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
