@@ -23,9 +23,9 @@ const getUserIdFromToken = (token) => {
 
 export default function AuthContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userData, setUserData]     = useState(null);
-    const [loading, setLoading]       = useState(true);
-    const timerRef           = useRef(null);
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const timerRef = useRef(null);
     const scheduleReLoginRef = useRef(null);
 
     const clearTimer = () => {
@@ -71,12 +71,15 @@ export default function AuthContextProvider({ children }) {
     scheduleReLoginRef.current = scheduleReLogin;
 
     const loginSuccess = useCallback((token, credentials = null) => {
+        const payload = parseToken(token);
         const userId = getUserIdFromToken(token);
         setIsLoggedIn(true);
-        if (userId) setUserData({ _id: userId });
-        if (credentials) {
-            sessionStorage.setItem("creds", JSON.stringify(credentials));
-        }
+        if (userId) setUserData({
+            _id: userId,
+            firstName: payload?.firstName ?? payload?.given_name ?? payload?.name?.split(" ")[0] ?? "",
+            lastName: payload?.lastName ?? payload?.family_name ?? payload?.name?.split(" ").slice(1).join(" ") ?? "",
+        });
+        if (credentials) sessionStorage.setItem("creds", JSON.stringify(credentials));
         scheduleReLogin(token);
     }, [scheduleReLogin]);
 

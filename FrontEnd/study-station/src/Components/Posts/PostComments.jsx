@@ -1,10 +1,10 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faUser, faPaperPlane, faTrash, faEllipsisV, faReply, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faPaperPlane, faTrash, faEllipsisV, faThumbsUp, faHeart, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useThemeContext } from "../Theme/ThemeContext";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
-import { createCommentApi } from '../Services/commentService';
+import { createCommentApi, deleteCommentApi, addCommentReactionApi } from '../Services/commentService';
 
 const getCurrentUserId = () => {
     const token = localStorage.getItem("accessToken") || "";
@@ -22,17 +22,34 @@ const getCurrentUserId = () => {
 
 function timeAgo(dateStr) {
     if (!dateStr) return "";
-    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    const normalized = dateStr.endsWith("Z") || dateStr.includes("+") ? dateStr : dateStr + "Z";
+    const diff = Math.floor((Date.now() - new Date(normalized)) / 1000);
     if (diff < 60) return "Just now";
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return new Date(dateStr).toLocaleString();
+    return new Date(normalized).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
 }
 
-function buildCommentTree(comments) {
+function buildCommentTree(comments, currentUserId) {
     const map = {};
     const roots = [];
-    comments.forEach(c => { map[c.id] = { ...c, replies: [] }; });
+    comments.forEach(c => {
+        map[c.id] = {
+            ...c,
+            replies: [],
+            reactions: (c.reactions || []).map(r => ({
+                ...r,
+                isMyReaction: r.userId?.toString() === currentUserId
+            }))
+        };
+    });
     comments.forEach(c => {
         if (c.parentCommentId && map[c.parentCommentId]) {
             map[c.parentCommentId].replies.push(map[c.id]);
@@ -40,88 +57,70 @@ function buildCommentTree(comments) {
             roots.push(map[c.id]);
         }
     });
+    comments.forEach(c => {
+    });
     return roots;
 }
 
-function ReplyInput({ postId, parentCommentId, onReplySent, isDarkMode, textPrimary, textSecondary, placeholderBg, inputBg, borderColor, userData }) {
-    const [content, setContent] = useState("");
-    const [submitting, setSubmitting] = useState(false);
+const navy = "#2C3E50";
+const steel = "#8FB7CC";
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        if (!content.trim()) return;
-        setSubmitting(true);
-        const response = await createCommentApi(content, postId, parentCommentId);
-        if (response?.message === "success") {
-            const newReply = {
-                id: response.data?.id || Date.now(),
-                content,
-                createdAt: response.data?.createdAt ?? new Date().toISOString(),
-                parentCommentId,
-                replies: [],
-                author: response.data?.author ?? (userData ? {
-                    id: userData._id,
-                    firstName: userData.firstName ?? userData.name?.split(" ")[0] ?? "",
-                    lastName: userData.lastName ?? userData.name?.split(" ").slice(1).join(" ") ?? "",
-                } : null),
-            };
-            onReplySent(newReply);
-            setContent("");
-        } else {
-            toast.error("Failed to send reply");
-        }
-        setSubmitting(false);
-    }
+function getInitials(firstName, lastName) {
+    const f = (firstName || "").trim()[0] || "";
+    const l = (lastName || "").trim()[0] || "";
+    return (f + l).toUpperCase() || "?";
+}
 
+function Avatar({ firstName, lastName, size = 36, fontSize = 12 }) {
     return (
-        <form onSubmit={handleSubmit} className="flex items-center gap-2 mt-2 ml-11">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                <FontAwesomeIcon icon={faUser} className="text-xs" style={{ color: textSecondary }} />
-            </div>
-            <div className="flex-1 relative">
-                <input
-                    type="text"
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                    placeholder="Write a reply..."
-                    className="w-full rounded-full px-3 py-1.5 pr-8 text-xs outline-none"
-                    style={{ backgroundColor: inputBg, color: textPrimary, border: `1px solid ${borderColor}` }}
-                    autoFocus
-                />
-                <button
-                    type="submit"
-                    disabled={submitting || content.length < 1}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed transition-colors"
-                    style={{ color: content.length >= 1 ? "#7daebd" : textSecondary }}
-                >
-                    <FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
-                </button>
-            </div>
-        </form>
+        <div style={{
+            width: size, height: size, borderRadius: "50%", flexShrink: 0,
+            background: "linear-gradient(135deg, #658FA5, #2C3E50)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontWeight: 600, fontSize, color: "white", letterSpacing: "0.02em",
+            border: "2px solid rgba(143,183,204,0.35)",
+            userSelect: "none"
+        }}>
+            {getInitials(firstName, lastName)}
+        </div>
     );
 }
 
-function CommentBubble({
-    comment, myFullName, currentUserId, postId, onDelete,
-    isDarkMode, textPrimary, textSecondary, cardBg, borderColor, placeholderBg, inputBg,
-    userData, depth = 0,
-}) {
+function getTokens(isDarkMode) {
+    return {
+        cardBg: isDarkMode ? "#1f1f1f" : "#ffffff",
+        textPrimary: isDarkMode ? "#f0f0f0" : "#1a1a2e",
+        textSecondary: isDarkMode ? "#9a9a9a" : "#686868",
+        borderColor: isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)",
+        inputBg: isDarkMode ? "#2a2a2a" : "#F3F4F6",
+        accentSoft: isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(143,183,204,0.18)",
+        fontFamily: '"Noto Sans Arabic", "Open Sans", sans-serif',
+    };
+}
+
+
+const reactionDefs = [
+    { type: "Helpful", icon: faThumbsUp },
+    { type: "Interested", icon: faHeart },
+    { type: "Notify", icon: faBell },
+];
+
+// ── CommentBubble ───────────────────────────────
+function CommentBubble({ comment, myFullName, myFirst, myLast, currentUserId, postId, onDelete, onReaction, isDarkMode }) {
     const [showMenu, setShowMenu] = useState(false);
-    const [showReplyInput, setShowReplyInput] = useState(false);
-    const [showReplies, setShowReplies] = useState(false);
-    const [extraReplies, setExtraReplies] = useState([]);
+    const reactions = comment.reactions || [];
     const menuRef = useRef(null);
+    const t = getTokens(isDarkMode);
 
-    const userName = comment.author
-        ? `${comment.author.firstName ?? ""} ${comment.author.lastName ?? ""}`.trim()
-        : myFullName;
+    const cFirst = comment.author?.firstName || myFirst || "";
+    const cLast = comment.author?.lastName || myLast || "";
+    const userName = `${cFirst} ${cLast}`.trim() || myFullName || "User";
 
-    const isMyComment = currentUserId && (
-        !comment.author || comment.author?.id?.toString() === currentUserId
-    );
+    const isMyComment = currentUserId && (!comment.author || comment.author?.id?.toString() === currentUserId);
 
-    const allReplies = [...(comment.replies || []), ...extraReplies];
-    const replyCount = allReplies.length;
+    const myReaction = reactions.find(r => r.isMyReaction);
+    const reactionCounts = {};
+    reactions.forEach(r => { reactionCounts[r.type] = (reactionCounts[r.type] || 0) + 1; });
 
     useEffect(() => {
         function handleClick(e) {
@@ -131,115 +130,83 @@ function CommentBubble({
         return () => document.removeEventListener("mousedown", handleClick);
     }, []);
 
-    function handleReplySent(newReply) {
-        setExtraReplies(prev => [...prev, newReply]);
-        setShowReplyInput(false);
-        setShowReplies(true);
+    async function handleReaction(type) {
+        onReaction(comment.id, type);
     }
 
     return (
-        <div
-            className={depth > 0 ? "ml-11 pl-3 border-l-2" : ""}
-            style={depth > 0 ? { borderColor: isDarkMode ? "#404040" : "#d1d5db" } : {}}
-        >
-            <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                    <FontAwesomeIcon icon={faUser} className="text-sm" style={{ color: textSecondary }} />
-                </div>
+        <div>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <Avatar firstName={cFirst} lastName={cLast} size={34} fontSize={11} />
 
-                <div className="flex-1 min-w-0">
-                    <div className="rounded-xl px-4 py-3" style={{ backgroundColor: inputBg }}>
-                        <p className="font-semibold text-sm" style={{ color: textPrimary }}>{userName}</p>
-                        <p className="text-[10px] mt-0.5" style={{ color: textSecondary }}>{timeAgo(comment.createdAt)}</p>
-                        <p className="text-sm mt-1 break-words" style={{ color: textSecondary }}>{comment.content}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                        background: t.inputBg, border: `1px solid ${t.borderColor}`,
+                        borderRadius: "12px", padding: ".6rem .9rem"
+                    }}>
+                        <p style={{ fontWeight: 700, fontSize: ".82rem", color: t.textPrimary }}>{userName}</p>
+                        <p style={{ fontSize: ".68rem", color: t.textSecondary, marginTop: "2px" }}>{timeAgo(comment.createdAt)}</p>
+                        <p style={{ fontSize: ".84rem", color: t.textSecondary, marginTop: "6px", lineHeight: 1.55, wordBreak: "break-word" }}>
+                            {comment.content}
+                        </p>
                     </div>
 
-                    {depth === 0 && (
-                        <div className="flex items-center gap-3 mt-1.5 px-1">
-                            <button
-                                onClick={() => setShowReplyInput(v => !v)}
-                                className="flex items-center gap-1 text-xs font-medium transition-colors"
-                                style={{ color: showReplyInput ? "#7daebd" : textSecondary }}
-                            >
-                                <FontAwesomeIcon icon={faReply} className="text-[10px]" />
-                                Reply
-                            </button>
-
-                            {replyCount > 0 && (
-                                <button
-                                    onClick={() => setShowReplies(v => !v)}
-                                    className="flex items-center gap-1 text-xs font-medium"
-                                    style={{ color: "#7daebd" }}
+                    {/* Reaction buttons */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "6px", paddingLeft: "4px" }}>
+                        {reactionDefs.map(({ type, icon }) => {
+                            const count = reactionCounts[type] || 0;
+                            const active = myReaction?.type === type;
+                            return (
+                                <button key={type} onClick={() => handleReaction(type)}
+                                    title={type}
+                                    style={{
+                                        display: "inline-flex", alignItems: "center", gap: "4px",
+                                        padding: "3px 8px", borderRadius: "999px",
+                                        border: `1px solid ${active ? steel : t.borderColor}`,
+                                        background: active ? `rgba(143,183,204,0.15)` : "none",
+                                        cursor: "pointer", fontSize: ".72rem", fontWeight: 500,
+                                        color: active ? steel : t.textSecondary,
+                                        transition: "all .2s"
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.borderColor = steel; e.currentTarget.style.color = steel; }}
+                                    onMouseLeave={e => { e.currentTarget.style.borderColor = active ? steel : t.borderColor; e.currentTarget.style.color = active ? steel : t.textSecondary; }}
                                 >
-                                    <FontAwesomeIcon icon={showReplies ? faChevronUp : faChevronDown} className="text-[10px]" />
-                                    {showReplies ? "Hide replies" : `${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
+                                    <FontAwesomeIcon icon={icon} style={{ fontSize: ".65rem" }} />
+                                    {count > 0 && <span>{count}</span>}
                                 </button>
-                            )}
-                        </div>
-                    )}
-
-                    {showReplyInput && (
-                        <ReplyInput
-                            postId={postId}
-                            parentCommentId={comment.id}
-                            onReplySent={handleReplySent}
-                            isDarkMode={isDarkMode}
-                            textPrimary={textPrimary}
-                            textSecondary={textSecondary}
-                            placeholderBg={placeholderBg}
-                            inputBg={inputBg}
-                            borderColor={borderColor}
-                            userData={userData}
-                        />
-                    )}
-
-                    {showReplies && allReplies.length > 0 && (
-                        <div className="mt-3 space-y-3">
-                            {allReplies.map(reply => (
-                                <CommentBubble
-                                    key={reply.id}
-                                    comment={reply}
-                                    myFullName={myFullName}
-                                    currentUserId={currentUserId}
-                                    postId={postId}
-                                    onDelete={onDelete}
-                                    isDarkMode={isDarkMode}
-                                    textPrimary={textPrimary}
-                                    textSecondary={textSecondary}
-                                    cardBg={cardBg}
-                                    borderColor={borderColor}
-                                    placeholderBg={placeholderBg}
-                                    inputBg={inputBg}
-                                    userData={userData}
-                                    depth={depth + 1}
-                                />
-                            ))}
-                        </div>
-                    )}
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {isMyComment && (
-                    <div className="relative flex-shrink-0 mt-2" ref={menuRef}>
-                        <button
-                            onClick={() => setShowMenu(v => !v)}
-                            className="w-7 h-7 rounded-full flex items-center justify-center transition-colors"
-                            style={{ color: textSecondary }}
-                            onMouseEnter={e => e.currentTarget.style.backgroundColor = isDarkMode ? "#404040" : "#e4e6eb"}
-                            onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                    <div style={{ position: "relative", flexShrink: 0, marginTop: "4px" }} ref={menuRef}>
+                        <button onClick={() => setShowMenu(v => !v)}
+                            style={{
+                                width: 28, height: 28, borderRadius: "50%",
+                                background: "none", border: `1px solid ${t.borderColor}`,
+                                cursor: "pointer", color: t.textSecondary,
+                                display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s"
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.borderColor = steel; e.currentTarget.style.color = steel; }}
+                            onMouseLeave={e => { e.currentTarget.style.borderColor = t.borderColor; e.currentTarget.style.color = t.textSecondary; }}
                         >
-                            <FontAwesomeIcon icon={faEllipsisV} className="text-xs" />
+                            <FontAwesomeIcon icon={faEllipsisV} style={{ fontSize: ".65rem" }} />
                         </button>
                         {showMenu && (
-                            <div
-                                className="absolute right-0 top-8 z-50 rounded-xl shadow-xl overflow-hidden"
-                                style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, minWidth: 130 }}
-                            >
-                                <button
-                                    onClick={() => { onDelete(comment.id); setShowMenu(false); }}
-                                    className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+                            <div style={{
+                                position: "absolute", right: 0, top: "34px", zIndex: 50,
+                                background: t.cardBg, border: `1px solid ${t.borderColor}`,
+                                borderRadius: "10px",
+                                boxShadow: isDarkMode ? "0 8px 24px rgba(0,0,0,.5)" : "0 8px 24px rgba(44,62,80,.13)",
+                                overflow: "hidden", minWidth: "130px"
+                            }}>
+                                <button onClick={() => { onDelete(comment.id); setShowMenu(false); }}
+                                    style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 14px", background: "none", border: "none", cursor: "pointer", fontSize: ".82rem", color: "#ef4444", transition: "background .15s" }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,.08)"}
+                                    onMouseLeave={e => e.currentTarget.style.background = "none"}
                                 >
-                                    <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                                    Delete
+                                    <FontAwesomeIcon icon={faTrash} style={{ fontSize: ".7rem" }} /> Delete
                                 </button>
                             </div>
                         )}
@@ -250,9 +217,11 @@ function CommentBubble({
     );
 }
 
-export default function PostComments({ post, onBack, onCommentDeleted }) {
+// ── PostComments (main export) ──────────────────
+export default function PostComments({ post, onBack, onCommentAdd, onCommentDelete }) {
+    const currentUserId = getCurrentUserId();
     const [commentTree, setCommentTree] = useState(() =>
-        buildCommentTree(post?.comments || [])
+        buildCommentTree(post?.comments || [], currentUserId)
     );
     const [commentContent, setCommentContent] = useState("");
     const [submitting, setSubmitting] = useState(false);
@@ -261,223 +230,267 @@ export default function PostComments({ post, onBack, onCommentDeleted }) {
 
     const { isDarkMode } = useThemeContext();
     const { userData } = useContext(AuthContext);
-    const currentUserId = getCurrentUserId();
+    const t = getTokens(isDarkMode);
 
+    const userDataRef = useRef(userData);
     useEffect(() => {
-        if (post?.comments) {
-            setCommentTree(buildCommentTree(post.comments));
-        }
-    }, [post]);
+        if (userData) userDataRef.current = userData;
+    }, [userData]);
 
-    useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [commentTree.length]);
+    const myFirst = userData?.firstName ?? userData?.name?.split(" ")[0] ?? "";
+    const myLast = userData?.lastName ?? userData?.name?.split(" ").slice(1).join(" ") ?? "";
+    const myFullName = `${myFirst} ${myLast}`.trim() || "You";
 
-    const cardBg = isDarkMode ? "#2A2A2A" : "white";
-    const textPrimary = isDarkMode ? "#E0E0E0" : "#2f3b48";
-    const textSecondary = isDarkMode ? "#B0B0B0" : "#6b6f76";
-    const placeholderBg = isDarkMode ? "#363636" : "#e4e6eb";
-    const inputBg = isDarkMode ? "#363636" : "#f0f2f5";
-    const borderColor = isDarkMode ? "#404040" : "#e4e6eb";
+    const totalCommentCount = commentTree.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0);
 
-    // العدد الكلي = كل الكومنتات الأصلية + كل الـ replies تحتها
-    const totalCommentCount = commentTree.reduce(
-        (acc, c) => acc + 1 + (c.replies?.length || 0),
-        0
-    );
-
-    const myFullName = userData
-        ? `${userData.firstName ?? ""} ${userData.lastName ?? ""}`.trim() || userData.name || "You"
-        : "You";
-
-    const authorName = post?.author
-        ? `${post.author.firstName} ${post.author.lastName}`
-        : "Unknown Author";
+    const authorFirst = post?.author?.firstName || "";
+    const authorLast = post?.author?.lastName || "";
+    const authorName = post?.author ? `${authorFirst} ${authorLast}`.trim() : "Unknown Author";
 
     const reactions = post?.reactions || [];
     const reactionCounts = {};
     reactions.forEach(r => { reactionCounts[r.type] = (reactionCounts[r.type] || 0) + 1; });
     const totalReactions = reactions.length;
-
     const emojiReactions = [
         { type: "Helpful", emoji: "👍" },
         { type: "Interested", emoji: "❤️" },
         { type: "Notify", emoji: "🔔" },
     ];
 
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [commentTree.length]);
+
     async function createComment(e) {
         e.preventDefault();
         if (!commentContent.trim()) return;
         setSubmitting(true);
+
+        // snapshot القيم وقت الـ submit مش من الـ closure
+        const firstName = userData?.firstName ?? userData?.name?.split(" ")[0] ?? "";
+        const lastName = userData?.lastName ?? userData?.name?.split(" ").slice(1).join(" ") ?? "";
+        const fullName = `${firstName} ${lastName}`.trim() || "You";
+
         const response = await createCommentApi(commentContent, post.id, null);
         if (response?.message === 'success') {
+            const newId = response.data?.id ?? response.data?.commentId;
+            if (!newId) {
+                toast.error("Failed to add comment");
+                setSubmitting(false);
+                return;
+            }
             const newComment = {
-                id: response.data?.id || Date.now(),
+                id: newId,
                 content: commentContent,
-                createdAt: response.data?.createdAt ?? new Date().toISOString(),
+                createdAt: new Date().toISOString(),
                 parentCommentId: null,
                 replies: [],
-                author: response.data?.author ?? (userData ? {
-                    id: userData._id,
-                    firstName: userData.firstName ?? userData.name?.split(" ")[0] ?? "",
-                    lastName: userData.lastName ?? userData.name?.split(" ").slice(1).join(" ") ?? "",
-                } : null),
+                reactions: [],
+                author: {
+                    id: currentUserId,
+                    firstName,
+                    lastName,
+                },
             };
             setCommentTree(prev => [...prev, newComment]);
             setCommentContent("");
+            if (onCommentAdd) onCommentAdd(newComment);
         } else {
             toast.error("Failed to add comment");
         }
         setSubmitting(false);
     }
 
-    function deleteComment(commentId) {
-        setCommentTree(prev => prev.filter(c => c.id !== commentId));
-        if (onCommentDeleted) onCommentDeleted(commentId);
-        toast.success("Comment deleted!");
+    async function deleteComment(commentId) {
+        const response = await deleteCommentApi(post.id, commentId);
+        if (response?.message === "success") {
+            setCommentTree(prev => prev.filter(c => c.id !== commentId));
+            if (onCommentDelete) onCommentDelete(commentId);
+            toast.success("Comment deleted!");
+        } else {
+            toast.error("Failed to delete comment");
+        }
+    }
+
+    function handleCommentReaction(commentId, type) {
+        setCommentTree(prev => prev.map(c => {
+            if (c.id !== commentId) return c;
+            const existing = (c.reactions || []).find(r => r.isMyReaction);
+            if (existing?.type === type) {
+                return { ...c, reactions: c.reactions.filter(r => !r.isMyReaction) };
+            } else if (existing) {
+                return { ...c, reactions: [...c.reactions.filter(r => !r.isMyReaction), { type, isMyReaction: true, userId: currentUserId }] };
+            } else {
+                return { ...c, reactions: [...(c.reactions || []), { type, isMyReaction: true, userId: currentUserId }] };
+            }
+        }));
+
+        addCommentReactionApi(post.id, commentId, type)
+            .then(res => console.log("reaction response:", res))  // ✅ أضف ده
+            .catch(() => toast.error("Failed to update reaction"));
     }
 
     if (!post) return null;
 
     return (
-        <div className="min-h-screen font-sans">
-            <main className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 w-full">
+        <>
+            <style>{`
+                .pc-back-btn {
+                    display:inline-flex; align-items:center; justify-content:center;
+                    width:36px; height:36px; border-radius:9px;
+                    border:1px solid ${t.borderColor}; background:${t.cardBg};
+                    color:${t.textPrimary}; cursor:pointer; transition:all .2s;
+                }
+                .pc-back-btn:hover { border-color:${steel}; color:${steel}; background:${t.accentSoft}; }
+                .pc-card {
+                    background:${t.cardBg}; border:1px solid ${t.borderColor};
+                    border-radius:14px; padding:1.25rem;
+                    position:relative; overflow:hidden;
+                }
+                .pc-card::before {
+                    content:''; position:absolute;
+                    top:0; left:0; right:0; height:3px;
+                    border-radius:14px 14px 0 0;
+                    background:linear-gradient(90deg,${navy},${steel});
+                }
+                .pc-comment-input {
+                    width:100%; padding:10px 38px 10px 16px;
+                    border-radius:999px; border:1px solid ${t.borderColor};
+                    background:${t.inputBg}; font-size:.875rem; color:${t.textPrimary};
+                    outline:none; transition:border .2s, box-shadow .2s;
+                }
+                .pc-comment-input::placeholder { color:${t.textSecondary}; }
+                .pc-comment-input:focus { border-color:${steel}; box-shadow:0 0 0 3px rgba(143,183,204,.15); }
+                .pc-reaction-badge {
+                    display:inline-flex; align-items:center; justify-content:center;
+                    width:24px; height:24px; border-radius:50%;
+                    background:${t.inputBg}; border:1px solid ${t.borderColor}; font-size:.82rem;
+                }
+            `}</style>
 
-                <header className="flex items-center gap-4 mb-6 sm:mb-8">
-                    <button
-                        onClick={onBack}
-                        className="p-2 rounded-lg transition-colors"
-                        style={{ backgroundColor: cardBg, color: textPrimary }}
-                        onMouseEnter={e => e.currentTarget.style.backgroundColor = isDarkMode ? "#404040" : "#f5f6f7"}
-                        onMouseLeave={e => e.currentTarget.style.backgroundColor = cardBg}
-                    >
-                        <FontAwesomeIcon icon={faArrowLeft} />
-                    </button>
-                    <h1 className="text-xl sm:text-2xl font-bold" style={{ color: textPrimary }}>
-                        Comments ({totalCommentCount})
-                    </h1>
-                </header>
+            <div style={{ minHeight: "100vh", fontFamily: t.fontFamily }}>
+                <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "1.5rem 1.5rem 4rem" }}>
 
-                <div className="space-y-4 sm:space-y-6 max-w-full sm:max-w-2xl md:max-w-3xl mx-auto">
+                    {/* Header */}
+                    <header style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1.75rem" }}>
+                        <button className="pc-back-btn" onClick={onBack}>
+                            <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: ".85rem" }} />
+                        </button>
+                        <div>
+                            <h1 style={{ fontWeight: 800, fontSize: "1.5rem", color: t.textPrimary, lineHeight: 1.2 }}>
+                                Comments
+                            </h1>
+                            <p style={{ fontSize: ".75rem", color: t.textSecondary, marginTop: "2px" }}>
+                                {totalCommentCount} {totalCommentCount === 1 ? "comment" : "comments"}
+                            </p>
+                        </div>
+                    </header>
 
-                    <div className="rounded-xl shadow-md p-5 sm:p-6 md:p-7 transition-colors duration-300" style={{ backgroundColor: cardBg }}>
-                        <header className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                                <FontAwesomeIcon icon={faUser} className="text-lg sm:text-xl" style={{ color: textSecondary }} />
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-sm sm:text-base font-bold" style={{ color: textPrimary }}>{authorName}</div>
-                                <div className="text-[10px] sm:text-xs mt-0.5" style={{ color: textSecondary }}>
-                                    {post.createdAt && new Date(post.createdAt).toLocaleString()}
+                    <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+
+                        {/* Post preview */}
+                        <div className="pc-card">
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "1rem" }}>
+                                <Avatar firstName={authorFirst} lastName={authorLast} size={40} fontSize={13} />
+                                <div>
+                                    <div style={{ fontWeight: 700, fontSize: ".9rem", color: t.textPrimary }}>{authorName}</div>
+                                    <div style={{ fontSize: ".72rem", color: t.textSecondary, marginTop: "2px" }}>
+                                        {post.createdAt && new Date(post.createdAt + "Z").toLocaleString("en-GB", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            hour12: true
+                                        })}                                    </div>
                                 </div>
                             </div>
-                        </header>
-                        <div>
-                            {post.title && (
-                                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1" style={{ color: textPrimary }}>{post.title}</h3>
-                            )}
-                            {post.content && (
-                                <p className="text-sm sm:text-base leading-relaxed" style={{ color: textPrimary, wordBreak: "break-word", overflowWrap: "break-word", whiteSpace: "pre-wrap" }}>
-                                    {post.content}
-                                </p>
-                            )}
+
+                            {post.title && <div style={{ fontWeight: 700, fontSize: "1rem", color: t.textPrimary, marginBottom: ".3rem", lineHeight: 1.3 }}>{post.title}</div>}
+                            {post.content && <p style={{ fontSize: ".875rem", color: t.textSecondary, lineHeight: 1.65, wordBreak: "break-word", whiteSpace: "pre-wrap" }}>{post.content}</p>}
+
                             {post.imageUrl && (
                                 <>
-                                    <img
-                                        src={post.imageUrl}
-                                        alt={post.title || "Post image"}
-                                        className="w-full h-48 sm:h-56 md:h-64 rounded-lg object-cover mt-3 cursor-pointer hover:opacity-90 transition-opacity"
+                                    <img src={post.imageUrl} alt={post.title || "Post image"}
+                                        style={{ width: "100%", height: "220px", objectFit: "cover", borderRadius: "10px", marginTop: "12px", border: `1px solid ${t.borderColor}`, cursor: "pointer", transition: "opacity .2s" }}
                                         onClick={() => setShowImageModal(true)}
+                                        onMouseEnter={e => e.target.style.opacity = .88}
+                                        onMouseLeave={e => e.target.style.opacity = 1}
                                         onError={e => { e.target.style.display = "none"; }}
                                     />
                                     {showImageModal && (
-                                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.85)" }} onClick={() => setShowImageModal(false)}>
-                                            <div className="relative max-w-4xl max-h-[90vh] w-full">
-                                                <img src={post.imageUrl} alt="" className="w-full h-full object-contain rounded-lg" style={{ maxHeight: "90vh" }} onClick={e => e.stopPropagation()} />
-                                                <button onClick={() => setShowImageModal(false)} className="absolute cursor-pointer top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>✕</button>
+                                        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem", background: "rgba(0,0,0,0.88)" }} onClick={() => setShowImageModal(false)}>
+                                            <div style={{ position: "relative", maxWidth: "900px", width: "100%" }}>
+                                                <img src={post.imageUrl} alt="" style={{ width: "100%", maxHeight: "90vh", objectFit: "contain", borderRadius: "12px" }} onClick={e => e.stopPropagation()} />
+                                                <button onClick={() => setShowImageModal(false)} style={{ position: "absolute", top: "12px", right: "12px", width: "34px", height: "34px", borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", color: "white", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
                                             </div>
                                         </div>
                                     )}
                                 </>
                             )}
+
                             {totalReactions > 0 && (
-                                <div className="flex items-center gap-2 mt-4 pt-3" style={{ borderTop: `1px solid ${borderColor}` }}>
-                                    <div className="flex items-center gap-1">
+                                <div style={{ display: "flex", alignItems: "center", gap: "7px", marginTop: "1rem", paddingTop: ".75rem", borderTop: `1px solid ${t.borderColor}` }}>
+                                    <div style={{ display: "flex", gap: "3px" }}>
                                         {Object.entries(reactionCounts).slice(0, 3).map(([type]) => {
-                                            const emojiInfo = emojiReactions.find(rt => rt.type === type);
-                                            return (
-                                                <div key={type} className="w-6 h-6 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: isDarkMode ? "#363636" : "#f3f4f6" }}>
-                                                    {emojiInfo?.emoji || "👍"}
-                                                </div>
-                                            );
+                                            const info = emojiReactions.find(r => r.type === type);
+                                            return <span key={type} className="pc-reaction-badge">{info?.emoji || "👍"}</span>;
                                         })}
                                     </div>
-                                    <span className="text-xs font-medium" style={{ color: textSecondary }}>{totalReactions}</span>
+                                    <span style={{ fontSize: ".75rem", fontWeight: 500, color: t.textSecondary }}>{totalReactions}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Comments card */}
+                        <div className="pc-card">
+                            {/* Add comment */}
+                            <div style={{ paddingBottom: "1rem", borderBottom: `1px solid ${t.borderColor}`, marginBottom: "1rem" }}>
+                                <form onSubmit={createComment} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <div style={{ flex: 1, position: "relative" }}>
+                                        <input type="text" value={commentContent}
+                                            onChange={e => setCommentContent(e.target.value)}
+                                            placeholder="Write a comment…"
+                                            className="pc-comment-input"
+                                        />
+                                        <button type="submit" disabled={submitting || commentContent.length < 2}
+                                            style={{
+                                                position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
+                                                background: "none", border: "none",
+                                                cursor: commentContent.length >= 2 ? "pointer" : "not-allowed",
+                                                color: commentContent.length >= 2 ? steel : t.textSecondary,
+                                                fontSize: ".8rem", transition: "color .2s"
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faPaperPlane} />
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            {/* Comment list */}
+                            {commentTree.length === 0 ? (
+                                <div style={{ textAlign: "center", padding: "2.5rem 0" }}>
+                                    <div style={{ fontSize: "2rem", marginBottom: ".5rem" }}>💬</div>
+                                    <p style={{ fontSize: ".875rem", color: t.textSecondary }}>No comments yet. Be the first!</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                                    {commentTree.map(comment => (
+                                        <CommentBubble key={comment.id} comment={comment}
+                                            myFullName={myFullName} myFirst={myFirst} myLast={myLast}
+                                            currentUserId={currentUserId} postId={post.id} onDelete={deleteComment}
+                                            onReaction={handleCommentReaction}
+                                            isDarkMode={isDarkMode}
+                                        />
+                                    ))}
+                                    <div ref={bottomRef} />
                                 </div>
                             )}
                         </div>
                     </div>
-
-                    <div className="rounded-xl shadow-md p-5 sm:p-6 transition-colors duration-300" style={{ backgroundColor: cardBg }}>
-                        <div className="pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                            <form onSubmit={createComment} className="flex items-center gap-3">
-                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: placeholderBg }}>
-                                    <FontAwesomeIcon icon={faUser} className="text-sm" style={{ color: textSecondary }} />
-                                </div>
-                                <div className="flex-1 relative">
-                                    <input
-                                        type="text"
-                                        value={commentContent}
-                                        onChange={e => setCommentContent(e.target.value)}
-                                        placeholder="Write a comment..."
-                                        className="w-full rounded-full px-4 py-2 pr-10 text-sm outline-none transition-colors duration-300"
-                                        style={{ backgroundColor: inputBg, color: textPrimary, border: `1px solid ${borderColor}` }}
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={submitting || commentContent.length < 2}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed transition-colors"
-                                        style={{ color: commentContent.length >= 2 ? "#7daebd" : textSecondary }}
-                                    >
-                                        <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                        {commentTree.length === 0 ? (
-                            <div className="text-center py-10">
-                                <p className="text-3xl mb-2">💬</p>
-                                <p className="text-sm" style={{ color: textSecondary }}>No comments yet. Be the first!</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-5 pt-4">
-                                {commentTree.map(comment => (
-                                    <CommentBubble
-                                        key={comment.id}
-                                        comment={comment}
-                                        myFullName={myFullName}
-                                        currentUserId={currentUserId}
-                                        postId={post.id}
-                                        onDelete={deleteComment}
-                                        isDarkMode={isDarkMode}
-                                        textPrimary={textPrimary}
-                                        textSecondary={textSecondary}
-                                        cardBg={cardBg}
-                                        borderColor={borderColor}
-                                        placeholderBg={placeholderBg}
-                                        inputBg={inputBg}
-                                        userData={userData}
-                                        depth={0}
-                                    />
-                                ))}
-                                <div ref={bottomRef} />
-                            </div>
-                        )}
-                    </div>
-
-                </div>
-            </main>
-        </div>
+                </main>
+            </div>
+        </>
     );
 }

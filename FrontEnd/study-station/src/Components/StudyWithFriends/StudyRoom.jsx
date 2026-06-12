@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useThemeContext } from "../Theme/ThemeContext";
 import TimerStudyRoom from "./TimerStudyRoom";
 import ToDoStudyRoom from "./ToDoStudyRoom";
+import { useFocusSession } from "../Services/useFocusSession";
 import {
     getRoomById,
     leaveRoom,
@@ -13,8 +14,6 @@ import {
     toggleTask,
     updateTask,
     deleteTask,
-    startFocusSession,
-    stopFocusSession,
 } from "../Services/studyWithFriendsService";
 
 const AV_PALETTE = [
@@ -43,7 +42,6 @@ const getMemberName = (m) =>
     m?.profile?.userName ||
     "Unknown";
 
-// استخراج اسم المُرسِل من رسالة
 const getSenderName = (msg) =>
     msg?.senderName ||
     msg?.userName ||
@@ -108,18 +106,20 @@ export default function StudyRoom() {
     const [room, setRoom] = useState(null);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
-    const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [leaving, setLeaving] = useState(false);
     const [sending, setSending] = useState(false);
     const [toast, setToast] = useState({ visible: false, msg: "" });
     const [leaveConfirm, setLeaveConfirm] = useState(false);
-    const [sharedTimer, setSharedTimer] = useState(null);
+
+    // ✅ الـ timer state كله هنا — مش في fetchRoom
+    const { sharedTimer, handleStart, handleStop } = useFocusSession(roomId);
 
     const tasksRef = useRef([]);
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
+    const pendingToggles = useRef(new Set());
 
     const pageBg = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#1e1e1e" : "#fff";
@@ -136,6 +136,7 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
+    // ✅ fetchRoom لا تمس الـ timer على الإطلاق — useFocusSession بيتكلم مع الباك بنفسه
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
@@ -147,26 +148,14 @@ export default function StudyRoom() {
             ]);
 
             const taskList = Array.isArray(tasks) ? tasks : (tasks?.tasks ?? []);
-            setRoom(prev => ({
+            setRoom({
                 ...data,
                 tasks: taskList.map(t =>
                     pendingToggles.current.has(t.id)
                         ? { ...t, isDone: !t.isDone }
                         : t
                 )
-            }));
-
-            const activeSession = data.activeFocusSession ?? data.currentSession ?? null;
-            if (activeSession?.id && activeSession?.startedAt) {
-                const elapsed = Math.floor((Date.now() - new Date(activeSession.startedAt)) / 1000);
-                const duration = (activeSession.durationMinutes ?? 25) * 60;
-                const remaining = Math.max(0, duration - elapsed);
-                setSessionId(activeSession.id);
-                setSharedTimer({ remaining, duration, isRunning: remaining > 0 });
-            } else {
-                setSessionId(null);
-                setSharedTimer(null);
-            }
+            });
 
             const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
             setMessages(prev => {
@@ -178,7 +167,7 @@ export default function StudyRoom() {
                     .sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
             });
 
-        } catch (err) {
+        } catch {
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
             if (!silent) setLoading(false);
@@ -244,21 +233,6 @@ export default function StudyRoom() {
         }
     };
 
-    const handleStartFocus = async (durationMinutes = 25) => {
-        try {
-            const session = await startFocusSession(roomId, durationMinutes);
-            setSessionId(session?.id ?? session?.sessionId ?? null);
-        } catch (err) { console.error("Start focus failed", err); }
-    };
-
-    const handleStopFocus = async () => {
-        if (!sessionId) return;
-        try {
-            await stopFocusSession(roomId, sessionId);
-            setSessionId(null);
-        } catch (err) { console.error("Stop focus failed", err); }
-    };
-
     const handleAddTask = async (taskText) => {
         if (!taskText?.trim()) return;
         try {
@@ -269,18 +243,14 @@ export default function StudyRoom() {
         }
     };
 
-    const pendingToggles = useRef(new Set());
-
     const handleToggleTask = async (taskId) => {
         pendingToggles.current.add(taskId);
-
         setRoom(prev => ({
             ...prev,
             tasks: (prev.tasks ?? []).map(t =>
                 t.id === taskId ? { ...t, isDone: !t.isDone } : t
             )
         }));
-
         try {
             await toggleTask(roomId, taskId);
         } catch {
@@ -331,16 +301,9 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members ||
-        room.participants ||
-        room.activeUsers ||
-        room.onlineUsers ||
-        [];
-    const onlineCount = room.onlineCount ||
-        members.length ||
-        room.participantsCount ||
-        room.current ||
-        0;
+    const members = room.members || room.participants || room.activeUsers || room.onlineUsers || [];
+    const onlineCount = room.onlineCount || members.length || room.participantsCount || room.current || 0;
+
     return (
         <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: pageBg }}>
             <style>{`
@@ -350,16 +313,10 @@ export default function StudyRoom() {
 
             {/* ── TOP BAR ── */}
             <div style={{
-                background: "#2C3E50",
-                height: 60,
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                padding: "0 1.5rem",
-                gap: "1rem",
-                borderBottom: "1px solid rgba(0,0,0,.15)"
+                background: "#2C3E50", height: 60, flexShrink: 0,
+                display: "flex", alignItems: "center", padding: "0 1.5rem",
+                gap: "1rem", borderBottom: "1px solid rgba(0,0,0,.15)"
             }}>
-                {/* اسم الروم والسبجكت */}
                 <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
                         <span style={{ fontSize: ".95rem", fontWeight: 800, letterSpacing: "-.02em", color: "#fff" }}>
@@ -374,7 +331,6 @@ export default function StudyRoom() {
                             {room.roomCode}
                         </span>
                     )}
-                    {/* Badge عدد الأونلاين */}
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 11px", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, background: "rgba(52,211,153,.15)", color: "#34d399", border: "1px solid rgba(52,211,153,.2)", flexShrink: 0 }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399", animation: "pulse 2s infinite" }} />
                         {onlineCount} Online
@@ -383,69 +339,24 @@ export default function StudyRoom() {
 
                 <div style={{ flex: 1, display: "flex", alignItems: "center", gap: ".5rem", overflow: "hidden", flexWrap: "nowrap" }}>
                     {members.length === 0 ? (
-                        <span style={{ fontSize: ".72rem", color: "rgba(255,255,255,.35)", fontStyle: "italic" }}>
-                            No members yet
-                        </span>
+                        <span style={{ fontSize: ".72rem", color: "rgba(255,255,255,.35)", fontStyle: "italic" }}>No members yet</span>
                     ) : (
                         <>
                             {members.slice(0, 5).map((m, i) => {
                                 const name = getMemberName(m);
                                 return (
-                                    <div
-                                        key={m?.id ?? i}
-                                        title={name}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "6px",
-                                            padding: "4px 10px 4px 4px",
-                                            borderRadius: 999,
-                                            background: "rgba(255,255,255,.1)",
-                                            border: "1px solid rgba(255,255,255,.15)",
-                                            flexShrink: 0,
-                                        }}
-                                    >
-                                        <div style={{
-                                            width: 26,
-                                            height: 26,
-                                            borderRadius: "50%",
-                                            border: "2px solid rgba(255,255,255,.2)",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontSize: ".52rem",
-                                            fontWeight: 800,
-                                            color: "#fff",
-                                            flexShrink: 0,
-                                            ...getAvStyle(i),
-                                        }}>
+                                    <div key={m?.id ?? i} title={name} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 10px 4px 4px", borderRadius: 999, background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", flexShrink: 0 }}>
+                                        <div style={{ width: 26, height: 26, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".52rem", fontWeight: 800, color: "#fff", flexShrink: 0, ...getAvStyle(i) }}>
                                             {getInitials(name)}
                                         </div>
-                                        <span style={{
-                                            fontSize: ".72rem",
-                                            fontWeight: 700,
-                                            color: "rgba(255,255,255,.85)",
-                                            whiteSpace: "nowrap",
-                                            maxWidth: 90,
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                        }}>
+                                        <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.85)", whiteSpace: "nowrap", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis" }}>
                                             {name}
                                         </span>
                                     </div>
                                 );
                             })}
                             {members.length > 5 && (
-                                <span style={{
-                                    fontSize: ".72rem",
-                                    fontWeight: 700,
-                                    color: "rgba(255,255,255,.5)",
-                                    flexShrink: 0,
-                                    padding: "4px 10px",
-                                    borderRadius: 999,
-                                    background: "rgba(255,255,255,.08)",
-                                    border: "1px solid rgba(255,255,255,.12)",
-                                }}>
+                                <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.5)", flexShrink: 0, padding: "4px 10px", borderRadius: 999, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)" }}>
                                     +{members.length - 5} more
                                 </span>
                             )}
@@ -453,27 +364,10 @@ export default function StudyRoom() {
                     )}
                 </div>
 
-                {/* زرار Leave */}
                 <button
                     onClick={handleLeave}
                     disabled={leaving}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "7px 15px",
-                        borderRadius: 10,
-                        border: "none",
-                        background: "rgba(248,113,113,.18)",
-                        color: "#fca5a5",
-                        fontFamily: "inherit",
-                        fontSize: ".78rem",
-                        fontWeight: 700,
-                        cursor: leaving ? "not-allowed" : "pointer",
-                        transition: "background .2s",
-                        opacity: leaving ? .6 : 1,
-                        flexShrink: 0,
-                    }}
+                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 15px", borderRadius: 10, border: "none", background: "rgba(248,113,113,.18)", color: "#fca5a5", fontFamily: "inherit", fontSize: ".78rem", fontWeight: 700, cursor: leaving ? "not-allowed" : "pointer", transition: "background .2s", opacity: leaving ? .6 : 1, flexShrink: 0 }}
                 >
                     {leaving ? "Leaving…" : (
                         <>
@@ -493,12 +387,12 @@ export default function StudyRoom() {
 
                 {/* ── LEFT — Timer + ToDo ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                    {/* ✅ handleStart و handleStop جايين من useFocusSession — مفيش isActive */}
                     <TimerStudyRoom
                         roomId={roomId}
-                        onStart={handleStartFocus}
-                        onStop={handleStopFocus}
-                        isActive={!!sessionId}
                         sharedTimer={sharedTimer}
+                        onStart={handleStart}
+                        onStop={handleStop}
                     />
                     <ToDoStudyRoom
                         tasks={room.tasks ?? []}

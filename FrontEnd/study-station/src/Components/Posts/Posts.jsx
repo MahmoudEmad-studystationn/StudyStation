@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import PostComments from "./PostComments";
 import PostCard from "./PostCard";
 import PostComposer from "./PostComposer";
@@ -32,18 +32,16 @@ export default function Posts() {
   const [currentView, setCurrentView] = useState("posts");
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const deletedCommentIds = useRef(new Set());
-
   const { isDarkMode } = useThemeContext();
   const { userData } = useContext(AuthContext);
 
-  const navy  = "#2C3E50";
+  const navy = "#2C3E50";
   const steel = "#8FB7CC";
-  const textPrimary   = isDarkMode ? "#f0f0f0" : "#1a1a2e";
+  const textPrimary = isDarkMode ? "#f0f0f0" : "#1a1a2e";
   const textSecondary = isDarkMode ? "#9a9a9a" : "#686868";
-  const borderColor   = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)";
-  const inputBg       = isDarkMode ? "#1f1f1f" : "#ffffff";
-  const bgPage        = isDarkMode ? "#171717" : "#F3F4F6";
+  const borderColor = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)";
+  const inputBg = isDarkMode ? "#1f1f1f" : "#ffffff";
+  const fontFamily = '"Noto Sans Arabic", "Open Sans", sans-serif';
 
   const currentUserId = getCurrentUserId();
 
@@ -54,23 +52,18 @@ export default function Posts() {
         ...r,
         isMyReaction: r.userId?.toString() === currentUserId
       })),
-      comments: (post.comments || []).filter(c => !deletedCommentIds.current.has(c.id))
+      comments: post.comments || []
     }));
   }
 
   async function fetchPosts() {
+    const { data } = await axiosInstance.get("Posts");
+    console.log(data[0]?.createdAt); 
     try {
       setLoading(true);
       const { data } = await axiosInstance.get("Posts");
-      const normalizedPosts = normalizePosts(data);
-      setPosts(normalizedPosts);
-
-      setSelectedPost(prev => {
-        if (!prev) return prev;
-        const updated = normalizedPosts.find(p => p.id === prev.id);
-        return updated || prev;
-      });
-    } catch (err) {
+      setPosts(normalizePosts(data));
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
@@ -102,17 +95,23 @@ export default function Posts() {
       })
     );
 
-    setSelectedPost(prev => {
-      if (!prev || prev.id !== postId) return prev;
-      const myExistingReaction = (prev.reactions || []).find(r => r.isMyReaction === true);
-      if (myExistingReaction?.type === reactionType) {
-        return { ...prev, reactions: prev.reactions.filter(r => !r.isMyReaction) };
-      } else if (myExistingReaction) {
-        return { ...prev, reactions: [...prev.reactions.filter(r => !r.isMyReaction), { type: reactionType, isMyReaction: true, userId: currentUserId }] };
-      } else {
-        return { ...prev, reactions: [...prev.reactions, { type: reactionType, isMyReaction: true, userId: currentUserId }] };
-      }
-    });
+    function handleCommentReaction(commentId, type) {
+      setCommentTree(prev => prev.map(c => {
+        if (c.id !== commentId) return c;
+        const existing = (c.reactions || []).find(r => r.isMyReaction);
+        if (existing?.type === type) {
+          return { ...c, reactions: c.reactions.filter(r => !r.isMyReaction) };
+        } else if (existing) {
+          return { ...c, reactions: [...c.reactions.filter(r => !r.isMyReaction), { type, isMyReaction: true, userId: currentUserId }] };
+        } else {
+          return { ...c, reactions: [...(c.reactions || []), { type, isMyReaction: true, userId: currentUserId }] };
+        }
+      }));
+
+      addCommentReactionApi(post.id, commentId, type).catch(() => {
+        toast.error("Failed to update reaction");
+      });
+    }
 
     axiosInstance.post(`Posts/${postId}/reactions`, { type: reactionType }).catch(() => {
       toast.error("Failed to update reaction");
@@ -120,27 +119,14 @@ export default function Posts() {
     });
   }
 
-  function addCommentToPost(postId, comment) {
-    setPosts(prevPosts =>
-      prevPosts.map(p => {
-        if (p.id !== postId) return p;
-        return { ...p, comments: [...(p.comments || []), comment] };
-      })
-    );
-    setSelectedPost(prev => {
-      if (!prev || prev.id !== postId) return prev;
-      return { ...prev, comments: [...(prev.comments || []), comment] };
-    });
-  }
-
   async function deletePost(postId) {
     try {
       await axiosInstance.delete(`Posts/${postId}`);
       toast.success("Post deleted successfully!");
+      fetchPosts();
     } catch {
       toast.error("Failed to delete post");
     }
-    fetchPosts();
   }
 
   function openComments(postId) {
@@ -153,24 +139,23 @@ export default function Posts() {
     }
   }
 
+  function handleCommentAdd(postId, newComment) {
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p;
+      return { ...p, comments: [...(p.comments || []), newComment] };
+    }));
+  }
+
+  function handleCommentDelete(postId, commentId) {
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p;
+      return { ...p, comments: (p.comments || []).filter(c => c.id !== commentId) };
+    }));
+  }
+
   function goBackToPosts() {
     setCurrentView("posts");
     setSelectedPost(null);
-    fetchPosts();
-  }
-
-  function onCommentDeleted(commentId) {
-    deletedCommentIds.current.add(commentId);
-    setPosts(prevPosts =>
-      prevPosts.map(p => ({
-        ...p,
-        comments: (p.comments || []).filter(c => c.id !== commentId)
-      }))
-    );
-    setSelectedPost(prev => {
-      if (!prev) return prev;
-      return { ...prev, comments: (prev.comments || []).filter(c => c.id !== commentId) };
-    });
   }
 
   if (currentView === "comments" && selectedPost) {
@@ -178,7 +163,8 @@ export default function Posts() {
       <PostComments
         post={selectedPost}
         onBack={goBackToPosts}
-        onCommentDeleted={onCommentDeleted}
+        onCommentAdd={(newComment) => handleCommentAdd(selectedPost.id, newComment)}
+        onCommentDelete={(commentId) => handleCommentDelete(selectedPost.id, commentId)}
       />
     );
   }
@@ -186,7 +172,6 @@ export default function Posts() {
   return (
     <>
       <style>{`
-
         .posts-search-input {
           width: 100%;
           padding: 9px 14px 9px 38px;
@@ -197,6 +182,7 @@ export default function Posts() {
           color: ${textPrimary};
           outline: none;
           transition: border .2s, box-shadow .2s;
+          font-family: ${fontFamily};
         }
         .posts-search-input::placeholder { color: ${textSecondary}; }
         .posts-search-input:focus {
@@ -207,10 +193,6 @@ export default function Posts() {
           text-align: center;
           padding: 3rem 0;
         }
-        .posts-empty-icon {
-          font-size: 2.5rem;
-          margin-bottom: .5rem;
-        }
         .posts-empty-text {
           font-size: .875rem;
           color: ${textSecondary};
@@ -220,10 +202,10 @@ export default function Posts() {
       <main style={{
         maxWidth: "1200px",
         margin: "0 auto",
-        padding: "1.5rem 1.5rem 4rem"
+        padding: "1.5rem 1.5rem 4rem",
+        fontFamily
       }}>
 
-        {/* Top bar: search + icons */}
         <header style={{
           display: "flex",
           alignItems: "center",
@@ -232,12 +214,10 @@ export default function Posts() {
           marginBottom: "1.75rem",
           flexWrap: "wrap"
         }}>
-          {/* Search bar */}
           <div style={{ flex: 1, minWidth: "200px", maxWidth: "480px", position: "relative" }}>
-            {/* Search icon */}
             <span style={{
               position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)",
-              color: textSecondary, fontSize: ".9rem", pointerEvents: "none"
+              color: textSecondary, pointerEvents: "none"
             }}><IconSearch /></span>
             <input
               type="text"
@@ -250,7 +230,6 @@ export default function Posts() {
           <HeaderIcons />
         </header>
 
-        {/* Feed */}
         <section style={{
           maxWidth: "720px",
           margin: "0 auto",
@@ -285,7 +264,8 @@ export default function Posts() {
               onOpenComments={openComments}
               onDeletePost={deletePost}
               commentLimit={1}
-              callBack={comment => addCommentToPost(post.id, comment)}
+              callBack={(newComment) => handleCommentAdd(post.id, newComment)}
+              onCommentDelete={(commentId) => handleCommentDelete(post.id, commentId)}
             />
           ))}
         </section>

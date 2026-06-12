@@ -23,3 +23,12 @@ export async function addCommentReactionApi(postId, commentId, type) {
         return { message: "error", error };
     }
 }
+
+export async function deleteCommentApi(postId, commentId) {
+    try {
+        await axiosInstance.delete(`Posts/${postId}/comments/${commentId}`);
+        return { message: "success" };
+    } catch (error) {
+        return { message: "error", error };
+    }
+}

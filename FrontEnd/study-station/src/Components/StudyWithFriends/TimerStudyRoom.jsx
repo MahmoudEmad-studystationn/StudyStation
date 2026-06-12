@@ -18,6 +18,15 @@ function saveState(roomId, state) {
     } catch { }
 }
 
+// ── Calculate remaining seconds from server startTime ─────────────────────
+// KEY FIX: every client calculates remaining the same way from the server's
+// startTime — so all users are in sync regardless of when they joined.
+function calcRemainingFromServer(startTime, durationMinutes) {
+    if (!startTime || !durationMinutes) return durationMinutes * 60;
+    const end = new Date(startTime).getTime() + durationMinutes * 60 * 1000;
+    return Math.max(0, Math.round((end - Date.now()) / 1000));
+}
+
 export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, sharedTimer }) {
     const { isDarkMode } = useThemeContext();
 
@@ -32,30 +41,67 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
     const [timeLeft, setTimeLeft] = useState(saved?.timeLeft ?? DURATIONS.focus);
     const [mode, setMode] = useState(saved?.mode ?? "focus");
     const [currentSession, setCurrentSession] = useState(saved?.currentSession ?? 1);
-    const [isRunning, setIsRunning] = useState(false);
-    const prevRoomRef = useRef(roomId);
 
-    // ─── Sync مع الـ sharedTimer الجاي من الباك ──────────────────────────────
+    // isRunning is always derived from sharedTimer when it exists
+    const [localRunning, setLocalRunning] = useState(false);
+    const isRunning = sharedTimer ? sharedTimer.isRunning : localRunning;
+
+    const prevRoomRef = useRef(roomId);
+    const localTickRef = useRef(null);
+    // Track which startTime we last wired up — avoids restarting the interval
+    // on every 5-second poll when nothing actually changed
+    const lastStartTimeRef = useRef(null);
+
+    // ─── Sync with sharedTimer from backend ──────────────────────────────────
     useEffect(() => {
         if (!sharedTimer) {
-            setIsRunning(false);
+            clearInterval(localTickRef.current);
+            localTickRef.current = null;
+            lastStartTimeRef.current = null;
             return;
         }
 
-        setTimeLeft(sharedTimer.remaining);
-        setIsRunning(sharedTimer.isRunning);
+        // ✅ Recalculate from startTime so all clients agree on the same value
+        const serverRemaining = sharedTimer.startTime
+            ? calcRemainingFromServer(sharedTimer.startTime, sharedTimer.durationMinutes)
+            : sharedTimer.remaining;
 
-        if (!sharedTimer.isRunning) return;
+        setTimeLeft(serverRemaining);
 
-        // local countdown للـ smoothness بين الـ polls
-        const id = setInterval(() => {
-            setTimeLeft(t => {
-                if (t <= 1) { clearInterval(id); return 0; }
-                return t - 1;
-            });
+        if (!sharedTimer.isRunning) {
+            clearInterval(localTickRef.current);
+            localTickRef.current = null;
+            lastStartTimeRef.current = null;
+            return;
+        }
+
+        // Only restart interval when a NEW session starts (startTime changed)
+        // — not on every poll tick, which would cause jumps
+        if (lastStartTimeRef.current === sharedTimer.startTime && localTickRef.current) {
+            return;
+        }
+
+        lastStartTimeRef.current = sharedTimer.startTime;
+        clearInterval(localTickRef.current);
+
+        // Smooth local countdown between polls — always recalculates from startTime
+        localTickRef.current = setInterval(() => {
+            const remaining = sharedTimer.startTime
+                ? calcRemainingFromServer(sharedTimer.startTime, sharedTimer.durationMinutes)
+                : 0;
+
+            setTimeLeft(remaining);
+
+            if (remaining <= 0) {
+                clearInterval(localTickRef.current);
+                localTickRef.current = null;
+            }
         }, 1000);
 
-        return () => clearInterval(id);
+        return () => {
+            clearInterval(localTickRef.current);
+            localTickRef.current = null;
+        };
     }, [sharedTimer]);
 
     // ─── Save state ──────────────────────────────────────────────────────────
@@ -67,26 +113,29 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
     useEffect(() => {
         if (prevRoomRef.current !== roomId) {
             prevRoomRef.current = roomId;
+            clearInterval(localTickRef.current);
+            localTickRef.current = null;
+            lastStartTimeRef.current = null;
             const newSaved = loadState(roomId);
             setTimeLeft(newSaved?.timeLeft ?? DURATIONS.focus);
             setMode(newSaved?.mode ?? "focus");
             setCurrentSession(newSaved?.currentSession ?? 1);
-            setIsRunning(false);
+            setLocalRunning(false);
         }
     }, [roomId]);
 
-    // ─── Local tick — بس لو مفيش sharedTimer ────────────────────────────────
+    // ─── Local tick — only when no sharedTimer ────────────────────────────────
     useEffect(() => {
         if (sharedTimer) return;
-        if (!isRunning) return;
+        if (!localRunning) return;
         if (timeLeft <= 0) { handleSwitch(); return; }
         const id = setInterval(() => setTimeLeft(t => t - 1), 1000);
         return () => clearInterval(id);
-    }, [isRunning, timeLeft, sharedTimer]);
+    }, [localRunning, timeLeft, sharedTimer]);
 
-    // ─── Auto-switch (local mode فقط) ────────────────────────────────────────
+    // ─── Auto-switch (local mode only) ───────────────────────────────────────
     function handleSwitch() {
-        setIsRunning(false);
+        setLocalRunning(false);
         if (mode === "focus") {
             if (currentSession < 4) {
                 setMode("shortBreak");
@@ -110,14 +159,16 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
         } else {
             if (onStop) onStop();
         }
-        // local mode بس لو مفيش sharedTimer
-        if (!sharedTimer) setIsRunning(r => !r);
+        if (!sharedTimer) setLocalRunning(r => !r);
     }
 
     // ─── Restart ──────────────────────────────────────────────────────────────
     function restart() {
         if (onStop && isRunning) onStop();
-        setIsRunning(false);
+        setLocalRunning(false);
+        clearInterval(localTickRef.current);
+        localTickRef.current = null;
+        lastStartTimeRef.current = null;
         setTimeLeft(DURATIONS.focus);
         setMode("focus");
         setCurrentSession(1);
@@ -150,6 +201,26 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
                     <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                 </svg>
                 Pomodoro Timer
+                {/* Sync badge — visible when using shared timer */}
+                {sharedTimer && (
+                    <span style={{
+                        marginLeft: "auto",
+                        fontSize: ".6rem",
+                        fontWeight: 700,
+                        color: "#34d399",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                    }}>
+                        <span style={{
+                            width: 6, height: 6, borderRadius: "50%",
+                            background: "#34d399",
+                            animation: "timerPulse 2s ease-in-out infinite",
+                            display: "inline-block",
+                        }} />
+                        SYNCED
+                    </span>
+                )}
             </div>
 
             {/* Circle clock */}

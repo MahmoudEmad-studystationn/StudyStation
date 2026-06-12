@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin './hero.js';
 @source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
@@ -31,18 +32,32 @@
     font-style: italic;
 }
 
+:lang(ar),
+[dir="rtl"] {
+    font-family: "Noto Sans Arabic", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 100;
+}
+
+@font-face {
+    font-family: 'Noto Sans Arabic';
+    src: url('./assets/fonts/NotoSansArabic-VariableFont_wdth-wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
 body.dark-mode ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
 }
 
 body.dark-mode ::-webkit-scrollbar-track {
-    background: #171717;       
+    background: #171717;
     border-radius: 10px;
 }
 
 body.dark-mode ::-webkit-scrollbar-thumb {
-    background: #4b5563;        
+    background: #4b5563;
     border-radius: 10px;
 }
 
