@@ -27,7 +27,6 @@ const DARK = {
 const TYPE_CONFIG = {
     like: {
         icon: Heart,
-        label: "liked your post",
         iconBg: "rgba(239,68,68,.12)",
         iconColor: "#ef4444",
     },
@@ -37,13 +36,20 @@ const TYPE_CONFIG = {
         iconBg: "rgba(59,130,246,.12)",
         iconColor: "#3b82f6",
     },
-    reply: {
+    system: {
         icon: CornerDownRight,
-        label: "replied to your comment",
+        label: "reposted your post",
         iconBg: "rgba(16,185,129,.12)",
         iconColor: "#10b981",
     },
 };
+
+function getLabel(notif) {
+    if (notif.type === "like") return "liked your post";
+    if (notif.type === "comment") return "commented on your post";
+    if (notif.type === "system") return "reposted your post";
+    return "interacted with your content";
+}
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 function Avatar({ initials, size = 40 }) {
@@ -125,13 +131,12 @@ function NotifItem({ notif, dark, onMarkRead, onDelete }) {
                 }} />
             )}
 
-            <Avatar initials={notif.avatar || notif.userAvatar || "??"} size={42} />
-
+            <Avatar initials={notif.senderName?.slice(0, 2) ?? "??"} size={42} />
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: ".875rem", color: t.text, lineHeight: 1.5, marginBottom: ".25rem" }}>
                     <span style={{ fontWeight: 600 }}>{notif.user || notif.userName}</span>
                     {" "}
-                    <span style={{ color: t.muted }}>{cfg.label}</span>
+                    <span style={{ color: t.muted }}>{getLabel(notif)}</span>
                     {" "}
                     <span style={{ fontWeight: 500, color: t.steel, fontSize: ".82rem" }}>
                         "{notif.postTitle || notif.title}"
@@ -266,12 +271,34 @@ export default function NotificationsPage() {
         setError(null);
         try {
             const data = await api.getNotifications();
-            const list = Array.isArray(data) ? data
-                : Array.isArray(data?.items) ? data.items
-                : Array.isArray(data?.data) ? data.data
-                : [];
-            setNotifs(list);
-        } catch {
+
+            console.log("API response:", data);
+
+            const list = Array.isArray(data?.notifications)
+                ? data.notifications
+                : Array.isArray(data)
+                    ? data
+                    : [];
+
+            const TYPE_MAP = { 1: "like", 2: "comment", 3: "system" };
+
+            const normalized = list.map(n => ({
+                ...n,
+                id: n.id,
+                read: n.isRead,
+                user: n.senderName,
+                postTitle: n.targetTitle,
+                type: TYPE_MAP[n.type] ?? "like",
+                createdAt: new Date(n.createdAt).toLocaleString("en-US", {
+                    month: "short", day: "numeric",
+                    hour: "numeric", minute: "2-digit",
+                    hour12: true
+                }),
+            }));
+
+            setNotifs(normalized);
+        } catch (err) {
+            console.error("Notifications error:", err);
             setError("Couldn't load notifications. Please try again.");
         } finally {
             setLoading(false);

@@ -1,10 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment, faThumbsUp, faTrash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faComment, faThumbsUp, faTrash, faPaperPlane, faBookmark, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-icons";
 import { useThemeContext } from "../Theme/ThemeContext";
 import { createCommentApi } from '../Services/commentService';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from "react-toastify";
+import { addSavedItem } from '../Services/Saveditemsservice';
 
 const emojiReactions = [
     { type: "Helpful", emoji: "👍" },
@@ -15,13 +17,38 @@ const emojiReactions = [
 const navy = "#2C3E50";
 const steel = "#8FB7CC";
 
+// ── localStorage helpers ──────────────────────────────────────────────────────
+const STORAGE_KEY = "savedPosts";
+
+function getSavedPostsSet() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch {
+        return new Set();
+    }
+}
+
+function addToSavedPostsSet(id) {
+    try {
+        const set = getSavedPostsSet();
+        set.add(String(id));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    } catch {}
+}
+
+function isPostSaved(id) {
+    return getSavedPostsSet().has(String(id));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function getInitials(firstName, lastName) {
     const f = (firstName || "").trim()[0] || "";
     const l = (lastName || "").trim()[0] || "";
     return (f + l).toUpperCase() || "?";
 }
 
-// Matches the sidebar avatar exactly
 function Avatar({ firstName, lastName, size = 40, fontSize = 13 }) {
     return (
         <div style={{
@@ -37,6 +64,137 @@ function Avatar({ firstName, lastName, size = 40, fontSize = 13 }) {
     );
 }
 
+// ── 3-dot Menu ────────────────────────────────────────────────────────────────
+function PostMenu({ postId, isMyPost, isDarkMode, onDelete }) {
+    const [open, setOpen] = useState(false);
+    const [saved, setSaved] = useState(() => isPostSaved(postId));
+    const [saveLoading, setSaveLoading] = useState(false);
+    const menuRef = useRef(null);
+
+    // close on outside click
+    useEffect(() => {
+        if (!open) return;
+        function handleClick(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+        }
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+    }, [open]);
+
+    async function handleSave() {
+        if (saved || saveLoading) return;
+        setSaveLoading(true);
+        try {
+            await addSavedItem(postId, 0); // 0 = Post
+            addToSavedPostsSet(postId);
+            setSaved(true);
+            toast.success("Post saved!");
+        } catch {
+            toast.error("Couldn't save post");
+        } finally {
+            setSaveLoading(false);
+            setOpen(false);
+        }
+    }
+
+    function handleDelete() {
+        setOpen(false);
+        onDelete(postId);
+    }
+
+    const menuBg      = isDarkMode ? "#2a2a2a" : "#ffffff";
+    const menuBorder  = isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(44,62,80,0.12)";
+    const itemHoverBg = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.045)";
+    const textColor   = isDarkMode ? "#e0e0e0" : "#2C3E50";
+
+    return (
+        <div ref={menuRef} style={{ position: "relative", flexShrink: 0 }}>
+            {/* trigger */}
+            <button
+                onClick={() => setOpen(v => !v)}
+                style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    border: `1px solid ${menuBorder}`,
+                    background: open
+                        ? (isDarkMode ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.06)")
+                        : "transparent",
+                    color: isDarkMode ? "#9a9a9a" : "#686868",
+                    cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all .18s",
+                }}
+            >
+                <FontAwesomeIcon icon={faEllipsisV} style={{ fontSize: ".75rem" }} />
+            </button>
+
+            {/* dropdown */}
+            {open && (
+                <div style={{
+                    position: "absolute", top: "calc(100% + 6px)", right: 0,
+                    minWidth: 160,
+                    background: menuBg,
+                    border: `1px solid ${menuBorder}`,
+                    borderRadius: 10,
+                    boxShadow: isDarkMode
+                        ? "0 8px 28px rgba(0,0,0,0.5)"
+                        : "0 8px 28px rgba(44,62,80,0.14)",
+                    zIndex: 100,
+                    overflow: "hidden",
+                    animation: "pc-slideUp .14s ease-out",
+                }}>
+                    {/* Save option */}
+                    <button
+                        onClick={handleSave}
+                        disabled={saved || saveLoading}
+                        style={{
+                            width: "100%", padding: "10px 14px",
+                            background: "transparent", border: "none",
+                            display: "flex", alignItems: "center", gap: 9,
+                            fontSize: ".84rem", fontWeight: 500,
+                            color: saved ? steel : textColor,
+                            cursor: saved ? "default" : "pointer",
+                            transition: "background .15s",
+                        }}
+                        onMouseEnter={e => { if (!saved) e.currentTarget.style.background = itemHoverBg; }}
+                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                    >
+                        <FontAwesomeIcon
+                            icon={saved ? faBookmark : faBookmarkOutline}
+                            style={{ fontSize: ".8rem", color: saved ? steel : "inherit", width: 14 }}
+                        />
+                        {saveLoading ? "Saving…" : saved ? "Saved!" : "Save Post"}
+                    </button>
+
+                    {/* Divider + Delete — only for post owner */}
+                    {isMyPost && (
+                        <>
+                            <div style={{ height: 1, background: menuBorder, margin: "2px 0" }} />
+                            <button
+                                onClick={handleDelete}
+                                style={{
+                                    width: "100%", padding: "10px 14px",
+                                    background: "transparent", border: "none",
+                                    display: "flex", alignItems: "center", gap: 9,
+                                    fontSize: ".84rem", fontWeight: 500,
+                                    color: "#ef4444",
+                                    cursor: "pointer",
+                                    transition: "background .15s",
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
+                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                            >
+                                <FontAwesomeIcon icon={faTrash} style={{ fontSize: ".8rem", width: 14 }} />
+                                Delete Post
+                            </button>
+                        </>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 export default function PostCard({ post, currentUserId, onReaction, onOpenComments, onDeletePost, commentLimit, callBack, onCommentDelete }) {
     const { isDarkMode } = useThemeContext();
     const { userData } = useContext(AuthContext);
@@ -46,26 +204,26 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
     const [showImageModal, setShowImageModal] = useState(false);
     const [localComments, setLocalComments] = useState(post.comments || []);
 
-    const cardBg = isDarkMode ? "#1f1f1f" : "#ffffff";
-    const textPrimary = isDarkMode ? "#f0f0f0" : "#1a1a2e";
+    const cardBg        = isDarkMode ? "#1f1f1f" : "#ffffff";
+    const textPrimary   = isDarkMode ? "#f0f0f0" : "#1a1a2e";
     const textSecondary = isDarkMode ? "#9a9a9a" : "#686868";
-    const borderColor = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)";
-    const inputBg = isDarkMode ? "#2a2a2a" : "#F3F4F6";
-    const accentSoft = isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(143,183,204,0.18)";
+    const borderColor   = isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(44,62,80,0.1)";
+    const inputBg       = isDarkMode ? "#2a2a2a" : "#F3F4F6";
+    const accentSoft    = isDarkMode ? "rgba(143,183,204,0.1)" : "rgba(143,183,204,0.18)";
 
     const authorFirst = post.author?.firstName || "";
-    const authorLast = post.author?.lastName || "";
-    const authorName = post.author ? `${authorFirst} ${authorLast}`.trim() : "Unknown Author";
+    const authorLast  = post.author?.lastName  || "";
+    const authorName  = post.author ? `${authorFirst} ${authorLast}`.trim() : "Unknown Author";
 
-    const reactions = post.reactions || [];
+    const reactions      = post.reactions || [];
     const reactionCounts = {};
     reactions.forEach(r => { reactionCounts[r.type] = (reactionCounts[r.type] || 0) + 1; });
     const totalReactions = reactions.length;
-    const myReaction = reactions.find(r => r.isMyReaction === true);
-    const isMyPost = currentUserId && post.author?.id?.toString() === currentUserId;
+    const myReaction     = reactions.find(r => r.isMyReaction === true);
+    const isMyPost       = currentUserId && post.author?.id?.toString() === currentUserId;
 
-    const myFirst = userData?.firstName ?? userData?.name?.split(" ")[0] ?? "";
-    const myLast = userData?.lastName ?? userData?.name?.split(" ").slice(1).join(" ") ?? "";
+    const myFirst    = userData?.firstName ?? userData?.name?.split(" ")[0] ?? "";
+    const myLast     = userData?.lastName  ?? userData?.name?.split(" ").slice(1).join(" ") ?? "";
     const myFullName = `${myFirst} ${myLast}`.trim() || "You";
 
     const handleReactionClick = (type) => { onReaction(post.id, type); setShowReactions(false); };
@@ -79,11 +237,7 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
                 id: response.data?.id || Date.now(),
                 content: commentContent,
                 createdAt: new Date().toISOString(),
-                author: {
-                    id: currentUserId,
-                    firstName: myFirst,
-                    lastName: myLast,
-                },
+                author: { id: currentUserId, firstName: myFirst, lastName: myLast },
             };
             setLocalComments(prev => [...prev, newComment]);
             setCommentContent('');
@@ -132,14 +286,6 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
                     color:${isDarkMode ? steel : navy};
                     background:${accentSoft};
                 }
-                .p-delete-btn {
-                    width:30px; height:30px; border-radius:8px;
-                    border:1px solid ${borderColor}; background:transparent;
-                    color:${textSecondary}; cursor:pointer;
-                    display:flex; align-items:center; justify-content:center;
-                    transition:all .2s;
-                }
-                .p-delete-btn:hover { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,.08); }
                 .p-reaction-picker {
                     position:absolute; bottom:calc(100% + 8px); left:0;
                     display:flex; align-items:center; gap:2px;
@@ -190,26 +336,25 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
             <div className="post-card">
 
                 {/* Header */}
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "1rem" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "1rem" }}>
                     <Avatar firstName={authorFirst} lastName={authorLast} size={40} fontSize={13} />
                     <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 700, fontSize: ".9rem", color: textPrimary }}>{authorName}</div>
                         <div style={{ fontSize: ".72rem", color: textSecondary, marginTop: "2px" }}>
                             {post.createdAt && new Date(post.createdAt + "Z").toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true
+                                day: "2-digit", month: "short", year: "numeric",
+                                hour: "2-digit", minute: "2-digit", hour12: true
                             })}
                         </div>
                     </div>
-                    {isMyPost && (
-                        <button className="p-delete-btn" onClick={() => onDeletePost(post.id)}>
-                            <FontAwesomeIcon icon={faTrash} style={{ fontSize: ".72rem" }} />
-                        </button>
-                    )}
+
+                    {/* 3-dot menu */}
+                    <PostMenu
+                        postId={post.id}
+                        isMyPost={isMyPost}
+                        isDarkMode={isDarkMode}
+                        onDelete={onDeletePost}
+                    />
                 </div>
 
                 {/* Body */}
@@ -304,6 +449,7 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
                     </button>
                 </div>
 
+                {/* Comment input */}
                 <div style={{ paddingTop: ".85rem", paddingBottom: localComments.length > 0 ? ".85rem" : 0, borderBottom: localComments.length > 0 ? `1px solid ${borderColor}` : "none" }}>
                     <form onSubmit={createComment} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <div style={{ flex: 1, position: "relative" }}>
@@ -334,8 +480,8 @@ export default function PostCard({ post, currentUserId, onReaction, onOpenCommen
                     <div style={{ paddingTop: ".85rem", display: "flex", flexDirection: "column", gap: "8px" }}>
                         {localComments.slice(0, commentLimit).map(comment => {
                             const cFirst = comment.author?.firstName ?? myFirst;
-                            const cLast = comment.author?.lastName ?? myLast;
-                            const cName = comment.author ? `${cFirst} ${cLast}`.trim() : myFullName;
+                            const cLast  = comment.author?.lastName  ?? myLast;
+                            const cName  = comment.author ? `${cFirst} ${cLast}`.trim() : myFullName;
                             const isMine = currentUserId && (!comment.author || comment.author?.id?.toString() === currentUserId);
                             return (
                                 <div key={comment.id} style={{ display: "flex", alignItems: "flex-start", gap: "9px" }}>

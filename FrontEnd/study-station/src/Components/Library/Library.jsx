@@ -133,6 +133,7 @@ function ErrorState({ message, onRetry, isDarkMode }) {
 // ── Main ───────────────────────────────────────────────────
 export default function Library() {
   const { isDarkMode } = useThemeContext();
+  const navigate = useNavigate();
 
   const [resources,    setResources]    = useState([]);
   const [loading,      setLoading]      = useState(true);
@@ -199,6 +200,8 @@ export default function Library() {
                 <span style={{ color: isDarkMode ? "rgba(255,255,255,.85)" : "#2C3E50", fontWeight: 700 }}>Resources</span>, and{" "}
                 <span style={{ color: isDarkMode ? "rgba(255,255,255,.85)" : "#2C3E50", fontWeight: 700 }}>Roadmaps</span> all in one place.
               </p>
+
+              {/* ── CTA Buttons ── */}
               <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap", marginTop: "1.25rem" }}>
                 <Link to="/share-resource">
                   <button
@@ -212,6 +215,29 @@ export default function Library() {
                     Share a Resource
                   </button>
                 </Link>
+
+                {/* ── Saved Items Button ── */}
+                <button
+                  onClick={() => navigate("/saved")}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "10px",
+                    background: isDarkMode ? "rgba(143,183,204,0.12)" : "rgba(143,183,204,0.15)",
+                    color: "#8FB7CC",
+                    border: `1px solid ${isDarkMode ? "rgba(143,183,204,0.25)" : "rgba(143,183,204,0.4)"}`,
+                    fontWeight: 600, fontSize: ".85rem", cursor: "pointer",
+                    transition: "all .2s", whiteSpace: "nowrap",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = isDarkMode ? "rgba(143,183,204,0.2)" : "rgba(143,183,204,0.25)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = isDarkMode ? "rgba(143,183,204,0.12)" : "rgba(143,183,204,0.15)"; e.currentTarget.style.transform = ""; }}
+                >
+                  {/* filled bookmark icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: "15px", height: "15px" }}>
+                    <path d="M5 3h14a1 1 0 0 1 1 1v17l-8-4-8 4V4a1 1 0 0 1 1-1Z" />
+                  </svg>
+                  Saved Items
+                </button>
+
                 <button
                   onClick={() => document.getElementById('library-tracks')?.scrollIntoView({ behavior: 'smooth' })}
                   style={{ display: "inline-flex", alignItems: "center", gap: "7px", padding: "9px 18px", borderRadius: "10px", background: isDarkMode ? "rgba(255,255,255,.08)" : "rgba(0,0,0,0.05)", color: isDarkMode ? "rgba(255,255,255,.8)" : "#6b6f76", border: `1px solid ${isDarkMode ? "rgba(255,255,255,.12)" : "rgba(0,0,0,0.1)"}`, fontWeight: 500, fontSize: ".85rem", cursor: "pointer", transition: "all .2s", whiteSpace: "nowrap", backdropFilter: "blur(12px) saturate(200%)" }}

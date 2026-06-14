@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { addSavedItem } from "../Services/savedItemsService";
 import { ExternalLinkIcon } from "lucide-react";
@@ -11,11 +11,34 @@ const ITEM_TYPE_MAP = {
 };
 
 function getItemType(type) {
-    if (!type) return 3; // default → Resource
-    return ITEM_TYPE_MAP[type.toLowerCase()] ?? 3;
+    return 1; // All library resources = LibraryResource
 }
 
-// ── Design tokens (same as Library.jsx) ──────────────────────────────────────
+// ── localStorage helpers ──────────────────────────────────────────────────────
+const STORAGE_KEY = "savedLibraryResources";
+
+function getSavedSet() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch {
+        return new Set();
+    }
+}
+
+function addToSavedSet(id) {
+    try {
+        const set = getSavedSet();
+        set.add(String(id));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    } catch {}
+}
+
+export function isResourceSaved(id) {
+    return getSavedSet().has(String(id));
+}
+
+// ── Design tokens ─────────────────────────────────────────────────────────────
 const TYPE_STYLES = {
     roadmap: { color: "#8FB7CC", darkBg: "rgba(143,183,204,0.18)", bg: "rgba(143,183,204,0.15)", label: "Roadmap", icon: "M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" },
     resource: { color: "#3D718D", darkBg: "rgba(61,113,141,0.2)", bg: "rgba(61,113,141,0.12)", label: "Resource", icon: "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" },
@@ -50,56 +73,55 @@ function getSectionKey(type) {
 
 // ── Save Button ───────────────────────────────────────────────────────────────
 function SaveButton({ resourceId, resourceType, isDarkMode }) {
-    // saved: null = idle, true = saved, false = error
-    const [saved, setSaved] = useState(null);
+    const [saved, setSaved] = useState(() => isResourceSaved(resourceId));
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     async function handleSave(e) {
-        e.stopPropagation(); // don't navigate to detail page
+        e.stopPropagation();
         if (saved || loading) return;
 
         setLoading(true);
         try {
             await addSavedItem(resourceId, getItemType(resourceType));
+            addToSavedSet(resourceId); // persist to localStorage
             setSaved(true);
         } catch {
-            setSaved(false);           // show error state briefly
-            setTimeout(() => setSaved(null), 2000);
+            setError(true);
+            setTimeout(() => setError(false), 2000);
         } finally {
             setLoading(false);
         }
     }
 
-    // colours
-    const idle = isDarkMode ? "#9a9a9a" : "#686868";
-    const bgIdle = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+    const idle   = isDarkMode ? "#9a9a9a" : "#686868";
+    const bgIdle  = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
     const bgSaved = isDarkMode ? "rgba(143,183,204,0.18)" : "rgba(143,183,204,0.2)";
-    const bgError = isDarkMode ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.1)";
+    const bgError = isDarkMode ? "rgba(239,68,68,0.15)"  : "rgba(239,68,68,0.1)";
 
-    const bg = saved === true ? bgSaved : saved === false ? bgError : bgIdle;
-    const color = saved === true ? "#8FB7CC" : saved === false ? "#ef4444" : idle;
-    const title = saved === true ? "Saved!" : saved === false ? "Failed — try again" : "Save";
+    const bg    = saved ? bgSaved : error ? bgError : bgIdle;
+    const color = saved ? "#8FB7CC" : error ? "#ef4444" : idle;
+    const title = saved ? "Saved!" : error ? "Failed — try again" : "Save";
 
     return (
         <button
             onClick={handleSave}
             title={title}
-            disabled={loading || saved === true}
+            disabled={loading || saved}
             style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 width: 30, height: 30, borderRadius: 8, border: "none",
-                background: bg, color, cursor: saved === true ? "default" : "pointer",
+                background: bg, color, cursor: saved ? "default" : "pointer",
                 transition: "all .2s", flexShrink: 0,
                 opacity: loading ? 0.6 : 1,
             }}
         >
             {loading ? (
-                /* tiny spinner */
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                     style={{ animation: "spin .7s linear infinite" }}>
                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                 </svg>
-            ) : saved === true ? (
+            ) : saved ? (
                 /* filled bookmark */
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M5 3h14a1 1 0 0 1 1 1v17l-8-4-8 4V4a1 1 0 0 1 1-1Z" />
@@ -121,14 +143,14 @@ export default function ResourceCard({ resource, isDarkMode }) {
     const navigate = useNavigate();
     const t = getTypeStyle(resource.type);
 
-    const cardBg = isDarkMode ? "#1f1f1f" : "#ffffff";
+    const cardBg     = isDarkMode ? "#1f1f1f" : "#ffffff";
     const cardBorder = hovered ? t.color + "80" : isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(44,62,80,0.08)";
     const titleColor = isDarkMode ? "#f0f0f0" : "#1a1a2e";
     const mutedColor = isDarkMode ? "#9a9a9a" : "#686868";
-    const arrowBg = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
+    const arrowBg    = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
     const arrowColor = hovered ? "#ffffff" : mutedColor;
 
-    const catLabel = resource.categoryName || CATEGORY_MAP[resource.categoryId] || resource.category || null;
+    const catLabel     = resource.categoryName || CATEGORY_MAP[resource.categoryId] || resource.category || null;
     const resTypeLabel = resource.resourceTypeName || RESOURCE_TYPE_MAP[resource.resourceTypeId] || null;
     const isPaid = resource.type?.toLowerCase() === "paid";
     const isFree = resource.type?.toLowerCase() === "free";
@@ -238,7 +260,6 @@ export default function ResourceCard({ resource, isDarkMode }) {
                     {SECTIONS[getSectionKey(resource.type)]?.label || "Resource"}
                 </span>
 
-                {/* ── action buttons ── */}
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }} onClick={e => e.stopPropagation()}>
                     <SaveButton
                         resourceId={resource.id}

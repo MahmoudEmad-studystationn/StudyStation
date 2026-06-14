@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button, Input } from "@heroui/react";
 import {
     Search, Bookmark, BookmarkX, ExternalLink,
     FileText, BookOpen, StickyNote, Newspaper,
     GraduationCap, Inbox, Calendar, X, Loader2
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useThemeContext } from '../Components/Theme/ThemeContext';
 import { getSavedItems, deleteSavedItem } from "../Components/Services/Saveditemsservice";
 
-// ─── Design tokens (same as NotificationsPage) ────────────────────────────────
+export const SearchIcon = (props) => (
+    <svg aria-hidden="true" fill="none" focusable="false" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" {...props}>
+        <path d="M11.5 21C16.7467 21 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+        <path d="M22 22L20 20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+    </svg>
+);
+
+// ─── Design tokens ────────────────────────────────────────────────────────────
 const LIGHT = {
     navy: "#2C3E50", steel: "#8FB7CC", bg: "#F3F4F6",
     surface: "#ffffff", surface2: "#e8eaed", text: "#1a1a2e",
@@ -25,15 +34,14 @@ const DARK = {
 };
 
 // ─── Badge config ─────────────────────────────────────────────────────────────
-const TYPE_CONFIG = {
-    PDF:      { icon: FileText,      label: "PDF",      light: { bg: "rgba(239,68,68,.10)",   color: "#dc2626" }, dark: { bg: "rgba(239,68,68,.15)",   color: "#f87171" } },
-    Course:   { icon: GraduationCap, label: "Course",   light: { bg: "rgba(59,130,246,.12)",  color: "#2563eb" }, dark: { bg: "rgba(59,130,246,.15)",  color: "#60a5fa" } },
-    Note:     { icon: StickyNote,    label: "Note",     light: { bg: "rgba(245,158,11,.12)",  color: "#d97706" }, dark: { bg: "rgba(245,158,11,.15)",  color: "#fbbf24" } },
-    Article:  { icon: Newspaper,     label: "Article",  light: { bg: "rgba(16,185,129,.12)",  color: "#059669" }, dark: { bg: "rgba(16,185,129,.15)",  color: "#34d399" } },
-    Resource: { icon: BookOpen,      label: "Resource", light: { bg: "rgba(139,92,246,.12)",  color: "#7c3aed" }, dark: { bg: "rgba(139,92,246,.15)",  color: "#a78bfa" } },
-};
+function normalizeType(raw) {
+    const postsTypes = new Set(["note", "Note", "article", "Article", "post", "Post", 2, 3]);
+    if (!raw && raw !== 0) return "Library";
+    if (postsTypes.has(raw)) return "Posts";
+    return "Library";
+}
 
-const FILTERS = ["All", "PDF", "Course", "Note", "Article", "Resource"];
+const FILTERS = ["All", "Posts", "Library"];
 
 function formatDate(iso) {
     if (!iso) return "";
@@ -46,27 +54,63 @@ function SkeletonItem({ dark }) {
     const t = dark ? DARK : LIGHT;
     return (
         <div style={{
-            display: "flex", alignItems: "flex-start", gap: "1rem",
-            padding: "1rem 1.25rem", borderRadius: 14,
+            display: "flex", alignItems: "center", gap: "1.25rem",
+            padding: "1.25rem 1.75rem", borderRadius: 18,
+            background: t.surface, marginBottom: 0,
         }}>
-            <div style={{ width: 42, height: 42, borderRadius: 10, background: t.surface2, flexShrink: 0, animation: "pulse 1.5s infinite" }} />
+            <div style={{ width: 52, height: 52, borderRadius: 14, background: t.surface2, flexShrink: 0, animation: "pulse 1.5s infinite" }} />
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ height: 13, width: "55%", borderRadius: 6, background: t.surface2, animation: "pulse 1.5s infinite" }} />
+                <div style={{ height: 12, width: "30%", borderRadius: 6, background: t.surface2, animation: "pulse 1.5s infinite" }} />
+                <div style={{ height: 14, width: "60%", borderRadius: 6, background: t.surface2, animation: "pulse 1.5s infinite" }} />
                 <div style={{ height: 11, width: "80%", borderRadius: 6, background: t.surface2, animation: "pulse 1.5s infinite" }} />
-                <div style={{ height: 11, width: "40%", borderRadius: 6, background: t.surface2, animation: "pulse 1.5s infinite" }} />
             </div>
         </div>
     );
 }
 
 // ─── Saved Item Row ───────────────────────────────────────────────────────────
-function SavedItem({ item, dark, onRemove }) {
+function SavedItemCard({ item, dark, onRemove }) {
     const t = dark ? DARK : LIGHT;
-    const cfg = TYPE_CONFIG[item.type] || TYPE_CONFIG.Resource;
+    const normalizedType = normalizeType(item.itemType);
+    const TYPE_CONFIG = {
+        Posts: { icon: Newspaper, label: "Post", light: { bg: "rgba(61,113,141,0.2)", color: "#8FB7CC" }, dark: { bg: "rgba(61,113,141,0.2)", color: "#8FB7CC" } },
+        Library: { icon: BookOpen, label: "Library", light: { bg: "rgba(101,143,165,0.2)", color: "#658FA5" }, dark: { bg: "rgba(101,143,165,0.2)", color: "#658FA5" } },
+    };
+    const cfg = TYPE_CONFIG[normalizedType] || TYPE_CONFIG["Library"];
     const Icon = cfg.icon;
     const badge = dark ? cfg.dark : cfg.light;
     const [hovered, setHovered] = useState(false);
     const [removing, setRemoving] = useState(false);
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        const id = item.originalItemId || item.id;
+        const type = normalizeType(item.itemType);
+
+        if (type === "Library") {
+            navigate(`/library/${id}`);
+        } else {
+            const nameParts = (item.authorName || "").trim().split(" ");
+            const firstName = nameParts[0] || "";
+            const lastName = nameParts.slice(1).join(" ") || "";
+
+            navigate(`/posts/${id}`, {
+                state: {
+                    post: {
+                        id: id,
+                        title: item.title,
+                        content: item.contentSnippet || "",
+                        createdAt: item.savedAt || item.createdAt,
+                        imageUrl: item.url || null,
+                        reactions: [],
+                        comments: [],
+                        author: { id: null, firstName, lastName }
+                    },
+                    fromSaved: true
+                }
+            });
+        }
+    };
 
     const handleRemove = async (e) => {
         e.stopPropagation();
@@ -78,100 +122,125 @@ function SavedItem({ item, dark, onRemove }) {
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.22 }}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
+            onClick={handleClick}
             style={{
-                display: "flex", alignItems: "flex-start", gap: "1rem",
-                padding: "1rem 1.25rem", borderRadius: 14, position: "relative",
-                background: hovered ? `rgba(143,183,204,0.04)` : "transparent",
-                border: `1px solid ${hovered ? "rgba(143,183,204,0.2)" : "transparent"}`,
-                transition: "all .22s", cursor: "default",
+                background: t.surface,
+                border: `1px solid ${hovered ? "rgba(143,183,204,0.35)" : t.cardBorder}`,
+                borderRadius: 18,
+                padding: "1.25rem 1.75rem",
+                cursor: "pointer",
                 opacity: removing ? 0.5 : 1,
+                transition: "all .22s",
+                boxShadow: hovered
+                    ? (dark ? "0 8px 32px rgba(0,0,0,0.35)" : "0 8px 32px rgba(44,62,80,0.10)")
+                    : "none",
+                position: "relative",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                gap: "1.25rem",
+                width: "100%",
             }}
         >
-            {/* Icon box */}
+            {/* accent left bar on hover */}
             <div style={{
-                width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                position: "absolute", top: 0, left: 0, bottom: 0, width: 3,
+                borderRadius: "18px 0 0 18px",
+                background: `linear-gradient(180deg, #2C3E50, #8FB7CC)`,
+                opacity: hovered ? 1 : 0,
+                transition: "opacity .22s",
+            }} />
+
+            {/* icon */}
+            <div style={{
+                width: 52, height: 52, borderRadius: 14, flexShrink: 0,
                 background: badge.bg,
                 display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-                <Icon size={18} color={badge.color} strokeWidth={2} />
+                <Icon size={24} color={badge.color} strokeWidth={2} />
             </div>
 
-            {/* Content */}
+            {/* content */}
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: ".875rem", fontWeight: 600, color: t.text, marginBottom: ".2rem", lineHeight: 1.35 }}>
-                    {item.title}
-                </div>
-                <div style={{
-                    fontSize: ".8rem", color: t.muted, lineHeight: 1.5, marginBottom: ".4rem",
-                    display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden",
-                }}>
-                    {item.description || item.desc || "No description provided."}
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {/* badge + date row */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: ".35rem" }}>
                     <span style={{
-                        display: "inline-flex", alignItems: "center", gap: 4,
-                        padding: "2px 8px", borderRadius: 999,
-                        fontSize: ".68rem", fontWeight: 600,
+                        display: "inline-flex", alignItems: "center", gap: 5,
+                        padding: "3px 10px", borderRadius: 999,
+                        fontSize: ".7rem", fontWeight: 700,
                         textTransform: "uppercase", letterSpacing: ".05em",
                         background: badge.bg, color: badge.color,
                     }}>
-                        <Icon size={9} strokeWidth={2.5} /> {cfg.label}
+                        <Icon size={10} strokeWidth={2.5} /> {cfg.label}
                     </span>
                     {(item.savedAt || item.createdAt) && (
                         <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: ".72rem", color: t.muted }}>
-                            <Calendar size={10} />
+                            <Calendar size={11} />
                             {formatDate(item.savedAt || item.createdAt)}
                         </span>
                     )}
                 </div>
+
+                {/* title */}
+                <div style={{
+                    fontSize: "1rem", fontWeight: 700, color: t.text,
+                    marginBottom: ".3rem", lineHeight: 1.35,
+                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                }}>
+                    {item.title}
+                </div>
+
+                {/* description */}
+                <div style={{
+                    fontSize: ".83rem", color: t.muted, lineHeight: 1.55,
+                    display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden",
+                }}>
+                    {item.contentSnippet || item.description || item.desc || "No description provided."}
+                </div>
             </div>
 
-            {/* Actions */}
-            <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+            {/* right actions */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                 <AnimatePresence>
-                    {hovered && !removing && (
+                    {hovered && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.85 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.85 }}
-                            transition={{ duration: 0.15 }}
-                            style={{ display: "flex", gap: 4 }}
+                            initial={{ opacity: 0, x: 8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 8 }}
+                            style={{ display: "flex", alignItems: "center", gap: 8 }}
                         >
-                            <button
-                                title="Open"
-                                style={{
-                                    background: t.surface2, border: "none", cursor: "pointer",
-                                    color: t.muted, display: "flex", alignItems: "center", justifyContent: "center",
-                                    width: 28, height: 28, borderRadius: "50%", transition: "all .15s",
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.background = t.steel; e.currentTarget.style.color = "#fff"; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = t.surface2; e.currentTarget.style.color = t.muted; }}
-                            >
-                                <ExternalLink size={12} />
-                            </button>
-                            <button
-                                onClick={handleRemove}
-                                title="Remove from saved"
-                                style={{
-                                    background: "rgba(239,68,68,.1)", border: "none", cursor: "pointer",
-                                    color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center",
-                                    width: 28, height: 28, borderRadius: "50%", transition: "all .15s",
-                                }}
-                            >
-                                <BookmarkX size={12} />
-                            </button>
+                            <span style={{
+                                display: "flex", alignItems: "center", gap: 5,
+                                fontSize: ".75rem", color: t.steel, fontWeight: 600,
+                            }}>
+                                <ExternalLink size={13} /> Open
+                            </span>
+                            {!removing && (
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    onClick={handleRemove}
+                                    title="Remove"
+                                    style={{
+                                        background: "rgba(239,68,68,.1)", border: "none", cursor: "pointer",
+                                        color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center",
+                                        width: 32, height: 32, borderRadius: "50%", transition: "all .15s",
+                                    }}
+                                >
+                                    <BookmarkX size={15} />
+                                </motion.button>
+                            )}
                         </motion.div>
                     )}
-                    {removing && (
-                        <Loader2 size={16} color={t.muted} style={{ animation: "spin 1s linear infinite" }} />
-                    )}
                 </AnimatePresence>
+                {removing && <Loader2 size={18} color={t.muted} style={{ animation: "spin 1s linear infinite" }} />}
             </div>
         </motion.div>
     );
@@ -246,8 +315,8 @@ export default function SavedPage() {
             .then(data => {
                 const list = Array.isArray(data) ? data
                     : Array.isArray(data?.items) ? data.items
-                    : Array.isArray(data?.data) ? data.data
-                    : [];
+                        : Array.isArray(data?.data) ? data.data
+                            : [];
                 setItems(list);
             })
             .catch(err => {
@@ -260,11 +329,10 @@ export default function SavedPage() {
     useEffect(() => { fetchItems(); }, []);
 
     const filtered = (items || []).filter(item => {
-        const matchType = activeFilter === "All" || item.type === activeFilter;
-        const q = query.toLowerCase();
-        const matchQ = !q
-            || (item.title || "").toLowerCase().includes(q)
-            || (item.description || item.desc || "").toLowerCase().includes(q);
+        const matchType = activeFilter === "All" || normalizeType(item.itemType) === activeFilter;
+        const matchQ = !query
+            || (item.title || "").toLowerCase().includes(query.toLowerCase())
+            || (item.contentSnippet || item.description || "").toLowerCase().includes(query.toLowerCase());
         return matchType && matchQ;
     });
 
@@ -284,12 +352,10 @@ export default function SavedPage() {
 
     return (
         <div style={{
-            fontFamily: "'DM Sans', sans-serif",
             background: t.bg, color: t.text,
             minHeight: "100vh", transition: "background .3s, color .3s",
         }}>
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
                 @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
@@ -302,24 +368,23 @@ export default function SavedPage() {
                 backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
             }}>
                 <div style={{
-                    maxWidth: 960, margin: "0 auto", padding: "0 2rem",
-                    height: 52, display: "flex", alignItems: "center",
-                    justifyContent: "space-between",
+                    maxWidth: 1100, margin: "0 auto", padding: "0 2rem",
+                    height: 64, display: "flex", alignItems: "center",
+                    justifyContent: "space-between", gap: 16,
                 }}>
-                    {/* left side */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                        {/* back */}
+                    {/* left: back + title */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
                         <button
                             onClick={() => window.history.back()}
                             style={{
-                                background: "transparent", border: "none",
+                                background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
+                                border: `1px solid ${t.border}`, borderRadius: 8,
                                 cursor: "pointer", color: t.muted,
                                 display: "flex", alignItems: "center", gap: 5,
-                                fontSize: ".8rem", fontFamily: "'DM Sans', sans-serif",
-                                padding: 0, transition: "color .2s",
+                                fontSize: ".8rem", padding: "5px 10px", transition: "all .2s",
                             }}
-                            onMouseEnter={e => e.currentTarget.style.color = t.text}
-                            onMouseLeave={e => e.currentTarget.style.color = t.muted}
+                            onMouseEnter={e => { e.currentTarget.style.color = t.text; e.currentTarget.style.borderColor = t.steel; }}
+                            onMouseLeave={e => { e.currentTarget.style.color = t.muted; e.currentTarget.style.borderColor = t.border; }}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: 13, height: 13 }}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -327,123 +392,139 @@ export default function SavedPage() {
                             Back
                         </button>
 
-                        <div style={{ width: 1, height: 16, background: t.border }} />
-
-                        {/* title */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                            <Bookmark size={14} color={t.steel} strokeWidth={2} />
-                            <span style={{
-                                fontSize: ".875rem", fontWeight: 600, color: t.text,
-                                fontFamily: "'Syne', sans-serif", letterSpacing: "-.01em",
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <div style={{
+                                width: 32, height: 32, borderRadius: 9,
+                                background: dark ? "rgba(143,183,204,0.15)" : "rgba(143,183,204,0.2)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
                             }}>
+                                <Bookmark size={15} color={t.steel} strokeWidth={2} />
+                            </div>
+                            <span style={{ fontSize: ".95rem", fontWeight: 700, color: t.text, letterSpacing: "-.01em" }}>
                                 Saved
                             </span>
                             {items && items.length > 0 && (
                                 <span style={{
                                     background: t.steel, color: dark ? t.navy : "#fff",
                                     fontSize: ".68rem", fontWeight: 700,
-                                    borderRadius: 99, padding: "1px 7px",
+                                    borderRadius: 99, padding: "2px 8px",
                                     lineHeight: "18px", display: "inline-block",
                                 }}>
                                     {items.length}
                                 </span>
                             )}
                         </div>
+                    </div>
 
-                        {/* filter pills */}
-                        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginLeft: 4 }}>
-                            {FILTERS.map(f => (
-                                <button
+                    {/* center: filters */}
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        {FILTERS.map(f => {
+                            const isActive = activeFilter === f;
+                            return (
+                                <Button
                                     key={f}
+                                    radius="full"
                                     onClick={() => setActiveFilter(f)}
                                     style={{
-                                        padding: "4px 11px", borderRadius: 999,
-                                        fontSize: ".75rem", fontWeight: 500,
-                                        cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                                        border: `1px solid ${activeFilter === f ? t.steel : t.border}`,
-                                        background: activeFilter === f
-                                            ? (dark ? "rgba(143,183,204,0.18)" : "rgba(143,183,204,0.12)")
-                                            : "transparent",
-                                        color: activeFilter === f ? t.steel : t.muted,
-                                        transition: "all .18s",
+                                        backgroundColor: isActive
+                                            ? (dark ? "#8FB7CC" : "#2C3E50")
+                                            : (dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"),
+                                        color: isActive
+                                            ? (dark ? "#1a1a2e" : "#ffffff")
+                                            : t.muted,
+                                        border: `1px solid ${isActive ? "transparent" : t.border}`,
+                                        height: 34, fontSize: ".78rem", fontWeight: 600,
+                                        padding: "0 14px",
+                                        transition: "all .2s",
+                                        boxShadow: isActive ? "0 2px 8px rgba(143,183,204,0.25)" : "none",
                                     }}
                                 >
                                     {f}
-                                </button>
-                            ))}
-                        </div>
+                                </Button>
+                            );
+                        })}
                     </div>
 
-                    {/* right side — search */}
-                    <div style={{ position: "relative", width: 200 }}>
-                        <Search size={13} style={{
-                            position: "absolute", left: 10, top: "50%",
-                            transform: "translateY(-50%)", color: t.muted, pointerEvents: "none",
-                        }} />
-                        <input
+                    {/* right: search */}
+                    <div style={{ width: 240, flexShrink: 0 }}>
+                        <Input
+                            isClearable
                             value={query}
-                            onChange={e => setQuery(e.target.value)}
-                            placeholder="Search saved…"
-                            style={{
-                                width: "100%", padding: "6px 28px 6px 30px",
-                                background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                                border: `1px solid ${query ? t.steel : t.border}`,
-                                borderRadius: 8, fontSize: ".8rem", color: t.text, outline: "none",
-                                transition: "all .2s",
+                            onValueChange={setQuery}
+                            classNames={{
+                                input: ["bg-transparent", "text-black/90 dark:text-white/90",
+                                    "placeholder:text-default-700/50 dark:placeholder:text-white/60", "text-sm"],
+                                innerWrapper: "bg-transparent",
+                                inputWrapper: ["shadow-sm", "bg-default-200/50", "dark:bg-default/60",
+                                    "backdrop-blur-xl", "backdrop-saturate-200",
+                                    "hover:bg-default-200/70", "dark:hover:bg-default/70",
+                                    "group-data-[focus=true]:bg-default-200/50",
+                                    "dark:group-data-[focus=true]:bg-default/60",
+                                    "cursor-text!", "h-9", "px-3"],
                             }}
+                            placeholder="Search saved"
+                            radius="lg"
+                            startContent={<SearchIcon className="text-black/50 dark:text-white/90 text-slate-400 pointer-events-none shrink-0" style={{ width: 14, height: 14 }} />}
                         />
-                        {query && (
-                            <button
-                                onClick={() => setQuery("")}
-                                style={{
-                                    position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
-                                    background: "transparent", border: "none", cursor: "pointer", color: t.muted, display: "flex",
-                                }}
-                            >
-                                <X size={12} />
-                            </button>
-                        )}
                     </div>
                 </div>
             </div>
 
             {/* ── LIST ── */}
-            <div style={{ maxWidth: 960, margin: "0 auto", padding: ".75rem 2rem 4rem" }}>
-                {/* count line */}
-                {!loading && items && (
-                    <div style={{ fontSize: ".72rem", color: t.muted, marginBottom: ".5rem", paddingLeft: "1.25rem", fontWeight: 500 }}>
-                        {filtered.length} item{filtered.length !== 1 ? "s" : ""}
-                        {activeFilter !== "All" ? ` · ${activeFilter}` : ""}
-                        {query ? ` matching "${query}"` : ""}
-                    </div>
-                )}
-
+            <div style={{ maxWidth: 1100, margin: "0 auto", padding: "1.5rem 2rem 4rem" }}>
                 {error && <ErrorBanner message={error} dark={dark} onRetry={fetchItems} />}
 
                 {loading && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: "0.25rem" }}>
-                        {[1, 2, 3, 4, 5].map(i => <SkeletonItem key={i} dark={dark} />)}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {[1, 2, 3, 4, 5, 6].map(i => <SkeletonItem key={i} dark={dark} />)}
                     </div>
                 )}
 
-                {!loading && (
-                    filtered.length === 0
-                        ? <EmptyState t={t} query={query} />
-                        : (
-                            <motion.div layout style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                <AnimatePresence>
-                                    {filtered.map(item => (
-                                        <SavedItem
-                                            key={item.id}
-                                            item={item}
-                                            dark={dark}
-                                            onRemove={handleRemove}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </motion.div>
-                        )
-                )}
+               {!loading && (() => {
+    const posts = filtered.filter(i => normalizeType(i.itemType) === "Posts");
+    const library = filtered.filter(i => normalizeType(i.itemType) === "Library");
+
+    if (filtered.length === 0) return <EmptyState t={t} query={query} />;
+
+    const renderSection = (title, icon, items) => {
+        if (items.length === 0) return null;
+        return (
+            <div style={{ marginBottom: "2rem" }}>
+                <div style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    marginBottom: "1rem", paddingBottom: ".6rem",
+                    borderBottom: `1px solid ${t.border}`,
+                }}>
+                    {icon}
+                    <span style={{ fontSize: ".85rem", fontWeight: 700, color: t.muted, textTransform: "uppercase", letterSpacing: ".06em" }}>
+                        {title}
+                    </span>
+                    <span style={{
+                        background: t.accentSoft, color: t.steel,
+                        fontSize: ".68rem", fontWeight: 700,
+                        borderRadius: 99, padding: "2px 8px",
+                    }}>
+                        {items.length}
+                    </span>
+                </div>
+                <motion.div layout style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                    <AnimatePresence>
+                        {items.map(item => (
+                            <SavedItemCard key={item.id} item={item} dark={dark} onRemove={handleRemove} />
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+            </div>
+        );
+    };
+
+    return (
+        <>
+            {renderSection("Posts", <Newspaper size={14} color={t.steel} />, posts)}
+            {renderSection("Library", <BookOpen size={14} color={t.steel} />, library)}
+        </>
+    );
+})()}
             </div>
         </div>
     );

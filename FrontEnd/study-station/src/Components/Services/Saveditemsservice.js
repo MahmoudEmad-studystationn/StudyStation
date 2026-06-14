@@ -1,13 +1,5 @@
 const BASE_URL = "https://study-station.runasp.net/api";
 
-export const SavedItemType = {
-    PDF: 1,
-    Course: 2,
-    Note: 3,
-    Article: 4,
-    Resource: 5,
-};
-
 // ── Token helper ──────────────────────────────────────────────────────────────
 function getToken() {
     return localStorage.getItem("accessToken");

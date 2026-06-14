@@ -5,6 +5,7 @@ import {
   faUserGroup,
   faPenToSquare,
   faFloppyDisk,
+  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 import postsImage from "./posts.jpg";
 import { useThemeContext } from "../Theme/ThemeContext";
@@ -15,14 +16,16 @@ function Home() {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
 
-  const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+  const capitalize = (str) =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 
   const getFirstName = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) return "User";
       const payload = JSON.parse(atob(token.split(".")[1]));
-      const raw = payload.given_name || payload.firstName || payload.name || "User";
+      const raw =
+        payload.given_name || payload.firstName || payload.name || "User";
       return capitalize(raw);
     } catch {
       return "User";
@@ -44,18 +47,29 @@ function Home() {
   const cardStyle = {
     backgroundColor: cardBg,
     borderColor: borderColor,
-    boxShadow: isDarkMode ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)",
+    boxShadow: isDarkMode
+      ? "0 8px 16px rgba(0,0,0,0.3)"
+      : "0 8px 16px rgba(0,0,0,0.07)",
   };
 
-  const iconStyle = { backgroundColor: iconBg, borderColor: iconBorder, color: textPrimary };
+  const iconStyle = {
+    backgroundColor: iconBg,
+    borderColor: iconBorder,
+    color: textPrimary,
+  };
 
   const Btn = ({ onClick, children, style = {} }) => (
     <button
       onClick={onClick}
-      style={{ backgroundColor: buttonBg, color: "white", boxShadow: "0 10px 16px rgba(0,0,0,0.15)", ...style }}
+      style={{
+        backgroundColor: buttonBg,
+        color: "white",
+        boxShadow: "0 10px 16px rgba(0,0,0,0.15)",
+        ...style,
+      }}
       className="py-2.5 px-4 rounded-lg text-sm font-medium cursor-pointer shadow-md transition-colors"
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHover)}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonBg)}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = style.backgroundColor || buttonBg)}
     >
       {children}
     </button>
@@ -64,14 +78,19 @@ function Home() {
   return (
     <>
       <style>{`
-        .home-grid-2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
         .home-grid-3 {
           display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 20px;
+        }
+        .home-grid-bottom {
+          display: grid;
           grid-template-columns: 2fr 1fr;
+          gap: 20px;
+        }
+        .home-side-cards {
+          display: flex;
+          flex-direction: column;
           gap: 20px;
         }
         .library-inner {
@@ -91,12 +110,20 @@ function Home() {
           display: block;
         }
 
-        @media (max-width: 768px) {
-          .home-grid-2 {
-            grid-template-columns: 1fr;
+        @media (max-width: 900px) {
+          .home-grid-3 {
+            grid-template-columns: 1fr 1fr;
           }
+        }
+        @media (max-width: 600px) {
           .home-grid-3 {
             grid-template-columns: 1fr;
+          }
+          .home-grid-bottom {
+            grid-template-columns: 1fr;
+          }
+          .home-side-cards {
+            flex-direction: column;
           }
           .library-inner {
             flex-direction: column;
@@ -122,89 +149,283 @@ function Home() {
         }
       `}</style>
 
-      <div className="min-h-screen transition-colors duration-300" >
+      <div className="min-h-screen transition-colors duration-300">
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
 
           {/* Header */}
-          <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+          <header
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: 28,
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
             <div>
-              <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, color: textPrimary }}>
-                {/* ✅ بيعرض اسم اليوزر الحقيقي */}
-                <span style={{ color: textAccent, fontWeight: 600 }}>Welcome, {firstName}</span>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 26,
+                  fontWeight: 600,
+                  color: textPrimary,
+                  lineHeight: 1.2,
+                }}
+              >
+                Welcome back,{" "}
+                <span style={{ color: textAccent }}>{firstName}</span>
               </h1>
-              <p style={{ marginTop: 6, fontSize: 16, color: textSecondary }}>Your goals are waiting for you.</p>
+              <p style={{ marginTop: 5, fontSize: 14, color: textSecondary }}>
+                Your goals are waiting for you.
+              </p>
             </div>
             <HeaderIcons />
           </header>
 
-          {/* Solo + Friends */}
+          {/* Solo + Friends + AI — three equal cards */}
           <section style={{ marginBottom: 20 }}>
-            <div className="home-grid-2">
+            <div className="home-grid-3">
+
               {/* Solo Study */}
-              <div className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300" style={cardStyle}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+              <div
+                className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
+                style={cardStyle}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
+                    style={iconStyle}
+                  >
                     <FontAwesomeIcon icon={faHeadphones} />
                   </div>
-                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Solo Study</h3>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: textPrimary,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Solo Study
+                  </h3>
                 </div>
-                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                <p
+                  style={{
+                    margin: "8px 0 16px",
+                    color: textSecondary,
+                    lineHeight: 1.6,
+                    fontSize: 14,
+                  }}
+                >
                   Start a focused solo session with built-in timers and sounds.
                 </p>
-                <Btn onClick={() => navigate("/solo-study")}>Start Focus Mode</Btn>
+                <Btn onClick={() => navigate("/solo-study")}>
+                  Start Focus Mode
+                </Btn>
               </div>
 
               {/* Study With Friends */}
-              <div className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300" style={cardStyle}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+              <div
+                className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
+                style={cardStyle}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
+                    style={iconStyle}
+                  >
                     <FontAwesomeIcon icon={faUserGroup} />
                   </div>
-                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Study With Friends</h3>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: textPrimary,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Study With Friends
+                  </h3>
                 </div>
-                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
-                  Join or create a group study room and stay productive together.
+                <p
+                  style={{
+                    margin: "8px 0 16px",
+                    color: textSecondary,
+                    lineHeight: 1.6,
+                    fontSize: 14,
+                  }}
+                >
+                  Join or create a group study room and stay productive
+                  together.
                 </p>
-                <Btn onClick={() => navigate("/study-with-friends")}>Start Now</Btn>
+                <Btn onClick={() => navigate("/study-with-friends")}>
+                  Start Now
+                </Btn>
               </div>
+
+              {/* AI Study Assistant — same style as the other two */}
+              <div
+                className="rounded-2xl p-3 shadow-lg border-b relative transition-all duration-300"
+                style={cardStyle}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
+                    style={iconStyle}
+                  >
+                    <FontAwesomeIcon icon={faRobot} />
+                  </div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: textPrimary,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    AI Assistant
+                  </h3>
+                </div>
+                <p
+                  style={{
+                    margin: "8px 0 16px",
+                    color: textSecondary,
+                    lineHeight: 1.6,
+                    fontSize: 14,
+                  }}
+                >
+                  Ask questions, summarize lessons, generate quizzes, and get
+                  instant study help.
+                </p>
+                <Btn onClick={() => navigate("/aichat")}>
+                  Start Chat
+                </Btn>
+              </div>
+
             </div>
           </section>
 
           {/* Library */}
           <section style={{ marginBottom: 20 }}>
-            <div className="rounded-2xl p-4 shadow-lg border-b transition-all duration-300" style={cardStyle}>
+            <div
+              className="rounded-2xl p-4 shadow-lg border-b transition-all duration-300"
+              style={cardStyle}
+            >
               <div className="library-inner">
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <h3 style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: textAccent, textTransform: "uppercase" }}>
+                  <h3
+                    style={{
+                      margin: "0 0 8px",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: textAccent,
+                      textTransform: "uppercase",
+                    }}
+                  >
                     Your All-in-One Study Library
                   </h3>
-                  <p style={{ margin: "0 0 20px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
-                    Explore courses, resources, and roadmap all in one place to make learning smooth and focused.
+                  <p
+                    style={{
+                      margin: "0 0 20px",
+                      color: textSecondary,
+                      lineHeight: 1.6,
+                      fontSize: 14,
+                    }}
+                  >
+                    Explore courses, resources, and roadmap all in one place to
+                    make learning smooth and focused.
                   </p>
                   <Btn onClick={() => navigate("/library")}>Explore Now</Btn>
                 </div>
 
                 <div className="library-badges">
-                  <span style={{
-                    backgroundColor: "#8FB7CC", color: "#fff",
-                    padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500,
-                    boxShadow: "0 8px 14px rgba(0,0,0,0.15)",
-                    minHeight: 90, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center",
-                  }}>
+                  <span
+                    style={{
+                      backgroundColor: "#8FB7CC",
+                      color: "#fff",
+                      padding: "10px 14px",
+                      borderRadius: 10,
+                      fontSize: 13,
+                      fontWeight: 500,
+                      boxShadow: "0 8px 14px rgba(0,0,0,0.15)",
+                      minHeight: 90,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
                     Playlists & Courses
-                    <p style={{ marginTop: 6, fontSize: 11, fontWeight: 300, lineHeight: 1.4, color: "#fff", width: 120 }}>
-                      Ready-made playlists of top courses to guide you from beginner to pro.
+                    <p
+                      style={{
+                        marginTop: 6,
+                        fontSize: 11,
+                        fontWeight: 300,
+                        lineHeight: 1.4,
+                        color: "#fff",
+                        width: 120,
+                      }}
+                    >
+                      Ready-made playlists of top courses to guide you from
+                      beginner to pro.
                     </p>
                   </span>
-                  <span style={{
-                    backgroundColor: "rgba(143,183,204,0.15)", color: isDarkMode ? "#8FB7CC" : "#686868",
-                    padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500,
-                    boxShadow: isDarkMode ? "0 8px 14px rgba(0,0,0,0.3)" : "0 8px 14px rgba(0,0,0,0.08)",
-                    minHeight: 90, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center",
-                  }}>
+                  <span
+                    style={{
+                      backgroundColor: "rgba(143,183,204,0.15)",
+                      color: isDarkMode ? "#8FB7CC" : "#686868",
+                      padding: "10px 14px",
+                      borderRadius: 10,
+                      fontSize: 13,
+                      fontWeight: 500,
+                      boxShadow: isDarkMode
+                        ? "0 8px 14px rgba(0,0,0,0.3)"
+                        : "0 8px 14px rgba(0,0,0,0.08)",
+                      minHeight: 90,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
                     Resources & Roadmaps
-                    <p style={{ marginTop: 6, fontSize: 11, fontWeight: 300, lineHeight: 1.4, color: isDarkMode ? "#8FB7CC" : "#686868", width: 120 }}>
-                      Study materials and track roadmaps to stay on the right path.
+                    <p
+                      style={{
+                        marginTop: 6,
+                        fontSize: 11,
+                        fontWeight: 300,
+                        lineHeight: 1.4,
+                        color: isDarkMode ? "#8FB7CC" : "#686868",
+                        width: 120,
+                      }}
+                    >
+                      Study materials and track roadmaps to stay on the right
+                      path.
                     </p>
                   </span>
                 </div>
@@ -212,39 +433,129 @@ function Home() {
             </div>
           </section>
 
-          {/* Posts + Saves */}
+          {/* Posts + My Saves */}
           <section>
-            <div className="home-grid-3">
+            <div className="home-grid-bottom">
+
               {/* Posts */}
-              <div className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300 posts-card"
-                style={{ ...cardStyle, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, overflow: "hidden" }}>
+              <div
+                className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300 posts-card"
+                style={{
+                  ...cardStyle,
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: 16,
+                  overflow: "hidden",
+                }}
+              >
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                    <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <div
+                      className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
+                      style={iconStyle}
+                    >
                       <FontAwesomeIcon icon={faPenToSquare} />
                     </div>
-                    <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>Posts</h3>
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: 17,
+                        fontWeight: 600,
+                        color: textPrimary,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Posts
+                    </h3>
                   </div>
-                  <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14, maxWidth: "80%" }}>
-                    Explore study tips, quick resources, and interactive posts to join live study rooms and share your progress.
+                  <p
+                    style={{
+                      margin: "8px 0 16px",
+                      color: textSecondary,
+                      lineHeight: 1.6,
+                      fontSize: 14,
+                      maxWidth: "80%",
+                    }}
+                  >
+                    Explore study tips, quick resources, and interactive posts
+                    to join live study rooms and share your progress.
                   </p>
-                  <Btn onClick={() => navigate("/posts")}>Start Exploring</Btn>
+                  <Btn onClick={() => navigate("/posts")}>
+                    Start Exploring
+                  </Btn>
                 </div>
-                <div className="posts-img" style={{ width: 170, flexShrink: 0 }}>
-                  <img src={postsImage} alt="Posts preview" style={{ width: "100%", height: "auto", objectFit: "contain", display: "block" }} />
+                <div
+                  className="posts-img"
+                  style={{ width: 170, flexShrink: 0 }}
+                >
+                  <img
+                    src={postsImage}
+                    alt="Posts preview"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
                 </div>
               </div>
 
-              {/* Saves */}
-              <div className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300"
-                style={{ ...cardStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
-                  <div className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium" style={iconStyle}>
+              {/* My Saves */}
+              <div
+                className="rounded-2xl p-3 shadow-lg border-b transition-all duration-300"
+                style={{
+                  ...cardStyle,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-[10px] flex items-center justify-center text-lg font-medium"
+                    style={iconStyle}
+                  >
                     <FontAwesomeIcon icon={faFloppyDisk} />
                   </div>
-                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: textPrimary, textTransform: "uppercase" }}>My Saves</h3>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: textPrimary,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    My Saves
+                  </h3>
                 </div>
-                <p style={{ margin: "8px 0 16px", color: textSecondary, lineHeight: 1.6, fontSize: 14 }}>
+                <p
+                  style={{
+                    margin: "8px 0 16px",
+                    color: textSecondary,
+                    lineHeight: 1.6,
+                    fontSize: 14,
+                  }}
+                >
                   Your go-to spot for everything you've marked to check later.
                 </p>
                 <Btn
@@ -252,7 +563,9 @@ function Home() {
                   style={{ paddingLeft: 28, paddingRight: 28 }}
                 >
                   Open Saved
-                </Btn>              </div>
+                </Btn>
+              </div>
+
             </div>
           </section>
 

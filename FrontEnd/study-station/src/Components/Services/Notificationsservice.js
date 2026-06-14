@@ -50,3 +50,4 @@ export function createNotificationsService(token) {
                 .then(r => handleResponse(r, `deleteNotification(${id})`)),
     };
 }
+

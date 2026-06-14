@@ -28,7 +28,7 @@ const IconSearch = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 export default function Posts() {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState("posts");
   const [selectedPost, setSelectedPost] = useState(null);
 
@@ -57,8 +57,6 @@ export default function Posts() {
   }
 
   async function fetchPosts() {
-    const { data } = await axiosInstance.get("Posts");
-    console.log(data[0]?.createdAt); 
     try {
       setLoading(true);
       const { data } = await axiosInstance.get("Posts");
@@ -94,24 +92,6 @@ export default function Posts() {
         }
       })
     );
-
-    function handleCommentReaction(commentId, type) {
-      setCommentTree(prev => prev.map(c => {
-        if (c.id !== commentId) return c;
-        const existing = (c.reactions || []).find(r => r.isMyReaction);
-        if (existing?.type === type) {
-          return { ...c, reactions: c.reactions.filter(r => !r.isMyReaction) };
-        } else if (existing) {
-          return { ...c, reactions: [...c.reactions.filter(r => !r.isMyReaction), { type, isMyReaction: true, userId: currentUserId }] };
-        } else {
-          return { ...c, reactions: [...(c.reactions || []), { type, isMyReaction: true, userId: currentUserId }] };
-        }
-      }));
-
-      addCommentReactionApi(post.id, commentId, type).catch(() => {
-        toast.error("Failed to update reaction");
-      });
-    }
 
     axiosInstance.post(`Posts/${postId}/reactions`, { type: reactionType }).catch(() => {
       toast.error("Failed to update reaction");

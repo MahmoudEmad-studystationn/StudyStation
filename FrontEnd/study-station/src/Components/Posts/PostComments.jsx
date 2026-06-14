@@ -223,6 +223,9 @@ export default function PostComments({ post, onBack, onCommentAdd, onCommentDele
     const [commentTree, setCommentTree] = useState(() =>
         buildCommentTree(post?.comments || [], currentUserId)
     );
+    useEffect(() => {
+        setCommentTree(buildCommentTree(post?.comments || [], currentUserId));
+    }, [post?.comments]);
     const [commentContent, setCommentContent] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
@@ -266,7 +269,6 @@ export default function PostComments({ post, onBack, onCommentAdd, onCommentDele
         if (!commentContent.trim()) return;
         setSubmitting(true);
 
-        // snapshot القيم وقت الـ submit مش من الـ closure
         const firstName = userData?.firstName ?? userData?.name?.split(" ")[0] ?? "";
         const lastName = userData?.lastName ?? userData?.name?.split(" ").slice(1).join(" ") ?? "";
         const fullName = `${firstName} ${lastName}`.trim() || "You";
@@ -313,6 +315,7 @@ export default function PostComments({ post, onBack, onCommentAdd, onCommentDele
     }
 
     function handleCommentReaction(commentId, type) {
+        // Optimistic update
         setCommentTree(prev => prev.map(c => {
             if (c.id !== commentId) return c;
             const existing = (c.reactions || []).find(r => r.isMyReaction);
@@ -325,9 +328,27 @@ export default function PostComments({ post, onBack, onCommentAdd, onCommentDele
             }
         }));
 
-        addCommentReactionApi(post.id, commentId, type)
-            .then(res => console.log("reaction response:", res))  // ✅ أضف ده
-            .catch(() => toast.error("Failed to update reaction"));
+        addCommentReactionApi(post.id, commentId, type).then(res => {
+            if (res?.message !== "success") {
+                // rollback
+                setCommentTree(prev => prev.map(c => {
+                    if (c.id !== commentId) return c;
+                    return { ...c, reactions: (c.reactions || []).filter(r => !r.isMyReaction) };
+                }));
+                toast.error("Failed to update reaction");
+            } else {
+                const reactionId = res.data?.reactionId;
+                setCommentTree(prev => prev.map(c => {
+                    if (c.id !== commentId) return c;
+                    return {
+                        ...c,
+                        reactions: c.reactions.map(r =>
+                            r.isMyReaction ? { ...r, id: reactionId } : r
+                        )
+                    };
+                }));
+            }
+        });
     }
 
     if (!post) return null;

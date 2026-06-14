@@ -1,1 +1,16 @@
-{"projectId":"prj_NjDx8D678tslT0ad7xD9EmV209XJ","orgId":"team_kpSYgo63Ab0jPpjiD3Bu1N7C","projectName":"study-station"}
+{
+  "projectId": "prj_NjDx8D678tslT0ad7xD9EmV209XJ",
+  "orgId": "team_kpSYgo63Ab0jPpjiD3Bu1N7C",
+  "projectName": "study-station",
+  "settings": {
+    "createdAt": 1761171218169,
+    "framework": "vite",
+    "devCommand": "npm run dev",
+    "installCommand": null,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "20.x"
+  }
+}

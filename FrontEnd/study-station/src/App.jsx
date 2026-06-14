@@ -34,6 +34,9 @@ import Moderation from "./Components/AdminDashboard/Moderarion";
 import AdminProtectedRoute from "./Components/ProtectedRoute/AdminProtectedRoute";
 import NotificationsPage from "./Pages/Notificationspage";
 import SavedPage from "./Pages/Savedpage";
+import PostPage from "./Components/Posts/PostPage";
+import AiChat from "./Components/Aichat/Aichat";
+import FloatingChatButton from "./Components/Aichat/Floatingchatbutton";
 
 
 function AppContent() {
@@ -205,6 +208,12 @@ function AppContent() {
               }
             />
 
+            <Route path="/posts/:id" element={
+              <ProtectedRoute>
+                <PostPage />
+              </ProtectedRoute>
+            } />
+
             <Route
               path="/profile"
               element={
@@ -230,6 +239,14 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <SavedPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/aichat"
+              element={
+                <ProtectedRoute>
+                  <AiChat />
                 </ProtectedRoute>
               }
             />
@@ -270,6 +287,7 @@ function AppContent() {
               }
             />
           </Routes>
+          <FloatingChatButton />
         </div>
       </ThemeProvider>
     </HeroUIProvider>
