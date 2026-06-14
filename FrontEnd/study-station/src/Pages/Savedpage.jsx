@@ -480,51 +480,51 @@ export default function SavedPage() {
                     </div>
                 )}
 
-               {!loading && (() => {
-    const posts = filtered.filter(i => normalizeType(i.itemType) === "Posts");
-    const library = filtered.filter(i => normalizeType(i.itemType) === "Library");
+                {!loading && (() => {
+                    const posts = filtered.filter(i => normalizeType(i.itemType) === "Posts");
+                    const library = filtered.filter(i => normalizeType(i.itemType) === "Library");
 
-    if (filtered.length === 0) return <EmptyState t={t} query={query} />;
+                    if (filtered.length === 0) return <EmptyState t={t} query={query} />;
 
-    const renderSection = (title, icon, items) => {
-        if (items.length === 0) return null;
-        return (
-            <div style={{ marginBottom: "2rem" }}>
-                <div style={{
-                    display: "flex", alignItems: "center", gap: 8,
-                    marginBottom: "1rem", paddingBottom: ".6rem",
-                    borderBottom: `1px solid ${t.border}`,
-                }}>
-                    {icon}
-                    <span style={{ fontSize: ".85rem", fontWeight: 700, color: t.muted, textTransform: "uppercase", letterSpacing: ".06em" }}>
-                        {title}
-                    </span>
-                    <span style={{
-                        background: t.accentSoft, color: t.steel,
-                        fontSize: ".68rem", fontWeight: 700,
-                        borderRadius: 99, padding: "2px 8px",
-                    }}>
-                        {items.length}
-                    </span>
-                </div>
-                <motion.div layout style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                    <AnimatePresence>
-                        {items.map(item => (
-                            <SavedItemCard key={item.id} item={item} dark={dark} onRemove={handleRemove} />
-                        ))}
-                    </AnimatePresence>
-                </motion.div>
-            </div>
-        );
-    };
+                    const renderSection = (title, icon, items) => {
+                        if (items.length === 0) return null;
+                        return (
+                            <div style={{ marginBottom: "2rem" }}>
+                                <div style={{
+                                    display: "flex", alignItems: "center", gap: 8,
+                                    marginBottom: "1rem", paddingBottom: ".6rem",
+                                    borderBottom: `1px solid ${t.border}`,
+                                }}>
+                                    {icon}
+                                    <span style={{ fontSize: ".85rem", fontWeight: 700, color: t.muted, textTransform: "uppercase", letterSpacing: ".06em" }}>
+                                        {title}
+                                    </span>
+                                    <span style={{
+                                        background: t.accentSoft, color: t.steel,
+                                        fontSize: ".68rem", fontWeight: 700,
+                                        borderRadius: 99, padding: "2px 8px",
+                                    }}>
+                                        {items.length}
+                                    </span>
+                                </div>
+                                <motion.div layout style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                                    <AnimatePresence>
+                                        {items.map(item => (
+                                            <SavedItemCard key={item.id} item={item} dark={dark} onRemove={handleRemove} />
+                                        ))}
+                                    </AnimatePresence>
+                                </motion.div>
+                            </div>
+                        );
+                    };
 
-    return (
-        <>
-            {renderSection("Posts", <Newspaper size={14} color={t.steel} />, posts)}
-            {renderSection("Library", <BookOpen size={14} color={t.steel} />, library)}
-        </>
-    );
-})()}
+                    return (
+                        <>
+                            {renderSection("Posts", <Newspaper size={14} color={t.steel} />, posts)}
+                            {renderSection("Library", <BookOpen size={14} color={t.steel} />, library)}
+                        </>
+                    );
+                })()}
             </div>
         </div>
     );
