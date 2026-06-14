@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { addSavedItem } from "../Services/savedItemsService";
+import { addSavedItem } from "../Services/Saveditemsservice";
 import { ExternalLinkIcon } from "lucide-react";
 
 const ITEM_TYPE_MAP = {
@@ -31,7 +31,7 @@ function addToSavedSet(id) {
         const set = getSavedSet();
         set.add(String(id));
         localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
-    } catch {}
+    } catch { }
 }
 
 export function isResourceSaved(id) {
@@ -94,12 +94,12 @@ function SaveButton({ resourceId, resourceType, isDarkMode }) {
         }
     }
 
-    const idle   = isDarkMode ? "#9a9a9a" : "#686868";
-    const bgIdle  = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+    const idle = isDarkMode ? "#9a9a9a" : "#686868";
+    const bgIdle = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
     const bgSaved = isDarkMode ? "rgba(143,183,204,0.18)" : "rgba(143,183,204,0.2)";
-    const bgError = isDarkMode ? "rgba(239,68,68,0.15)"  : "rgba(239,68,68,0.1)";
+    const bgError = isDarkMode ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.1)";
 
-    const bg    = saved ? bgSaved : error ? bgError : bgIdle;
+    const bg = saved ? bgSaved : error ? bgError : bgIdle;
     const color = saved ? "#8FB7CC" : error ? "#ef4444" : idle;
     const title = saved ? "Saved!" : error ? "Failed — try again" : "Save";
 
@@ -143,14 +143,14 @@ export default function ResourceCard({ resource, isDarkMode }) {
     const navigate = useNavigate();
     const t = getTypeStyle(resource.type);
 
-    const cardBg     = isDarkMode ? "#1f1f1f" : "#ffffff";
+    const cardBg = isDarkMode ? "#1f1f1f" : "#ffffff";
     const cardBorder = hovered ? t.color + "80" : isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(44,62,80,0.08)";
     const titleColor = isDarkMode ? "#f0f0f0" : "#1a1a2e";
     const mutedColor = isDarkMode ? "#9a9a9a" : "#686868";
-    const arrowBg    = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
+    const arrowBg = hovered ? t.color : (isDarkMode ? "#2a2a2a" : "#e8eaed");
     const arrowColor = hovered ? "#ffffff" : mutedColor;
 
-    const catLabel     = resource.categoryName || CATEGORY_MAP[resource.categoryId] || resource.category || null;
+    const catLabel = resource.categoryName || CATEGORY_MAP[resource.categoryId] || resource.category || null;
     const resTypeLabel = resource.resourceTypeName || RESOURCE_TYPE_MAP[resource.resourceTypeId] || null;
     const isPaid = resource.type?.toLowerCase() === "paid";
     const isFree = resource.type?.toLowerCase() === "free";
