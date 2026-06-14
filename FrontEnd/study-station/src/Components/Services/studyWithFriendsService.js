@@ -54,7 +54,7 @@ export const startFocusSession = (id, durationMinutes) =>
 export const stopFocusSession = (id, sessionId) =>
     axiosInstance.post(`${BASE}/${id}/focus/${sessionId}/stop`).then(r => r.data);
 
-
+// ✅ الـ endpoint الجديد
 export const getCurrentFocusSession = (id) =>
     axiosInstance.get(`${BASE}/${id}/focus/current`).then(r => r.data);
 
