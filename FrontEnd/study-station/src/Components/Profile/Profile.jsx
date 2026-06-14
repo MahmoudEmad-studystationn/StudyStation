@@ -58,7 +58,6 @@ const tokens = {
 
 const API_BASE = "https://study-station.runasp.net/api";
 
-// Fallback planner tasks if API returns empty
 const FALLBACK_DAYS = [
   { name: "Mon", tasks: [] },
   { name: "Tue", tasks: [] },
@@ -72,6 +71,7 @@ const FALLBACK_DAYS = [
 const DAY_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const DAY_ORDER = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const BAR_DAYS  = ["M","T","W","T","F","S","S"];
+const LS_KEY    = "study_planner_days";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -87,67 +87,57 @@ function formatDOB(isoString) {
   catch { return isoString; }
 }
 
-/**
- * Convert plannerTasks array from API into the 7-day grid format.
- * Each task looks like: { id, text/title/taskName, done/isCompleted, dayOfWeek?, scheduledDate? }
- */
+function loadDaysFromStorage() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length === 7) return parsed;
+    return null;
+  } catch { return null; }
+}
+
+function saveDaysToStorage(days) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(days)); } catch {}
+}
+
 function buildDaysFromAPI(plannerTasks) {
   const days = DAY_SHORT.map(name => ({ name, tasks: [] }));
-
   if (!Array.isArray(plannerTasks) || plannerTasks.length === 0) return days;
-
   plannerTasks.forEach(task => {
-    // Normalise fields — API may use different key names
-    const text    = task.text || task.title || task.taskName || task.name || "Untitled";
-    const done    = task.done ?? task.isCompleted ?? task.completed ?? false;
-    const priority= task.priority ?? task.isPriority ?? false;
-
-    // Find day index
+    const text     = task.text || task.title || task.taskName || task.name || "Untitled";
+    const done     = task.done ?? task.isCompleted ?? task.completed ?? false;
+    const priority = task.priority ?? task.isPriority ?? false;
     let dayIdx = -1;
-
     if (task.dayOfWeek) {
       dayIdx = DAY_ORDER.findIndex(d =>
         d.toLowerCase().startsWith((task.dayOfWeek || "").toLowerCase().slice(0, 3))
       );
     } else if (task.scheduledDate || task.date) {
-      const d   = new Date(task.scheduledDate || task.date);
-      // getDay() → 0=Sun..6=Sat  →  normalise to Mon=0
+      const d = new Date(task.scheduledDate || task.date);
       dayIdx = (d.getDay() + 6) % 7;
     }
-
     if (dayIdx >= 0 && dayIdx < 7) {
       days[dayIdx].tasks.push({ id: task.id ?? Date.now() + Math.random(), text, done, priority });
     }
   });
-
   return days;
 }
 
-/**
- * Build bar-chart heights from weeklyHours array.
- * Returns an array of 7 numbers (Mon→Sun), normalised to max 80px.
- */
 function buildBarHeights(weeklyHours) {
   if (!Array.isArray(weeklyHours) || weeklyHours.length === 0) return new Array(7).fill(0);
-
   const ordered = DAY_ORDER.map(dayName => {
     const found = weeklyHours.find(d =>
       (d.dayOfWeek || "").toLowerCase().startsWith(dayName.slice(0, 3).toLowerCase())
     );
     return found?.hours ?? 0;
   });
-
   const max = Math.max(...ordered, 1);
   return ordered.map(h => Math.round((h / max) * 80));
 }
 
-/**
- * Format activity log entries from API.
- * Each log may have: { type, description, subject, timestamp/createdAt, durationMinutes }
- */
 function formatActivity(activityLogs, accent) {
   if (!Array.isArray(activityLogs) || activityLogs.length === 0) return [];
-
   const typeIcon = {
     session : <Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]} />,
     library : <Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]} />,
@@ -155,31 +145,27 @@ function formatActivity(activityLogs, accent) {
     task    : <Icon paths={["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"]} points="14 2 14 8 20 8" />,
     default : <Icon poly={["22 12 18 12 15 21 9 3 6 12 2 12"]} />,
   };
-
   const colorMap = { session:"teal", library:"sky", room:"navy", task:"teal", default:"sky" };
-
-  return activityLogs.slice(0, 4).map((log, i) => {
-    const typeKey  = (log.type || "").toLowerCase();
-    const icon     = typeIcon[typeKey] || typeIcon.default;
-    const color    = colorMap[typeKey]  || colorMap.default;
-    const desc     = log.description || log.activity || log.action || "Activity";
-    const subject  = log.subject || log.course || log.topic || "";
-    const ts       = log.timestamp || log.createdAt || log.date || "";
-    const duration = log.durationMinutes ? `· ${log.durationMinutes} min` : "";
-
+  return activityLogs.slice(0, 4).map((log) => {
+    const typeKey = (log.type || "").toLowerCase();
+    const icon    = typeIcon[typeKey] || typeIcon.default;
+    const color   = colorMap[typeKey]  || colorMap.default;
+    const desc    = log.description || log.activity || log.action || "Activity";
+    const subject = log.subject || log.course || log.topic || "";
+    const ts      = log.timestamp || log.createdAt || log.date || "";
+    const duration= log.durationMinutes ? `· ${log.durationMinutes} min` : "";
     let timeLabel = "";
     if (ts) {
       try {
         const d = new Date(ts);
         const now = new Date();
         const diffH = Math.round((now - d) / 36e5);
-        if (diffH < 1)        timeLabel = "Just now";
-        else if (diffH < 24)  timeLabel = `${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})} · today`;
-        else if (diffH < 48)  timeLabel = `${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})} · yesterday`;
-        else                  timeLabel = d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+        if (diffH < 1)       timeLabel = "Just now";
+        else if (diffH < 24) timeLabel = `${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})} · today`;
+        else if (diffH < 48) timeLabel = `${d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})} · yesterday`;
+        else                 timeLabel = d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
       } catch { timeLabel = ""; }
     }
-
     return {
       color, icon,
       text: <span>{desc}{subject ? <> · <strong>{subject}</strong></> : ""}</span>,
@@ -198,7 +184,7 @@ function EditProfileModal({ t, accent, profile, onSave, onClose }) {
     dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.slice(0, 10) : "",
   });
   const [saving, setSaving] = useState(false);
-  const [error, setError]   = useState(null);
+  const [error,  setError]  = useState(null);
 
   const handleSave = async () => {
     setSaving(true); setError(null);
@@ -285,12 +271,10 @@ function AddTaskModal({ t, accent, dayName, onAdd, onClose }) {
 export default function ProfilePage() {
   const { isDarkMode: dark } = useThemeContext();
 
-  // Local planner state (editable in UI)
-  const [days, setDays]         = useState(FALLBACK_DAYS);
+  const [days, setDays]         = useState(() => loadDaysFromStorage() || FALLBACK_DAYS);
   const [modal, setModal]       = useState(null);
   const [editOpen, setEditOpen] = useState(false);
 
-  // Raw API data
   const [profile,   setProfile]   = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [loading,   setLoading]   = useState(true);
@@ -302,7 +286,10 @@ export default function ProfilePage() {
   const t      = tokens[dark ? "dark" : "light"];
   const accent = dark ? t["--sky"] : t["--ocean"];
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    saveDaysToStorage(days);
+  }, [days]);
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setApiError(null);
@@ -326,17 +313,24 @@ export default function ProfilePage() {
       setProfile(profileData);
       setDashboard(dashData);
 
-      // ── Populate planner from API ──────────────────────────────────────────
-      // dashData may carry plannerTasks at top level OR nested
       const plannerTasks =
         dashData?.plannerTasks ??
         dashData?.tasks        ??
         [];
 
-      const apiDays = buildDaysFromAPI(plannerTasks);
-      // Only replace local state if API returned actual tasks
-      const hasAnyTask = apiDays.some(d => d.tasks.length > 0);
-      if (hasAnyTask) setDays(apiDays);
+      if (Array.isArray(plannerTasks) && plannerTasks.length > 0) {
+        const apiDays = buildDaysFromAPI(plannerTasks);
+        setDays(prevDays => {
+          const merged = apiDays.map((apiDay, i) => {
+            const localDay = prevDays[i];
+            const localOnlyTasks = localDay.tasks.filter(lt =>
+              !apiDay.tasks.some(at => String(at.id) === String(lt.id))
+            );
+            return { ...apiDay, tasks: [...apiDay.tasks, ...localOnlyTasks] };
+          });
+          return merged;
+        });
+      }
 
     } catch (e) {
       setApiError(e.message);
@@ -347,9 +341,7 @@ export default function ProfilePage() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // ── Derived values from API ────────────────────────────────────────────────
-
-  // Profile fields — support both Profile endpoint and userDetails shape
+  // ── Derived values ─────────────────────────────────────────────────────────
   const firstName = profile?.firstName || dashboard?.userDetails?.name?.split(" ")[0] || "";
   const lastName  = profile?.lastName  || dashboard?.userDetails?.name?.split(" ").slice(1).join(" ") || "";
   const fullName  = [firstName, lastName].filter(Boolean).join(" ") || dashboard?.userDetails?.name || "Student";
@@ -357,37 +349,38 @@ export default function ProfilePage() {
   const gender    = profile?.gender      || "";
   const dob       = profile?.dateOfBirth || "";
 
-  // Track & streak from userDetails or profile
   const track  = (profile?.track) || (dashboard?.userDetails?.track) || "Frontend Track";
   const streak = (profile?.streak) || ((dashboard?.userDetails?.currentStreak) ?? 0);
 
-  // Stats — support multiple key-name conventions
   const stats           = (dashboard?.stats) ?? {};
   const totalStudyHours = stats.totalStudyHours ?? (dashboard?.totalStudyHours) ?? (dashboard?.totalHours)     ?? "—";
   const tasksDone       = stats.tasksDone       ?? (dashboard?.tasksDone)       ?? (dashboard?.completedTasks) ?? "—";
   const sessions        = stats.totalSessions   ?? (dashboard?.sessions)        ?? (dashboard?.totalSessions)  ?? "—";
-  const tasksToday      = stats.tasksToday      ?? (dashboard?.tasksToday)      ?? (dashboard?.todayTasks)     ?? "—";
+
+  // ── FIX: حساب tasksToday من الـ days state مباشرةً ────────────────────────
+  const tasksToday = days[normalizedToday]?.tasks?.length
+    ?? stats.tasksToday
+    ?? (dashboard?.tasksToday)
+    ?? (dashboard?.todayTasks)
+    ?? "—";
+
   const focusRooms      = (stats.activeStudyRooms) ?? stats.focusRooms          ?? (dashboard?.focusRooms)     ?? (dashboard?.activeRooms) ?? "—";
   const resources       = stats.resources       ?? (dashboard?.resources)       ?? (dashboard?.totalResources) ?? "—";
 
-  // Weekly hours — supports array of {dayOfWeek, hours} OR flat thisWeekHours number
   const weeklyHoursRaw   = (dashboard?.weeklyHours) ?? [];
   const weeklyHoursTotal = Array.isArray(weeklyHoursRaw) && weeklyHoursRaw.length > 0
     ? weeklyHoursRaw.reduce((sum, d) => sum + (d.hours ?? 0), 0).toFixed(1)
     : (stats.thisWeekHours ?? (dashboard?.thisWeekHours) ?? "—");
 
-  // Bar chart heights
   const BAR_HEIGHTS = Array.isArray(weeklyHoursRaw) && weeklyHoursRaw.length > 0
     ? buildBarHeights(weeklyHoursRaw)
     : days.map(day => Math.min(day.tasks.filter(tk => tk.done).length * 20, 80));
 
   const maxBarHeight = Math.max(...BAR_HEIGHTS, 1);
 
-  // Activity log
   const activityLogs  = (dashboard?.activityLogs) ?? [];
   const activityItems = formatActivity(activityLogs, accent);
 
-  // Today goal progress
   const todayStudied   = stats.todayStudyHours ?? 0;
   const dailyGoal      = (profile?.dailyGoalHours) ?? (dashboard?.dailyGoalHours) ?? 6;
   const progressPct    = dailyGoal > 0 ? Math.min(Math.round((todayStudied / dailyGoal) * 100), 100) : 0;
@@ -468,7 +461,6 @@ export default function ProfilePage() {
 
       <div className="page-el" style={{ maxWidth: 1100, margin: "0 auto", padding: "2.5rem 2rem 5rem", display: "flex", flexDirection: "column", gap: "1.5rem", fontFamily: "'Plus Jakarta Sans', sans-serif", color: t["--text"], WebkitFontSmoothing: "antialiased" }}>
 
-        {/* Error banner */}
         {apiError && (
           <div style={{ padding: "12px 18px", borderRadius: 12, background: "rgba(229,62,62,.08)", border: "1px solid rgba(229,62,62,.2)", fontSize: ".82rem", color: "#e53e3e", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <span>⚠ {apiError}</span>
@@ -479,7 +471,6 @@ export default function ProfilePage() {
         {/* ── PROFILE HEADER ───────────────────────────────────────────────── */}
         <div className="fade-up card-hover" style={{ ...card, padding: 0, overflow: "hidden", display: "grid", gridTemplateColumns: "1fr auto" }}>
           <div style={{ padding: "2rem", display: "flex", alignItems: "center", gap: "1.75rem" }}>
-            {/* Avatar */}
             <div style={{ position: "relative", flexShrink: 0 }}>
               <div className="avatar-ring-el" style={{ width: 86, height: 86, borderRadius: "50%", padding: 3, background: "linear-gradient(135deg, #3D718D, #8FB7CC)" }}>
                 <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: "linear-gradient(150deg, #658FA5 0%, #2C3E50 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: 800, color: "#fff", letterSpacing: "-.02em" }}>
@@ -489,7 +480,6 @@ export default function ProfilePage() {
               <div style={{ position: "absolute", bottom: 4, right: 4, width: 14, height: 14, borderRadius: "50%", background: "#34D399", border: `2.5px solid ${t["--surface"]}`, animation: "breathe 2.8s ease-in-out infinite" }} />
             </div>
 
-            {/* Info */}
             <div style={{ flex: 1 }}>
               {loading ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -502,17 +492,12 @@ export default function ProfilePage() {
                   <div className="profile-name-el" style={{ fontSize: "1.45rem", fontWeight: 800, letterSpacing: "-.025em", color: t["--text"], marginBottom: ".35rem", lineHeight: 1.1 }}>
                     {fullName}
                   </div>
-
-                  {/* Track badge */}
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: ".78rem", fontWeight: 600, color: accent, background: t["--accent-soft"], padding: "4px 11px", borderRadius: 999, marginBottom: ".75rem" }}>
                     <Icon poly={["16 18 22 12 16 6","8 6 2 12 8 18"]} size={12} />
                     {track}
                   </div>
-
-                  {/* Meta badges */}
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {[
-                      // Streak — show 0 if no streak yet
                       { icon: <Icon poly={["22 12 18 12 15 21 9 3 6 12 2 12"]} size={11} />, label: `${streak}-day streak` },
                       { icon: <Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14" size={11} />, label: "Active now" },
                       ...(gender ? [{ icon: <Icon paths={["M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"]} circles={[{cx:12,cy:7,r:4}]} size={11} />, label: gender }] : []),
@@ -528,7 +513,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Right stats panel */}
           <div className="profile-stats-el" style={{ padding: "2rem 2.5rem 2rem 1.5rem", display: "flex", flexDirection: "column", justifyContent: "center", gap: "1rem", borderLeft: `1px solid ${t["--border"]}` }}>
             {loading ? (
               <><Skeleton w="90px" h={28} r={8} /><Skeleton w="70px" h={28} r={8} /><Skeleton w="80px" h={28} r={8} /></>
@@ -560,10 +544,10 @@ export default function ProfilePage() {
         {/* ── STAT STRIP ───────────────────────────────────────────────────── */}
         <div className="fade-up stat-strip-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1rem" }}>
           {[
-            { grad:"#2C3E50,#3D718D", trend:"↑ 14%", up:true,  icon:<Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14"/>,                                                                                                       val: String(weeklyHoursTotal), sup:"h",  label:"This Week"   },
-            { grad:"#3D718D,#658FA5", trend:"↑ 8%",  up:true,  icon:<Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]}/>,                                                              val: String(tasksToday),       sup:"",  label:"Tasks Today" },
-            { grad:"#658FA5,#8FB7CC", trend:"= same",up:false, icon:<Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{cx:9,cy:7,r:4}]}/>,              val: String(focusRooms),       sup:"",  label:"Focus Rooms" },
-            { grad:"#8FB7CC,#b8d4e4", trend:"↑ 5%",  up:true,  icon:<Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]}/>,                                                        val: String(resources),        sup:"",  label:"Resources"   },
+            { grad:"#2C3E50,#3D718D", trend:"↑ 14%", up:true,  icon:<Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14"/>, val: String(weeklyHoursTotal), sup:"h", label:"This Week"   },
+            { grad:"#3D718D,#658FA5", trend:"↑ 8%",  up:true,  icon:<Icon points="9 11 12 14 22 4" paths={["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]}/>, val: String(tasksToday), sup:"", label:"Tasks Today" },
+            { grad:"#658FA5,#8FB7CC", trend:"= same",up:false, icon:<Icon paths={["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"]} circles={[{cx:9,cy:7,r:4}]}/>, val: String(focusRooms), sup:"", label:"Focus Rooms" },
+            { grad:"#8FB7CC,#b8d4e4", trend:"↑ 5%",  up:true,  icon:<Icon paths={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]}/>, val: String(resources), sup:"", label:"Resources"   },
           ].map(st => (
             <div key={st.label} className="tile-hover" style={{ ...card, boxShadow: t["--sh-sm"], padding: "1.25rem 1.4rem", position: "relative", overflow: "hidden", borderTop: "none" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2.5, borderRadius: "16px 16px 0 0", background: `linear-gradient(90deg, ${st.grad})` }} />
@@ -599,7 +583,6 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {/* Empty state */}
             {!loading && days.every(d => d.tasks.length === 0) && (
               <div style={{ textAlign: "center", padding: "2rem 1rem", color: t["--muted"], fontSize: ".82rem" }}>
                 No tasks yet — add your first task to get started!
@@ -679,7 +662,6 @@ export default function ProfilePage() {
                 <button className="card-action-el" style={{ fontSize: ".75rem", fontWeight: 700, color: accent, background: t["--accent-soft"], border: "none", padding: "5px 12px", borderRadius: 999, cursor: "pointer", fontFamily: "'Plus Jakarta Sans',sans-serif", transition: "opacity .2s", letterSpacing: ".02em" }}>See all</button>
               </div>
 
-              {/* Today progress ring */}
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem", padding: "1rem", background: t["--surface2"], borderRadius: 14 }}>
                 <svg viewBox="0 0 52 52" width={56} height={56} style={{ flexShrink: 0 }}>
                   <circle cx="26" cy="26" r="20" fill="none" stroke={t["--border"]} strokeWidth="5"/>
@@ -706,7 +688,6 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Activity list */}
               {loading ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
                   {[1,2,3].map(i => <div key={i} style={{ display:"flex", gap:12, alignItems:"center" }}><Skeleton w={34} h={34} r={10} /><div style={{flex:1}}><Skeleton h={12} r={6} /><div style={{marginTop:6}}><Skeleton w="60%" h={10} r={6}/></div></div></div>)}

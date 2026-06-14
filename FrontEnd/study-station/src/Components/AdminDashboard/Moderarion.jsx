@@ -1,17 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useThemeContext } from "../Theme/ThemeContext";
 import SidebarDashboard from "./SidebarDashboard";
 import TopbarDashboard from "./Topbardashboard";
 
-// ── Initial Data ─────────────────────────────────────────────────────────────
-const INITIAL_ITEMS = [
-    { id: 1, preview: "This answer is completely wrong, stop spreading misinformation here...", user: "user_049", type: "Post", time: "10 min ago" },
-    { id: 2, preview: 'Study room "Spam Zone" with no academic purpose detected.', user: "auto_flag", type: "Room", time: "42 min ago" },
-    { id: 3, preview: "Buy followers here! DM me for the best prices available online...", user: "spammer99", type: "Post", time: "1 hr ago" },
-    { id: 4, preview: "I hate this platform and everyone who uses it, absolute garbage.", user: "angry_usr", type: "Post", time: "2 hrs ago" },
-    { id: 5, preview: 'Room "Cheat Hub" — sharing exam answers and unauthorized materials.', user: "anon_12x", type: "Room", time: "3 hrs ago" },
-    { id: 6, preview: "Inappropriate profile picture reported by 3 users.", user: "user_077", type: "Post", time: "5 hrs ago" },
-];
+const BASE_URL = "https://study-station.runasp.net";
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const IconTrash = () => (
@@ -34,8 +26,55 @@ const IconShield = ({ size = 40 }) => (
 // ── ModerationPage ────────────────────────────────────────────────────────────
 export default function ModerationPage() {
     const { isDarkMode } = useThemeContext();
-    const [items, setItems] = useState(INITIAL_ITEMS);
+    const [items, setItems] = useState([]);
     const [fadingId, setFadingId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const getAuthHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+    });
+
+    // ── Fetch flagged items on mount ──────────────────────────────────────────
+    useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const res = await fetch(`${BASE_URL}/api/Admin/moderation`, {
+                    headers: getAuthHeaders(),
+                });
+                if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
+                const data = await res.json();
+                setItems(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchItems();
+    }, []);
+
+    // ── Delete item ───────────────────────────────────────────────────────────
+    const handleDelete = async (id) => {
+        setFadingId(id);
+        try {
+            const res = await fetch(`${BASE_URL}/api/Admin/moderation/${id}`, {
+                method: "DELETE",
+                headers: getAuthHeaders(),
+            });
+            if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+            setTimeout(() => {
+                setItems(prev => prev.filter(m => m.id !== id));
+                setFadingId(null);
+            }, 250);
+        } catch (err) {
+            setFadingId(null);
+            alert(`Error: ${err.message}`);
+        }
+    };
 
     const bgColor = isDarkMode ? "#171717" : "#F3F4F6";
     const surface = isDarkMode ? "#2A2A2A" : "#ffffff";
@@ -48,13 +87,6 @@ export default function ModerationPage() {
     const shadow = isDarkMode
         ? "0 8px 16px rgba(0,0,0,0.3)"
         : "0 8px 16px rgba(0,0,0,0.07)";
-    const handleDelete = (id) => {
-        setFadingId(id);
-        setTimeout(() => {
-            setItems(prev => prev.filter(m => m.id !== id));
-            setFadingId(null);
-        }, 250);
-    };
 
     return (
         <>
@@ -86,109 +118,126 @@ export default function ModerationPage() {
                     </div>
                 </div>
 
+                {/* Loading State */}
+                {loading && (
+                    <div style={{ textAlign: "center", padding: "3rem", color: muted, fontSize: ".85rem", fontWeight: 500 }}>
+                        Loading flagged content...
+                    </div>
+                )}
+
+                {/* Error State */}
+                {!loading && error && (
+                    <div style={{
+                        background: "rgba(248,113,113,.1)", border: "1px solid rgba(248,113,113,.3)",
+                        borderRadius: 10, padding: "1rem 1.25rem", color: "#dc2626",
+                        fontSize: ".82rem", fontWeight: 600,
+                    }}>
+                        ⚠️ {error}
+                    </div>
+                )}
+
                 {/* Table Card */}
-                <div style={{
-                    background: surface,
-                    border: `1px solid ${border}`,
-                    borderRadius: 14,
-                    boxShadow: shadow,
-                    overflow: "hidden",
-                }}>
-                    <div style={{ overflowX: "auto" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".82rem", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                            <thead>
-                                <tr style={{ background: surface3, borderBottom: `1px solid ${border}` }}>
-                                    {["Content Preview", "User", "Type", "Reported", "Action"].map(h => (
-                                        <th key={h} style={{
-                                            padding: ".75rem 1rem", textAlign: "left",
-                                            fontSize: ".68rem", fontWeight: 700, color: muted,
-                                            textTransform: "uppercase", letterSpacing: ".06em", whiteSpace: "nowrap",
-                                        }}>
-                                            {h}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {items.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={5} style={{ padding: "3rem 1rem", textAlign: "center", color: muted }}>
-                                            <IconShield />
-                                            <p style={{ fontSize: ".85rem", fontWeight: 600, marginTop: ".75rem" }}>
-                                                No flagged content — all clear!
-                                            </p>
-                                        </td>
+                {!loading && !error && (
+                    <div style={{
+                        background: surface,
+                        border: `1px solid ${border}`,
+                        borderRadius: 14,
+                        boxShadow: shadow,
+                        overflow: "hidden",
+                    }}>
+                        <div style={{ overflowX: "auto" }}>
+                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".82rem", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                                <thead>
+                                    <tr style={{ background: surface3, borderBottom: `1px solid ${border}` }}>
+                                        {["Content Preview", "User", "Type", "Reported", "Action"].map(h => (
+                                            <th key={h} style={{
+                                                padding: ".75rem 1rem", textAlign: "left",
+                                                fontSize: ".68rem", fontWeight: 700, color: muted,
+                                                textTransform: "uppercase", letterSpacing: ".06em", whiteSpace: "nowrap",
+                                            }}>
+                                                {h}
+                                            </th>
+                                        ))}
                                     </tr>
-                                ) : (
-                                    items.map(item => (
-                                        <tr
-                                            key={item.id}
-                                            style={{
-                                                borderBottom: `1px solid ${border2}`,
-                                                transition: "background .15s, opacity .25s",
-                                                opacity: fadingId === item.id ? 0 : 1,
-                                            }}
-                                            onMouseEnter={e => e.currentTarget.style.background = surface3}
-                                            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                                        >
-                                            {/* Content Preview */}
-                                            <td style={{ padding: ".85rem 1rem", color: text2, verticalAlign: "middle" }}>
-                                                <div style={{ maxWidth: 260, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                    {item.preview}
-                                                </div>
-                                            </td>
-
-                                            {/* User */}
-                                            <td style={{ padding: ".85rem 1rem", fontWeight: 700, color: textPrimary, fontSize: ".82rem", whiteSpace: "nowrap", verticalAlign: "middle" }}>
-                                                @{item.user}
-                                            </td>
-
-                                            {/* Type chip */}
-                                            <td style={{ padding: ".85rem 1rem", verticalAlign: "middle" }}>
-                                                <span style={{
-                                                    display: "inline-flex", alignItems: "center", gap: 4,
-                                                    padding: "3px 9px", borderRadius: 999,
-                                                    fontSize: ".68rem", fontWeight: 700,
-                                                    background: item.type === "Post" ? "rgba(61,113,141,.12)" : "rgba(101,143,165,.12)",
-                                                    color: item.type === "Post"
-                                                        ? (isDarkMode ? "#8FB7CC" : "#3D718D")
-                                                        : (isDarkMode ? "#9dc4d4" : "#658FA5"),
-                                                }}>
-                                                    {item.type}
-                                                </span>
-                                            </td>
-
-                                            {/* Time */}
-                                            <td style={{ padding: ".85rem 1rem", color: muted, fontSize: ".75rem", whiteSpace: "nowrap", verticalAlign: "middle" }}>
-                                                {item.time}
-                                            </td>
-
-                                            {/* Action */}
-                                            <td style={{ padding: ".85rem 1rem", verticalAlign: "middle" }}>
-                                                <button
-                                                    onClick={() => handleDelete(item.id)}
-                                                    style={{
-                                                        padding: "5px 11px", borderRadius: 8,
-                                                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                                                        fontSize: ".72rem", fontWeight: 700, cursor: "pointer",
-                                                        border: "1px solid rgba(248,113,113,.2)",
-                                                        background: "rgba(248,113,113,.1)", color: "#dc2626",
-                                                        transition: "all .2s", display: "inline-flex", alignItems: "center",
-                                                    }}
-                                                    onMouseEnter={e => e.currentTarget.style.background = "rgba(248,113,113,.2)"}
-                                                    onMouseLeave={e => e.currentTarget.style.background = "rgba(248,113,113,.1)"}
-                                                >
-                                                    <IconTrash />
-                                                    Delete
-                                                </button>
+                                </thead>
+                                <tbody>
+                                    {items.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={5} style={{ padding: "3rem 1rem", textAlign: "center", color: muted }}>
+                                                <IconShield />
+                                                <p style={{ fontSize: ".85rem", fontWeight: 600, marginTop: ".75rem" }}>
+                                                    No flagged content — all clear!
+                                                </p>
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                                    ) : (
+                                        items.map(item => (
+                                            <tr
+                                                key={item.id}
+                                                style={{
+                                                    borderBottom: `1px solid ${border2}`,
+                                                    transition: "background .15s, opacity .25s",
+                                                    opacity: fadingId === item.id ? 0 : 1,
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.background = surface3}
+                                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                            >
+                                                <td style={{ padding: ".85rem 1rem", color: text2, verticalAlign: "middle" }}>
+                                                    <div style={{ maxWidth: 260, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                        {item.preview}
+                                                    </div>
+                                                </td>
+
+                                                <td style={{ padding: ".85rem 1rem", fontWeight: 700, color: textPrimary, fontSize: ".82rem", whiteSpace: "nowrap", verticalAlign: "middle" }}>
+                                                    @{item.user}
+                                                </td>
+
+                                                <td style={{ padding: ".85rem 1rem", verticalAlign: "middle" }}>
+                                                    <span style={{
+                                                        display: "inline-flex", alignItems: "center", gap: 4,
+                                                        padding: "3px 9px", borderRadius: 999,
+                                                        fontSize: ".68rem", fontWeight: 700,
+                                                        background: item.type === "Post" ? "rgba(61,113,141,.12)" : "rgba(101,143,165,.12)",
+                                                        color: item.type === "Post"
+                                                            ? (isDarkMode ? "#8FB7CC" : "#3D718D")
+                                                            : (isDarkMode ? "#9dc4d4" : "#658FA5"),
+                                                    }}>
+                                                        {item.type}
+                                                    </span>
+                                                </td>
+
+                                                <td style={{ padding: ".85rem 1rem", color: muted, fontSize: ".75rem", whiteSpace: "nowrap", verticalAlign: "middle" }}>
+                                                    {item.time}
+                                                </td>
+
+                                                <td style={{ padding: ".85rem 1rem", verticalAlign: "middle" }}>
+                                                    <button
+                                                        onClick={() => handleDelete(item.id)}
+                                                        disabled={fadingId === item.id}
+                                                        style={{
+                                                            padding: "5px 11px", borderRadius: 8,
+                                                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                                            fontSize: ".72rem", fontWeight: 700, cursor: "pointer",
+                                                            border: "1px solid rgba(248,113,113,.2)",
+                                                            background: "rgba(248,113,113,.1)", color: "#dc2626",
+                                                            transition: "all .2s", display: "inline-flex", alignItems: "center",
+                                                            opacity: fadingId === item.id ? 0.5 : 1,
+                                                        }}
+                                                        onMouseEnter={e => e.currentTarget.style.background = "rgba(248,113,113,.2)"}
+                                                        onMouseLeave={e => e.currentTarget.style.background = "rgba(248,113,113,.1)"}
+                                                    >
+                                                        <IconTrash />
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                )}
             </main>
         </>
     );
