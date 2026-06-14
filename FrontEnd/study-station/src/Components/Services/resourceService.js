@@ -1,6 +1,23 @@
 import axiosInstance from "./axiosInstance";
 
-// ── GET all pending resources (for admin review) ──────────
+export function isResourceApproved(r) {
+    if (!r) return false;
+    if (r.isApproved === true || r.isApproved === 1) return true;
+    return String(r.status ?? "").toLowerCase() === "approved";
+}
+
+// ── GET pending resources (admin review queue) ──────────
+export async function getPendingResourcesApi() {
+    try {
+        const response = await axiosInstance.get("Admin/resources");
+        const all = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+        return { message: "success", resources: all.filter(r => !isResourceApproved(r)) };
+    } catch (error) {
+        return { message: "error", resources: [], error };
+    }
+}
+
+// ── GET all resources (for admin review) ──────────
 export async function getResourcesApi(search = "") {
     try {
         const response = await axiosInstance.get("Admin/resources", {
@@ -33,35 +50,37 @@ export async function rejectResourceApi(id) {
     }
 }
 
-// جيب الـ approved resources
+// ── GET approved resources (from Library — persisted on server) ──
 export async function getApprovedResourcesApi() {
     try {
-        const res = await fetch(`https://study-station.runasp.net/api/Admin/resources`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken") ?? ""}`,
-            },
-        });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        const all = Array.isArray(data) ? data : data.data ?? [];
-        return { resources: all.filter(r => r.status === "Approved") };
-    } catch {
-        return { resources: [] };
+        const response = await axiosInstance.get("Library/all");
+        const all = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+        return { message: "success", resources: all.filter(isResourceApproved) };
+    } catch (error) {
+        return { message: "error", resources: [], error };
     }
 }
 
-// احذف ريسورس
+// ── DELETE approved resource ──────────────────────────────
 export async function deleteResourceApi(id) {
     try {
-        const res = await fetch(`https://study-station.runasp.net/api/Admin/resources/${id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken") ?? ""}`,
-            },
-        });
-        if (!res.ok) throw new Error();
+        await axiosInstance.delete(`Admin/resources/${id}`);
         return { message: "success" };
-    } catch {
-        return { message: "error" };
+    } catch (error) {
+        const status = error.response?.status;
+        // Fallback: some approved items may only be removable via Library/reject
+        if (status === 403 || status === 404) {
+            try {
+                await axiosInstance.delete(`Library/reject/${id}`);
+                return { message: "success" };
+            } catch (fallbackError) {
+                return {
+                    message: "error",
+                    status: fallbackError.response?.status ?? status,
+                    error: fallbackError,
+                };
+            }
+        }
+        return { message: "error", status, error };
     }
 }

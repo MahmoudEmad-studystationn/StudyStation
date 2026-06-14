@@ -2,44 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useThemeContext } from "../Theme/ThemeContext";
 import SidebarDashboard from "./SidebarDashboard";
 import TopbarDashboard from "./Topbardashboard";
-import { approveResourceApi, rejectResourceApi } from "../Services/resourceService";
-
-const BASE_URL = "https://study-station.runasp.net/api";
-
-const fetchPendingResources = async () => {
-    const res = await fetch(`${BASE_URL}/Admin/resources`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken") ?? ""}`,
-        },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const all = Array.isArray(data) ? data : data.data ?? [];
-    return all.filter(r => r.status === "Pending");
-};
-
-const fetchApprovedResources = async () => {
-    const res = await fetch(`${BASE_URL}/Admin/resources`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken") ?? ""}`,
-        },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const all = Array.isArray(data) ? data : data.data ?? [];
-    return all.filter(r => r.status === "Approved");
-};
-
-const deleteResourceRequest = async (id) => {
-    const res = await fetch(`${BASE_URL}/Admin/resources/${id}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken") ?? ""}`,
-        },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return true;
-};
+import {
+    approveResourceApi,
+    rejectResourceApi,
+    deleteResourceApi,
+    getPendingResourcesApi,
+    getApprovedResourcesApi,
+} from "../Services/resourceService";
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const IconSearch = () => (
@@ -123,8 +92,12 @@ export default function ResourcesPage() {
         setLoading(true);
         setError(null);
         try {
-            const pending = await fetchPendingResources();
-            setResources(pending);
+            const result = await getPendingResourcesApi();
+            if (result.message === "success") {
+                setResources(result.resources);
+            } else {
+                setError("Failed to load resources.");
+            }
         } catch {
             setError("Failed to load resources.");
         } finally {
@@ -136,8 +109,12 @@ export default function ResourcesPage() {
         setLoadingApproved(true);
         setErrorApproved(null);
         try {
-            const approved = await fetchApprovedResources();
-            setApprovedResources(approved);
+            const result = await getApprovedResourcesApi();
+            if (result.message === "success") {
+                setApprovedResources(result.resources);
+            } else {
+                setErrorApproved("Failed to load approved resources.");
+            }
         } catch {
             setErrorApproved("Failed to load approved resources.");
         } finally {
@@ -145,11 +122,13 @@ export default function ResourcesPage() {
         }
     }, []);
 
-    useEffect(() => { loadResources(); }, [loadResources]);
+    const reloadAll = useCallback(async () => {
+        await Promise.all([loadResources(), loadApproved()]);
+    }, [loadResources, loadApproved]);
 
     useEffect(() => {
-        if (activeTab === "approved") loadApproved();
-    }, [activeTab, loadApproved]);
+        reloadAll();
+    }, [reloadAll]);
 
     // ── Helpers ────────────────────────────────────────────────────────────────
     const startProcessing = (id) => setProcessingIds(prev => new Set([...prev, id]));
@@ -169,7 +148,9 @@ export default function ResourcesPage() {
         startProcessing(id);
         const result = await approveResourceApi(id);
         if (result.message === "success") {
-            removeFromList(id, setResources);
+            stopProcessing(id);
+            await reloadAll();
+            setActiveTab("approved");
         } else {
             stopProcessing(id);
             alert("Failed to approve. Please try again.");
@@ -190,12 +171,18 @@ export default function ResourcesPage() {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this resource?")) return;
         startProcessing(id);
-        try {
-            await deleteResourceRequest(id);
-            removeFromList(id, setApprovedResources);
-        } catch {
+        const result = await deleteResourceApi(id);
+        if (result.message === "success") {
             stopProcessing(id);
-            alert("Failed to delete. Please try again.");
+            await reloadAll();
+        } else {
+            stopProcessing(id);
+            const statusMsg = result.status === 403
+                ? "Access denied. Please log in again as admin."
+                : result.status
+                    ? `Server error (${result.status}).`
+                    : "Network error.";
+            alert(`Failed to delete. ${statusMsg}`);
         }
     };
 
@@ -281,7 +268,7 @@ export default function ResourcesPage() {
                         />
                     </div>
                     <button
-                        onClick={activeTab === "pending" ? loadResources : loadApproved}
+                        onClick={reloadAll}
                         title="Refresh"
                         style={{
                             display: "flex", alignItems: "center", justifyContent: "center",
@@ -304,7 +291,7 @@ export default function ResourcesPage() {
                     }}>
                         <span>⚠ {error || errorApproved}</span>
                         <button
-                            onClick={activeTab === "pending" ? loadResources : loadApproved}
+                            onClick={reloadAll}
                             style={{ background: "none", border: "none", color: "#dc2626", fontWeight: 700, cursor: "pointer", fontSize: ".78rem" }}
                         >
                             Retry
@@ -403,10 +390,28 @@ export default function ResourcesPage() {
 
                                             {/* Actions */}
                                             <td style={{ padding: ".85rem 1rem", verticalAlign: "middle" }}>
-                                                <div style={{ display: "flex", gap: ".4rem" }}>
-                                                    {activeTab === "pending" ? (
+                                                <div style={{ display: "flex", gap: ".4rem", alignItems: "center" }}>
+                                                    {activeTab === "approved" ? (
+                                                        <button
+                                                            onClick={() => handleDelete(r.id)}
+                                                            disabled={isProcessing}
+                                                            style={{
+                                                                padding: "5px 11px", borderRadius: 8,
+                                                                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                                                fontSize: ".72rem", fontWeight: 700,
+                                                                cursor: isProcessing ? "not-allowed" : "pointer",
+                                                                border: "1px solid rgba(220,38,38,.25)",
+                                                                background: "rgba(220,38,38,.1)", color: "#dc2626",
+                                                                transition: "all .2s", display: "inline-flex", alignItems: "center",
+                                                                opacity: isProcessing ? 0.5 : 1,
+                                                            }}
+                                                            onMouseEnter={e => !isProcessing && (e.currentTarget.style.background = "rgba(220,38,38,.2)")}
+                                                            onMouseLeave={e => (e.currentTarget.style.background = "rgba(220,38,38,.1)")}
+                                                        >
+                                                            <IconTrash />Delete
+                                                        </button>
+                                                    ) : (
                                                         <>
-                                                            {/* Accept */}
                                                             <button
                                                                 onClick={() => handleApprove(r.id)}
                                                                 disabled={isProcessing}
@@ -425,8 +430,6 @@ export default function ResourcesPage() {
                                                             >
                                                                 <IconCheck />Accept
                                                             </button>
-
-                                                            {/* Reject */}
                                                             <button
                                                                 onClick={() => handleReject(r.id)}
                                                                 disabled={isProcessing}
@@ -446,26 +449,6 @@ export default function ResourcesPage() {
                                                                 <IconTrash />Reject
                                                             </button>
                                                         </>
-                                                    ) : (
-                                                        /* Delete */
-                                                        <button
-                                                            onClick={() => handleDelete(r.id)}
-                                                            disabled={isProcessing}
-                                                            style={{
-                                                                padding: "5px 11px", borderRadius: 8,
-                                                                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                                                                fontSize: ".72rem", fontWeight: 700,
-                                                                cursor: isProcessing ? "not-allowed" : "pointer",
-                                                                border: "1px solid rgba(220,38,38,.25)",
-                                                                background: "rgba(220,38,38,.1)", color: "#dc2626",
-                                                                transition: "all .2s", display: "inline-flex", alignItems: "center",
-                                                                opacity: isProcessing ? 0.5 : 1,
-                                                            }}
-                                                            onMouseEnter={e => !isProcessing && (e.currentTarget.style.background = "rgba(220,38,38,.2)")}
-                                                            onMouseLeave={e => (e.currentTarget.style.background = "rgba(220,38,38,.1)")}
-                                                        >
-                                                            <IconTrash />Delete
-                                                        </button>
                                                     )}
                                                 </div>
                                             </td>
