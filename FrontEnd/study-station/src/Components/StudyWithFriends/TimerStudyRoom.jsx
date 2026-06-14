@@ -19,8 +19,6 @@ function saveState(roomId, state) {
 }
 
 // ── Calculate remaining seconds from server startTime ─────────────────────
-// KEY FIX: every client calculates remaining the same way from the server's
-// startTime — so all users are in sync regardless of when they joined.
 function calcRemainingFromServer(startTime, durationMinutes) {
     if (!startTime || !durationMinutes) return durationMinutes * 60;
     const end = new Date(startTime).getTime() + durationMinutes * 60 * 1000;
@@ -42,15 +40,18 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
     const [mode, setMode] = useState(saved?.mode ?? "focus");
     const [currentSession, setCurrentSession] = useState(saved?.currentSession ?? 1);
 
-    // isRunning is always derived from sharedTimer when it exists
     const [localRunning, setLocalRunning] = useState(false);
     const isRunning = sharedTimer ? sharedTimer.isRunning : localRunning;
 
     const prevRoomRef = useRef(roomId);
     const localTickRef = useRef(null);
-    // Track which startTime we last wired up — avoids restarting the interval
-    // on every 5-second poll when nothing actually changed
     const lastStartTimeRef = useRef(null);
+
+    // ✅ FIX 1: ref يخزن أحدث قيمة لـ sharedTimer عشان الـ interval ميعملش stale closure
+    const sharedTimerRef = useRef(sharedTimer);
+    useEffect(() => {
+        sharedTimerRef.current = sharedTimer;
+    }, [sharedTimer]);
 
     // ─── Sync with sharedTimer from backend ──────────────────────────────────
     useEffect(() => {
@@ -61,7 +62,6 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
             return;
         }
 
-        // ✅ Recalculate from startTime so all clients agree on the same value
         const serverRemaining = sharedTimer.startTime
             ? calcRemainingFromServer(sharedTimer.startTime, sharedTimer.durationMinutes)
             : sharedTimer.remaining;
@@ -75,8 +75,7 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
             return;
         }
 
-        // Only restart interval when a NEW session starts (startTime changed)
-        // — not on every poll tick, which would cause jumps
+        // Only restart interval when startTime actually changes
         if (lastStartTimeRef.current === sharedTimer.startTime && localTickRef.current) {
             return;
         }
@@ -84,10 +83,11 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
         lastStartTimeRef.current = sharedTimer.startTime;
         clearInterval(localTickRef.current);
 
-        // Smooth local countdown between polls — always recalculates from startTime
+        // ✅ FIX 2: الـ interval بيقرأ من sharedTimerRef عشان دايمًا يشوف القيمة الحديثة
         localTickRef.current = setInterval(() => {
-            const remaining = sharedTimer.startTime
-                ? calcRemainingFromServer(sharedTimer.startTime, sharedTimer.durationMinutes)
+            const st = sharedTimerRef.current;
+            const remaining = st?.startTime
+                ? calcRemainingFromServer(st.startTime, st.durationMinutes)
                 : 0;
 
             setTimeLeft(remaining);
@@ -155,7 +155,9 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
     // ─── Toggle ───────────────────────────────────────────────────────────────
     function toggleRun() {
         if (!isRunning) {
-            if (onStart) onStart(Math.floor(timeLeft / 60));
+            // ✅ FIX 3: بيبعت الـ duration الأصلية للـ mode مش القيمة المتقلصة
+            const durationMinutes = DURATIONS[mode] / 60;
+            if (onStart) onStart(durationMinutes);
         } else {
             if (onStop) onStop();
         }
@@ -201,7 +203,6 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
                     <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                 </svg>
                 Pomodoro Timer
-                {/* Sync badge — visible when using shared timer */}
                 {sharedTimer && (
                     <span style={{
                         marginLeft: "auto",

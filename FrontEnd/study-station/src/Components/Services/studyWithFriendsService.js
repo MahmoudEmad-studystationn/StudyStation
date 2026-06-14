@@ -10,7 +10,6 @@ export const createRoom = (data) =>
 
 export const getRoomById = (id) =>
     axiosInstance.get(`${BASE}/${id}`).then(r => r.data);
-// ↑ tasks بتيجي جوا الـ response من هنا — مفيش GET /tasks endpoint
 
 export const joinRoom = (id, roomCode) => {
     const config = {
@@ -23,7 +22,7 @@ export const joinRoom = (id, roomCode) => {
 export const leaveRoom = (id) =>
     axiosInstance.post(`${BASE}/${id}/leave`, null).then(r => r.data);
 
-// ── Tasks (write-only endpoints) ─────────────────────────────────────────────
+// ── Tasks ─────────────────────────────────────────────────────────────────────
 export const addTask = (id, taskText) =>
     axiosInstance.post(
         `${BASE}/${id}/tasks`,
@@ -54,6 +53,10 @@ export const startFocusSession = (id, durationMinutes) =>
 
 export const stopFocusSession = (id, sessionId) =>
     axiosInstance.post(`${BASE}/${id}/focus/${sessionId}/stop`).then(r => r.data);
+
+
+export const getCurrentFocusSession = (id) =>
+    axiosInstance.get(`${BASE}/${id}/focus/current`).then(r => r.data);
 
 // ── Messages ──────────────────────────────────────────────────────────────────
 export const sendMessage = (id, messageText) =>
