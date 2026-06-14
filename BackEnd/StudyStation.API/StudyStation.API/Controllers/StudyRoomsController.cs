@@ -124,6 +124,18 @@ public class StudyRoomsController : ControllerBase
         return Ok(new { message = "Session stopped" });
     }
 
+    [HttpGet("{id}/focus/current")]
+    public async Task<IActionResult> GetCurrentFocusSession(int id)
+    {
+        var result = await _mediator.Send(
+            new GetCurrentFocusSessionQuery(id));
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
     [HttpPost("{id}/messages")]
     public async Task<IActionResult> SendMessage(int id, [FromBody] string content)
     {
