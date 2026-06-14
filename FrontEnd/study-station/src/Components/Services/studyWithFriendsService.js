@@ -10,11 +10,12 @@ export const createRoom = (data) =>
 
 export const getRoomById = (id) =>
     axiosInstance.get(`${BASE}/${id}`).then(r => r.data);
+// ↑ tasks بتيجي جوا الـ response من هنا — مفيش GET /tasks endpoint
 
 export const joinRoom = (id, roomCode) => {
     const config = {
         params: roomCode ? { roomCode } : {},
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
     };
     return axiosInstance.post(`${BASE}/${id}/join`, null, config).then(r => r.data);
 };
@@ -22,15 +23,13 @@ export const joinRoom = (id, roomCode) => {
 export const leaveRoom = (id) =>
     axiosInstance.post(`${BASE}/${id}/leave`, null).then(r => r.data);
 
+// ── Tasks (write-only endpoints) ─────────────────────────────────────────────
 export const addTask = (id, taskText) =>
     axiosInstance.post(
         `${BASE}/${id}/tasks`,
         { title: taskText },
         { headers: { "Content-Type": "application/json" } }
     ).then(r => r.data);
-
-export const getTasks = (id) =>
-    axiosInstance.get(`${BASE}/${id}/tasks`).then(r => r.data);
 
 export const toggleTask = (id, taskId) =>
     axiosInstance.patch(`${BASE}/${id}/tasks/${taskId}/toggle`).then(r => r.data);
@@ -45,6 +44,7 @@ export const updateTask = (id, taskId, title) =>
 export const deleteTask = (id, taskId) =>
     axiosInstance.delete(`${BASE}/${id}/tasks/${taskId}`).then(r => r.data);
 
+// ── Focus Sessions ────────────────────────────────────────────────────────────
 export const startFocusSession = (id, durationMinutes) =>
     axiosInstance.post(
         `${BASE}/${id}/focus/start`,
@@ -55,6 +55,7 @@ export const startFocusSession = (id, durationMinutes) =>
 export const stopFocusSession = (id, sessionId) =>
     axiosInstance.post(`${BASE}/${id}/focus/${sessionId}/stop`).then(r => r.data);
 
+// ── Messages ──────────────────────────────────────────────────────────────────
 export const sendMessage = (id, messageText) =>
     axiosInstance.post(
         `${BASE}/${id}/messages`,

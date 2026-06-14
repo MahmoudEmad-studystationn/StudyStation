@@ -3,13 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useThemeContext } from "../Theme/ThemeContext";
 import TimerStudyRoom from "./TimerStudyRoom";
 import ToDoStudyRoom from "./ToDoStudyRoom";
+import AiRoomPanel from "./AiRoomPanel";
 import { useFocusSession } from "../Services/useFocusSession";
 import {
     getRoomById,
     leaveRoom,
     sendMessage as apiSendMessage,
     getMessages,
-    getTasks,
     addTask,
     toggleTask,
     updateTask,
@@ -31,26 +31,14 @@ const fmtTime = iso => iso
     : new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
 const getMemberName = (m) =>
-    m?.userName ||
-    m?.name ||
-    m?.displayName ||
-    m?.fullName ||
-    m?.user?.userName ||
-    m?.user?.name ||
-    m?.user?.displayName ||
-    m?.profile?.name ||
-    m?.profile?.userName ||
-    "Unknown";
+    m?.userName || m?.name || m?.displayName || m?.fullName ||
+    m?.user?.userName || m?.user?.name || m?.user?.displayName ||
+    m?.profile?.name || m?.profile?.userName || "Unknown";
 
 const getSenderName = (msg) =>
-    msg?.senderName ||
-    msg?.userName ||
-    msg?.sender?.userName ||
-    msg?.sender?.name ||
-    msg?.sender?.displayName ||
-    msg?.user?.userName ||
-    msg?.user?.name ||
-    "Unknown";
+    msg?.senderName || msg?.userName || msg?.sender?.userName ||
+    msg?.sender?.name || msg?.sender?.displayName ||
+    msg?.user?.userName || msg?.user?.name || "Unknown";
 
 function Toast({ message, visible }) {
     return (
@@ -113,7 +101,6 @@ export default function StudyRoom() {
     const [toast, setToast] = useState({ visible: false, msg: "" });
     const [leaveConfirm, setLeaveConfirm] = useState(false);
 
-    // ✅ الـ timer state كله هنا — مش في fetchRoom
     const { sharedTimer, handleStart, handleStop } = useFocusSession(roomId);
 
     const tasksRef = useRef([]);
@@ -136,27 +123,23 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ✅ fetchRoom لا تمس الـ timer على الإطلاق — useFocusSession بيتكلم مع الباك بنفسه
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
-            const [data, msgs, tasks] = await Promise.all([
+            const [data, msgs] = await Promise.all([
                 getRoomById(roomId),
                 getMessages(roomId),
-                getTasks(roomId),
             ]);
-
-            const taskList = Array.isArray(tasks) ? tasks : (tasks?.tasks ?? []);
+            const taskList = Array.isArray(data?.tasks)
+                ? data.tasks
+                : (data?.taskList ?? data?.todos ?? []);
             setRoom({
                 ...data,
                 tasks: taskList.map(t =>
-                    pendingToggles.current.has(t.id)
-                        ? { ...t, isDone: !t.isDone }
-                        : t
+                    pendingToggles.current.has(t.id) ? { ...t, isDone: !t.isDone } : t
                 )
             });
-
             const incoming = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
             setMessages(prev => {
                 const optimistic = prev.filter(m => m.isOptimistic);
@@ -166,7 +149,6 @@ export default function StudyRoom() {
                 return [...incoming, ...stillPending]
                     .sort((a, b) => new Date(a.sentAt || 0) - new Date(b.sentAt || 0));
             });
-
         } catch {
             if (!silent) setError("Could not load room. Please try again.");
         } finally {
@@ -189,7 +171,6 @@ export default function StudyRoom() {
         if (!text || sending) return;
         setSending(true);
         setInput("");
-
         const optId = `opt-${Date.now()}`;
         const optimisticMsg = {
             id: optId,
@@ -198,9 +179,7 @@ export default function StudyRoom() {
             sentAt: new Date().toISOString(),
             isOptimistic: true,
         };
-
         setMessages(prev => [...prev, optimisticMsg]);
-
         try {
             await apiSendMessage(roomId, text);
             const msgs = await getMessages(roomId);
@@ -283,7 +262,6 @@ export default function StudyRoom() {
         try { await updateTask(roomId, taskId, newTitle); } catch { showToast("Update failed"); }
     };
 
-    // ── Early returns ──
     if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
@@ -319,12 +297,8 @@ export default function StudyRoom() {
             }}>
                 <div style={{ display: "flex", alignItems: "center", gap: ".75rem", flexShrink: 0 }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                        <span style={{ fontSize: ".95rem", fontWeight: 800, letterSpacing: "-.02em", color: "#fff" }}>
-                            {room.name}
-                        </span>
-                        <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "rgba(255,255,255,.45)" }}>
-                            {room.subject}
-                        </span>
+                        <span style={{ fontSize: ".95rem", fontWeight: 800, letterSpacing: "-.02em", color: "#fff" }}>{room.name}</span>
+                        <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "rgba(255,255,255,.45)" }}>{room.subject}</span>
                     </div>
                     {room.roomCode && (
                         <span style={{ padding: "2px 8px", borderRadius: 7, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".04em", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", color: "rgba(255,255,255,.65)" }}>
@@ -382,18 +356,12 @@ export default function StudyRoom() {
                 </button>
             </div>
 
-            {/* ── 3-COLUMN LAYOUT ── */}
-            <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 320px", flex: 1, overflow: "hidden", minHeight: 0 }}>
+            {/* ── 4-COLUMN LAYOUT ── */}
+            <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 300px 300px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
                 {/* ── LEFT — Timer + ToDo ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                    {/* ✅ handleStart و handleStop جايين من useFocusSession — مفيش isActive */}
-                    <TimerStudyRoom
-                        roomId={roomId}
-                        sharedTimer={sharedTimer}
-                        onStart={handleStart}
-                        onStop={handleStop}
-                    />
+                    <TimerStudyRoom roomId={roomId} sharedTimer={sharedTimer} onStart={handleStart} onStop={handleStop} />
                     <ToDoStudyRoom
                         tasks={room.tasks ?? []}
                         onAdd={handleAddTask}
@@ -419,7 +387,7 @@ export default function StudyRoom() {
                 </div>
 
                 {/* ── RIGHT — Chat ── */}
-                <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                <div style={{ background: surface, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <span style={{ fontSize: ".72rem", fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase", color: muted, display: "flex", alignItems: "center", gap: 6 }}>
                             <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -436,13 +404,11 @@ export default function StudyRoom() {
                         <div style={{ textAlign: "center", fontSize: ".67rem", fontWeight: 600, color: muted, padding: "4px 0" }}>
                             Welcome to {room.name} · {room.subject}
                         </div>
-
                         {messages.length === 0 && !loading && (
                             <div style={{ textAlign: "center", fontSize: ".75rem", color: muted, marginTop: "2rem", opacity: 0.6 }}>
                                 No messages yet. Say hi! 👋
                             </div>
                         )}
-
                         {messages.map((msg, i) => {
                             const senderName = getSenderName(msg);
                             return (
@@ -475,7 +441,7 @@ export default function StudyRoom() {
                                 placeholder="Message the room…"
                                 rows={1}
                                 disabled={sending}
-                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80, transition: "border 0.2s" }}
+                                style={{ flex: 1, padding: "9px 12px", background: surface3, border: `1px solid ${border}`, borderRadius: 12, fontFamily: "inherit", fontSize: ".82rem", color: textPrimary, outline: "none", resize: "none", lineHeight: 1.4, maxHeight: 80 }}
                             />
                             <button
                                 onClick={sendMsg}
@@ -485,14 +451,17 @@ export default function StudyRoom() {
                                 {sending
                                     ? <div style={{ width: 12, height: 12, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .6s linear infinite" }} />
                                     : <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="22" y1="2" x2="11" y2="13" />
-                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                        <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
                                     </svg>
                                 }
                             </button>
                         </div>
                     </div>
                 </div>
+
+                {/* ── FAR RIGHT — AI Assistant ── */}
+                <AiRoomPanel roomId={roomId} isDarkMode={isDarkMode} />
+
             </div>
 
             <ConfirmModal
