@@ -61,5 +61,11 @@ namespace StudyStation.API.Models
 
         // Notifications
         public ICollection<StudyStation.API.Features.Notifications.Models.Notification> Notifications { get; set; } = new List<StudyStation.API.Features.Notifications.Models.Notification>();
+
+        // AI Assistant
+        public ICollection<StudyStation.API.Features.AI.Models.AiConversation> AiConversations { get; set; } = new List<StudyStation.API.Features.AI.Models.AiConversation>();
+        public ICollection<StudyStation.API.Features.AI.Models.AiGeneratedContent> AiGeneratedContent { get; set; } = new List<StudyStation.API.Features.AI.Models.AiGeneratedContent>();
+        public ICollection<StudyStation.API.Features.AI.Models.AiUploadedFile> AiUploadedFiles { get; set; } = new List<StudyStation.API.Features.AI.Models.AiUploadedFile>();
+        public StudyStation.API.Features.AI.Models.UserLearningMemory? LearningMemory { get; set; }
     }
 }

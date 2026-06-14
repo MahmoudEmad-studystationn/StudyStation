@@ -16,6 +16,10 @@ public interface IStudyClient
     Task TaskDeleted(int taskId);
     Task FocusSessionStarted(object session);
     Task FocusSessionStopped(int sessionId);
+
+    // AI shared chat events
+    Task AiMessageReceived(object message);
+    Task AiResponseReceived(object response);
 }
 
 [Authorize]

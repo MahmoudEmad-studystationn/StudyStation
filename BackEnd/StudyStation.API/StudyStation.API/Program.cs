@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -90,6 +91,16 @@ builder.Services.AddAuthentication(options =>
 // 7. تسجيل الخدمات المشتركة
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// AI Services
+builder.Services.AddHttpClient<IAiService, ChatGptAiService>();
+builder.Services.AddScoped<AiPromptBuilder>();
+
+// Configure file upload size limit (20 MB)
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 20 * 1024 * 1024;
+});
 
 // 8. تسجيل MediatR و FluentValidation
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));

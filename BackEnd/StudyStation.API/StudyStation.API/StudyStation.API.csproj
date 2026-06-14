@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -21,6 +21,8 @@
 		</PackageReference>
 		<PackageReference Include="Scalar.AspNetCore" Version="2.12.46" />
 
+		<!-- AI Services -->
+		<PackageReference Include="UglyToad.PdfPig" Version="0.1.9-alpha001-patch1" />
 		
 	</ItemGroup>
 
