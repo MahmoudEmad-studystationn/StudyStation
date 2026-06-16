@@ -166,19 +166,18 @@ namespace StudyStation.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>Explain a concept at a given detail level (simple | detailed | eli5).</summary>
+        /// <summary>Explain a concept or uploaded file content at a given detail level (simple | detailed | eli5).</summary>
         [HttpPost("explain")]
         public async Task<IActionResult> Explain(
             [FromBody] AiExplainRequestDto request,
             CancellationToken ct = default)
         {
-            var result = await _mediator.Send(new SendAiMessageCommand(
+            var result = await _mediator.Send(new ExplainCommand(
                 UserId: CurrentUserId,
-                Message: $"Explain {request.Concept} at level: {request.Level}",
-                ConversationId: null,
-                Context: "Hub",
-                ContextEntityId: null,
-                UploadedFileId: null), ct);
+                Concept: request.Concept,
+                Level: request.Level,
+                UploadedFileId: request.UploadedFileId,
+                Content: request.Content), ct);
             return Ok(result);
         }
 

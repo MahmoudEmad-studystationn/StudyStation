@@ -39,7 +39,8 @@ namespace StudyStation.API.Controllers
             var response = await _aiService.ExplainConceptAsync(
                 request.Concept,
                 request.Level ?? "simple",
-                ct);
+                sourceMaterial: null,
+                ct: ct);
 
             return Ok(new { response });
         }

@@ -35,6 +35,12 @@ namespace StudyStation.API.Features.AI.DTOs
 
         /// <summary>"simple" | "detailed" | "eli5"</summary>
         public string Level { get; set; } = "simple";
+
+        /// <summary>Id of an already-uploaded file whose content will be explained.</summary>
+        public int? UploadedFileId { get; set; }
+
+        /// <summary>Raw text content provided directly by the caller to be explained.</summary>
+        public string? Content { get; set; }
     }
 
     // ─── Generic AI text response ──────────────────────────────────────────────

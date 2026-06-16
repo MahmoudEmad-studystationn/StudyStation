@@ -144,15 +144,27 @@ namespace StudyStation.API.Services
 
         // ─── Concept Explanation ──────────────────────────────────────────────
 
-        public string BuildExplainPrompt(string concept, string level)
+        public string BuildExplainPrompt(string concept, string level, string? material = null)
         {
             var instruction = level switch
             {
-                "eli5" => "Explain this concept as if talking to a 5-year-old. Use very simple words, everyday analogies, and a fun tone.",
+                "eli5" => "Explain this as if talking to a 5-year-old. Use very simple words, everyday analogies, and a fun tone.",
                 "detailed" => "Provide a comprehensive, technically detailed explanation suitable for an advanced student. Include mechanisms, edge cases, and real-world applications.",
-                _ => "Explain this concept clearly and simply. Use an analogy, a real-world example, and keep it accessible for a university student."
+                _ => "Explain this clearly and simply. Use an analogy, a real-world example, and keep it accessible for a university student."
             };
 
+            if (!string.IsNullOrWhiteSpace(material))
+            {
+                // Material-based explanation: explain the supplied content, using concept as a title
+                return $"{instruction}\n\n" +
+                       $"The topic is: \"{concept}\"\n\n" +
+                       $"Study Material:\n\"\"\"\n{TruncateText(material, 8000)}\n\"\"\"\n\n" +
+                       "Explain the content above clearly and in detail. " +
+                       "Cover the main concepts, use examples or analogies where helpful, " +
+                       "and structure your explanation with clear headings.";
+            }
+
+            // Concept-only explanation (no material provided)
             return $"{instruction}\n\nConcept: {concept}";
         }
 

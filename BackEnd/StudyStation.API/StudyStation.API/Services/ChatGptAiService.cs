@@ -298,8 +298,8 @@ namespace StudyStation.API.Services
 
         // ─── Explain ──────────────────────────────────────────────────────────
 
-        public Task<string> ExplainConceptAsync(string concept, string level = "simple", CancellationToken ct = default)
-            => GenerateSimpleResponseAsync(_promptBuilder.BuildExplainPrompt(concept, level), ct);
+        public Task<string> ExplainConceptAsync(string concept, string level = "simple", string? sourceMaterial = null, CancellationToken ct = default)
+            => GenerateSimpleResponseAsync(_promptBuilder.BuildExplainPrompt(concept, level, sourceMaterial), ct);
 
         // ─── Key Concepts ─────────────────────────────────────────────────────
 
@@ -328,13 +328,33 @@ namespace StudyStation.API.Services
         {
             try
             {
+                // Ensure stream is at the beginning (defensive seek)
+                if (pdfStream.CanSeek) pdfStream.Seek(0, SeekOrigin.Begin);
+
                 using var document = PdfDocument.Open(pdfStream);
-                var text = string.Join("\n", document.GetPages().Select(p => p.Text));
+                var sb = new System.Text.StringBuilder();
+
+                foreach (var page in document.GetPages())
+                {
+                    // GetWords() is more reliable than p.Text for most PDF layouts
+                    var words = page.GetWords();
+                    var lineText = string.Join(" ", words.Select(w => w.Text));
+                    if (!string.IsNullOrWhiteSpace(lineText))
+                        sb.AppendLine(lineText);
+                }
+
+                var text = sb.ToString().Trim();
+
+                if (string.IsNullOrWhiteSpace(text))
+                    _logger.LogWarning("PDF text extraction returned empty — file may be a scanned/image-based PDF (no text layer).");
+                else
+                    _logger.LogInformation("PDF text extracted successfully: {CharCount} characters.", text.Length);
+
                 return Task.FromResult(text);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to extract text from PDF");
+                _logger.LogError(ex, "Failed to extract text from PDF: {Message}", ex.Message);
                 return Task.FromResult(string.Empty);
             }
         }

@@ -59,26 +59,33 @@ namespace StudyStation.API.Features.AI.Commands
             using (var stream = new FileStream(filePath, FileMode.Create))
                 await file.CopyToAsync(stream, ct);
 
-            // 3. Extract text
+            // 3. Extract text  (read from the already-saved file so the stream is always fresh)
             string extractedText = string.Empty;
             bool isProcessed = false;
             try
             {
                 if (fileType == "PDF")
                 {
-                    using var pdfStream = file.OpenReadStream();
+                    // Use the persisted file path — avoids any stream-position issues
+                    // that occur when IFormFile is read a second time after CopyToAsync.
+                    using var pdfStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                     extractedText = await _ai.ExtractTextFromPdfAsync(pdfStream, ct);
+
+                    if (string.IsNullOrWhiteSpace(extractedText))
+                        _logger.LogWarning("PDF yielded no text for {FileName} — it may be a scanned/image-based PDF.", file.FileName);
+                    else
+                        _logger.LogInformation("PDF text extracted: {Chars} chars from {FileName}.", extractedText.Length, file.FileName);
                 }
                 else if (fileType == "Text")
                 {
-                    using var reader = new StreamReader(file.OpenReadStream());
+                    using var reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read));
                     extractedText = await reader.ReadToEndAsync(ct);
                 }
-                isProcessed = !string.IsNullOrEmpty(extractedText);
+                isProcessed = !string.IsNullOrWhiteSpace(extractedText);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Text extraction failed for file {FileName}", file.FileName);
+                _logger.LogWarning(ex, "Text extraction failed for file {FileName}: {Message}", file.FileName, ex.Message);
             }
 
             // 4. Persist record
