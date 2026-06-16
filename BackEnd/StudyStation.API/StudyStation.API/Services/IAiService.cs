@@ -47,8 +47,8 @@ namespace StudyStation.API.Services
             string subject,
             CancellationToken ct = default);
 
-        /// <summary>Explain a concept at a requested detail level.</summary>
-        Task<string> ExplainConceptAsync(string concept, string level = "simple", CancellationToken ct = default);
+        /// <summary>Explain a concept (or uploaded material) at a requested detail level.</summary>
+        Task<string> ExplainConceptAsync(string concept, string level = "simple", string? sourceMaterial = null, CancellationToken ct = default);
 
         /// <summary>Extract a bullet-list of key concepts from raw content.</summary>
         Task<string> ExtractKeyConceptsAsync(string content, CancellationToken ct = default);
