@@ -8,15 +8,12 @@ import { useFocusSession } from "../Services/useFocusSession";
 import {
     getRoomById,
     leaveRoom,
-    getMessages,
     addTask,
     toggleTask,
     updateTask,
     deleteTask,
     getTasks,
-    extractMembers,
-    normalizeMessage,
-    getMemberCount,
+    getRoomMembers,
 } from "../Services/studyWithFriendsService";
 import MembersPanel from "./MembersPanel";
 
@@ -31,10 +28,18 @@ const getAvStyle = i => AV_PALETTE[i % AV_PALETTE.length];
 const getInitials = (name = "") =>
     name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "?";
 
-const getMemberName = (m) =>
-    m?.userName || m?.name || m?.displayName || m?.fullName ||
-    m?.user?.userName || m?.user?.name || m?.user?.displayName ||
-    m?.profile?.name || m?.profile?.userName || "Unknown";
+// اسم العضو للعرض. لو السيرفر مرجعش اسم حقيقي، بترجع null
+// (مش "Member N" وهمية) وده بيتعامل معاه في مكان العرض.
+function getMemberName(m) {
+    const name =
+        m?.userName || m?.name || m?.displayName || m?.fullName ||
+        m?.user?.userName || m?.user?.name || m?.user?.displayName ||
+        m?.profile?.name || m?.profile?.userName || "";
+
+    const trimmed = (name || "").trim();
+    if (!trimmed || trimmed === "Unknown") return null;
+    return trimmed;
+}
 
 function normalizeTask(t) {
     return {
@@ -42,51 +47,6 @@ function normalizeTask(t) {
         isDone: t.isDone ?? t.isCompleted ?? false,
         title: t.title ?? t.text ?? t.content ?? "",
     };
-}
-
-function extractNamesFromMessages(incoming) {
-    const seen = new Set();
-    const names = [];
-    for (const msg of incoming) {
-        const name = msg.senderName;
-        if (name && name !== "Unknown" && !seen.has(name)) {
-            seen.add(name);
-            names.push(name);
-        }
-    }
-    return names;
-}
-
-function buildMembers(existingMembers, namesFromMessages, count) {
-    const realApiMembers = existingMembers.filter(m => {
-        const n = getMemberName(m);
-        return n && n !== "Unknown" && !n.startsWith("Member ");
-    });
-
-    if (realApiMembers.length > 0) {
-        if (realApiMembers.length < count && namesFromMessages.length > 0) {
-            const existingNames = new Set(realApiMembers.map(m => getMemberName(m)));
-            const extra = namesFromMessages
-                .filter(n => !existingNames.has(n))
-                .map((n, i) => ({ id: `msg-member-${i}`, userId: null, userName: n, name: n, isOnline: true }));
-            return [...realApiMembers, ...extra].slice(0, Math.max(count, realApiMembers.length));
-        }
-        return realApiMembers;
-    }
-
-    if (namesFromMessages.length > 0) {
-        return Array.from({ length: Math.max(count, namesFromMessages.length) }, (_, i) => ({
-            id: `msg-member-${i}`, userId: null,
-            userName: namesFromMessages[i] ?? `Member ${i + 1}`,
-            name: namesFromMessages[i] ?? `Member ${i + 1}`,
-            isOnline: true,
-        }));
-    }
-
-    return Array.from({ length: count }, (_, i) => ({
-        id: `placeholder-${i}`, userId: null,
-        userName: `Member ${i + 1}`, name: `Member ${i + 1}`, isOnline: true,
-    }));
 }
 
 function Toast({ message, visible }) {
@@ -141,6 +101,7 @@ export default function StudyRoom() {
     const { isDarkMode } = useThemeContext();
 
     const [room, setRoom] = useState(null);
+    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [leaving, setLeaving] = useState(false);
@@ -151,6 +112,7 @@ export default function StudyRoom() {
     const pendingToggles = useRef(new Set());
     const pollRef = useRef(null);
     const tasksPollRef = useRef(null);
+    const membersPollRef = useRef(null);
 
     const { sharedTimer, handleStart, handleStop } = useFocusSession(roomId);
 
@@ -163,6 +125,32 @@ export default function StudyRoom() {
         setToast({ visible: true, msg });
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
+
+    // ── Fetch members من /api/StudyRooms/{id}/members ────────────────────
+    // ده المصدر الوحيد والموثوق لأسماء الأعضاء. لو الريسبونس جه فاضي
+    // (تأخير شبكة مؤقت مثلاً) منمسحش القايمة القديمة، نسيبها زي ما هي
+    // لحد ما يجي ريسبونس فيه بيانات، عشان مفيش "فلاش" أو اختفاء مؤقت للأسماء.
+    const fetchMembers = useCallback(async () => {
+        if (!roomId) return;
+        try {
+            const list = await getRoomMembers(roomId);
+            if (Array.isArray(list) && list.length > 0) {
+                setMembers(list);
+            } else if (Array.isArray(list) && list.length === 0) {
+                // ريسبونس فاضي حقيقي (مفيش أعضاء أصلاً) - نفرغ القايمة
+                setMembers([]);
+            }
+        } catch {
+            // فشل الطلب - نسيب آخر قايمة معروفة كما هي، من غير ما نمسحها
+        }
+    }, [roomId]);
+
+    useEffect(() => {
+        if (!roomId) return;
+        fetchMembers();
+        membersPollRef.current = setInterval(fetchMembers, 5000);
+        return () => clearInterval(membersPollRef.current);
+    }, [fetchMembers]);
 
     // ── Fetch tasks من الـ API ─────────────────────────────────────────────
     const fetchTasks = useCallback(async () => {
@@ -189,20 +177,10 @@ export default function StudyRoom() {
         if (!roomId) return;
         if (!silent) setLoading(true);
         try {
-            const [data, msgs] = await Promise.all([
-                getRoomById(roomId),
-                getMessages(roomId).catch(() => []),
-            ]);
-
-            const incoming = (Array.isArray(msgs) ? msgs : (msgs?.messages ?? [])).map(normalizeMessage);
-            const namesFromMessages = extractNamesFromMessages(incoming);
-            const count = data?.participantsCount ?? data?.memberCount ?? 0;
-            const existingMembers = extractMembers(data);
-            const members = buildMembers(existingMembers, namesFromMessages, count);
+            const data = await getRoomById(roomId);
 
             setRoom(prev => ({
                 ...data,
-                members,
                 currentUserName: data?.currentUserName ?? prev?.currentUserName ?? null,
                 currentUser: data?.currentUser ?? prev?.currentUser ?? null,
             }));
@@ -226,15 +204,11 @@ export default function StudyRoom() {
     const confirmLeave = async () => {
         setLeaveConfirm(false);
         setLeaving(true);
-        try {
-            await leaveRoom(roomId);
-            clearInterval(pollRef.current);
-            clearInterval(tasksPollRef.current);
-            navigate("/study-with-friends");
-        } catch {
-            setLeaving(false);
-            showToast("Failed to leave room");
-        }
+        try { await leaveRoom(roomId); } catch { /* ignore */ }
+        clearInterval(pollRef.current);
+        clearInterval(tasksPollRef.current);
+        clearInterval(membersPollRef.current);
+        navigate("/study-with-friends");
     };
 
     const handleAddTask = async (taskText) => {
@@ -290,8 +264,7 @@ export default function StudyRoom() {
         </div>
     );
 
-    const members = room.members ?? extractMembers(room);
-    const onlineCount = getMemberCount(room, members);
+    const onlineCount = room?.participantsCount ?? members.length;
     const currentUserName = room?.currentUserName ?? room?.currentUser?.userName ?? null;
 
     return (
@@ -330,13 +303,14 @@ export default function StudyRoom() {
                         <>
                             {members.slice(0, 5).map((m, i) => {
                                 const name = getMemberName(m);
+                                const label = name || "Guest";
                                 return (
-                                    <div key={m?.id ?? i} title={name} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 10px 4px 4px", borderRadius: 999, background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", flexShrink: 0 }}>
+                                    <div key={m?.id ?? i} title={label} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 10px 4px 4px", borderRadius: 999, background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", flexShrink: 0 }}>
                                         <div style={{ width: 26, height: 26, borderRadius: "50%", border: "2px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".52rem", fontWeight: 800, color: "#fff", flexShrink: 0, ...getAvStyle(i) }}>
-                                            {getInitials(name)}
+                                            {name ? getInitials(name) : "?"}
                                         </div>
                                         <span style={{ fontSize: ".72rem", fontWeight: 700, color: "rgba(255,255,255,.85)", whiteSpace: "nowrap", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis" }}>
-                                            {name}
+                                            {label}
                                         </span>
                                     </div>
                                 );
