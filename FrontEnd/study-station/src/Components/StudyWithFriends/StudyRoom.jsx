@@ -13,6 +13,7 @@ import {
     toggleTask,
     updateTask,
     deleteTask,
+    getTasks,
     extractMembers,
     normalizeMessage,
     getMemberCount,
@@ -35,29 +36,12 @@ const getMemberName = (m) =>
     m?.user?.userName || m?.user?.name || m?.user?.displayName ||
     m?.profile?.name || m?.profile?.userName || "Unknown";
 
-// ── normalize task من الـ API (isCompleted → isDone) ───────────────────────
 function normalizeTask(t) {
     return {
         ...t,
         isDone: t.isDone ?? t.isCompleted ?? false,
         title: t.title ?? t.text ?? t.content ?? "",
     };
-}
-
-// ── localStorage helpers ────────────────────────────────────────────────────
-function loadTasksFromStorage(roomId) {
-    try {
-        const raw = localStorage.getItem(`tasks_room_${roomId}`);
-        return raw ? JSON.parse(raw) : [];
-    } catch { return []; }
-}
-
-function saveTasksToStorage(roomId, tasks) {
-    try {
-        // مخزنش الـ temp tasks
-        const toSave = tasks.filter(t => !String(t.id).startsWith("temp-"));
-        localStorage.setItem(`tasks_room_${roomId}`, JSON.stringify(toSave));
-    } catch { /* ignore */ }
 }
 
 function extractNamesFromMessages(incoming) {
@@ -163,23 +147,10 @@ export default function StudyRoom() {
     const [toast, setToast] = useState({ visible: false, msg: "" });
     const [leaveConfirm, setLeaveConfirm] = useState(false);
 
-    // ── Tasks: مستقلة، بتتحمل من localStorage أول ما نعرف الـ roomId ────────
-    const [tasks, setTasks] = useState(() => []);
+    const [tasks, setTasks] = useState([]);
     const pendingToggles = useRef(new Set());
     const pollRef = useRef(null);
-
-    // حمّل من localStorage أول ما يتعرف الـ roomId
-    useEffect(() => {
-        if (!roomId) return;
-        const stored = loadTasksFromStorage(roomId);
-        if (stored.length > 0) setTasks(stored.map(normalizeTask));
-    }, [roomId]);
-
-    // احفظ في localStorage كل ما تتغير الـ tasks
-    useEffect(() => {
-        if (!roomId) return;
-        saveTasksToStorage(roomId, tasks);
-    }, [tasks, roomId]);
+    const tasksPollRef = useRef(null);
 
     const { sharedTimer, handleStart, handleStop } = useFocusSession(roomId);
 
@@ -192,6 +163,27 @@ export default function StudyRoom() {
         setToast({ visible: true, msg });
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
+
+    // ── Fetch tasks من الـ API ─────────────────────────────────────────────
+    const fetchTasks = useCallback(async () => {
+        if (!roomId) return;
+        try {
+            const data = await getTasks(roomId);
+            const list = Array.isArray(data) ? data : (data?.tasks ?? data?.items ?? []);
+            // محدثش لو في pending toggles عشان متعملش override
+            if (pendingToggles.current.size === 0) {
+                setTasks(list.map(normalizeTask));
+            }
+        } catch { /* silent */ }
+    }, [roomId]);
+
+    // Poll الـ tasks كل 5 ثواني عشان الـ members التانيين يشوفوا التحديثات
+    useEffect(() => {
+        if (!roomId) return;
+        fetchTasks();
+        tasksPollRef.current = setInterval(fetchTasks, 5000);
+        return () => clearInterval(tasksPollRef.current);
+    }, [fetchTasks]);
 
     const fetchRoom = useCallback(async (silent = false) => {
         if (!roomId) return;
@@ -237,6 +229,7 @@ export default function StudyRoom() {
         try {
             await leaveRoom(roomId);
             clearInterval(pollRef.current);
+            clearInterval(tasksPollRef.current);
             navigate("/study-with-friends");
         } catch {
             setLeaving(false);
@@ -251,7 +244,6 @@ export default function StudyRoom() {
         setTasks(prev => [...prev, optimistic]);
         try {
             const result = await addTask(roomId, taskText.trim());
-            // الـ API بيرجع { id, title, isCompleted, ... }
             const normalized = normalizeTask(result);
             setTasks(prev => prev.map(t => t.id === tempId ? normalized : t));
         } catch {
@@ -281,7 +273,6 @@ export default function StudyRoom() {
         catch { showToast("Update failed"); }
     };
 
-    // ── Loading / Error ───────────────────────────────────────────────────────
     if (loading && !room) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: pageBg, flexDirection: "column", gap: "1rem" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid rgba(61,113,141,.2)", borderTopColor: "#3D718D", animation: "spin .7s linear infinite" }} />
@@ -379,7 +370,6 @@ export default function StudyRoom() {
             {/* ── 3-COLUMN LAYOUT ── */}
             <div style={{ display: "grid", gridTemplateColumns: "280px 1fr 420px", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
-                {/* ── LEFT ── */}
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
                     <TimerStudyRoom roomId={roomId} sharedTimer={sharedTimer} onStart={handleStart} onStop={handleStop} />
                     <MembersPanel members={members} onlineCount={onlineCount} />
@@ -392,7 +382,6 @@ export default function StudyRoom() {
                     />
                 </div>
 
-                {/* ── CENTER ── */}
                 <div style={{ background: pageBg, display: "flex", flexDirection: "column", overflow: "hidden", borderRight: `1px solid ${border}` }}>
                     <div style={{ padding: ".85rem 1.25rem", borderBottom: `1px solid ${border}`, background: surface, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: muted, flexShrink: 0 }}>
                         Shared Workspace
@@ -407,7 +396,6 @@ export default function StudyRoom() {
                     </div>
                 </div>
 
-                {/* ── RIGHT ── */}
                 <ChatRoom
                     roomId={roomId}
                     isDarkMode={isDarkMode}

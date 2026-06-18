@@ -230,3 +230,9 @@ export const sendMessage = (id, messageText) =>
 
 export const getMessages = (id) =>
     axiosInstance.get(`${BASE}/${id}/messages`).then(r => unwrapMessages(r.data));
+
+export const getTasks = (id) =>
+    axiosInstance.get(`${BASE}/${id}/tasks`).then(r => {
+        const data = r.data;
+        return Array.isArray(data) ? data : (data?.tasks ?? data?.items ?? []);
+    });
