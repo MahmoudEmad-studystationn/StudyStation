@@ -46,6 +46,7 @@ namespace StudyStation.API.Features.AI.Commands
             {
                 ".pdf" => "PDF",
                 ".txt" or ".md" => "Text",
+                ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" or ".webp" => "Image",
                 _ => "Other"
             };
 
@@ -80,6 +81,16 @@ namespace StudyStation.API.Features.AI.Commands
                 {
                     using var reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read));
                     extractedText = await reader.ReadToEndAsync(ct);
+                }
+                else if (fileType == "Image")
+                {
+                    using var imgStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    extractedText = await _ai.ExtractTextFromImageAsync(imgStream, ct);
+
+                    if (string.IsNullOrWhiteSpace(extractedText))
+                        _logger.LogWarning("Image OCR yielded no text for {FileName}.", file.FileName);
+                    else
+                        _logger.LogInformation("Image OCR extracted: {Chars} chars from {FileName}.", extractedText.Length, file.FileName);
                 }
                 isProcessed = !string.IsNullOrWhiteSpace(extractedText);
             }

@@ -48,25 +48,4 @@ namespace StudyStation.API.Features.AI.DTOs
         public DateTime SentAt { get; set; }
     }
 
-    // ─── Shared Room AI Chat DTOs ────────────────────────────────────────────
-
-    public class RoomAiChatResponseDto
-    {
-        public int ConversationId { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public string Role { get; set; } = "model";
-        public int? SenderUserId { get; set; }
-        public string? SenderName { get; set; }
-        public DateTime SentAt { get; set; }
-    }
-
-    public class RoomAiMessageDto
-    {
-        public int Id { get; set; }
-        public string Role { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public int? SenderUserId { get; set; }
-        public string? SenderName { get; set; }
-        public DateTime SentAt { get; set; }
-    }
 }

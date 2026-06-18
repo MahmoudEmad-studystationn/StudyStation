@@ -40,31 +40,4 @@ namespace StudyStation.API.Features.AI.Validators
                 .WithMessage($"QuestionType must be one of: {string.Join(", ", ValidTypes)}.");
         }
     }
-
-    public class AiSummarizeRequestValidator : AbstractValidator<AiSummarizeRequestDto>
-    {
-        public AiSummarizeRequestValidator()
-        {
-            RuleFor(x => x.Topic)
-                .NotEmpty().WithMessage("Topic is required.")
-                .MaximumLength(500);
-
-            RuleFor(x => x.Content)
-                .MaximumLength(50000).WithMessage("Content must not exceed 50,000 characters.");
-        }
-    }
-
-    public class AiExplainRequestValidator : AbstractValidator<AiExplainRequestDto>
-    {
-        public AiExplainRequestValidator()
-        {
-            RuleFor(x => x.Concept)
-                .NotEmpty().WithMessage("Concept is required.")
-                .MaximumLength(500);
-
-            RuleFor(x => x.Level)
-                .Must(l => l is "simple" or "detailed" or "eli5")
-                .WithMessage("Level must be 'simple', 'detailed', or 'eli5'.");
-        }
-    }
 }

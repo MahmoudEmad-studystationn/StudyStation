@@ -29,7 +29,7 @@ namespace StudyStation.API.Services
         public string BuildQuizPrompt(string topic, int count, string difficulty, string questionType, string? material)
         {
             var materialSection = material is not null
-                ? $"\n\nBase your questions on this study material:\n\"\"\"\n{TruncateText(material, 8000)}\n\"\"\""
+                ? $"\n\nBase your questions on this study material:\n\"\"\"\n{TruncateText(material, 4000)}\n\"\"\""
                 : string.Empty;
 
             var typeInstruction = questionType switch
@@ -59,37 +59,35 @@ namespace StudyStation.API.Services
 
         // ─── Flashcards ────────────────────────────────────────────────────────
 
-        public string BuildFlashcardsPrompt(string topic, int count, string? material)
+        public string BuildFlashcardPrompt(string topic, int count, string? material)
         {
             var materialSection = material is not null
-                ? $"\n\nBase the flashcards on this study material:\n\"\"\"\n{TruncateText(material, 8000)}\n\"\"\""
+                ? $"\n\nBase the flashcards on this study material:\n\"\"\"\n{TruncateText(material, 4000)}\n\"\"\""
                 : string.Empty;
 
-            var jsonExample = """{"front":"Term or concept","back":"Clear, concise definition or explanation","topic":"example"}""";
-
-            return $"Generate exactly {count} flashcards for the topic: \"{topic}\".\n" +
-                   $"{materialSection}\n\n" +
+            return $"Generate exactly {count} study flashcards about: \"{topic}\".{materialSection}\n\n" +
+                   "Each flashcard has a short \"front\" (a term, concept, or question) and a concise \"back\" (the definition or answer).\n\n" +
                    "Return a JSON array with this exact structure (no markdown, no extra text, just the JSON array):\n" +
-                   $"[{jsonExample}]\n\n" +
+                   "[{\"front\":\"...\",\"back\":\"...\",\"topic\":\"" + topic + "\"}]\n\n" +
                    "Rules:\n" +
-                   "- Front should be a key term, concept, or question\n" +
-                   "- Back should be a clear, memorable explanation (2-4 sentences max)\n" +
-                   $"- Cover a diverse range of sub-topics within \"{topic}\"\n" +
+                   "- front: keep it short (a term, concept, or question)\n" +
+                   "- back: a clear, concise explanation or answer\n" +
+                   "- Every flashcard MUST have a non-empty front and back\n" +
                    "- Return ONLY the JSON array, nothing else";
         }
 
         // ─── Summary ───────────────────────────────────────────────────────────
 
-        public string BuildSummaryPrompt(string topic, string content)
+        public string BuildSummarizePrompt(string content)
         {
-            return $"Summarise the following study content about \"{topic}\" in a clear, well-structured way.\n\n" +
-                   $"Content:\n\"\"\"\n{TruncateText(content, 10000)}\n\"\"\"\n\n" +
+            return "Summarize the following content for a student who wants to revise it quickly.\n\n" +
+                   $"Content:\n\"\"\"\n{TruncateText(content, 4000)}\n\"\"\"\n\n" +
                    "Provide:\n" +
-                   "1. A 3-5 paragraph summary\n" +
-                   "2. A bullet list of the 5-10 most important points\n" +
-                   "3. Key terms and definitions\n\n" +
-                   "Format your response clearly with headers.";
+                   "- A concise summary (1-3 short paragraphs)\n" +
+                   "- A bulleted list of the key points\n" +
+                   "Keep it accurate and focused on the most important information.";
         }
+
 
         // ─── Session Analysis ─────────────────────────────────────────────────
 
@@ -107,7 +105,7 @@ namespace StudyStation.API.Services
                 "}";
 
             return $"Perform a comprehensive analysis of this study session content about \"{subject}\".\n\n" +
-                   $"Study Material:\n\"\"\"\n{TruncateText(studyContent, 10000)}\n\"\"\"\n\n" +
+                   $"Study Material:\n\"\"\"\n{TruncateText(studyContent, 4000)}\n\"\"\"\n\n" +
                    "Return a JSON object with this exact structure (no markdown, just JSON):\n" +
                    $"{jsonStructure}\n\n" +
                    "Rules:\n" +
@@ -136,7 +134,7 @@ namespace StudyStation.API.Services
                 "}";
 
             return $"Analyse this group study session chat log about \"{subject}\" and generate comprehensive meeting notes.\n\n" +
-                   $"Chat Log:\n\"\"\"\n{TruncateText(chatLog, 10000)}\n\"\"\"\n\n" +
+                   $"Chat Log:\n\"\"\"\n{TruncateText(chatLog, 4000)}\n\"\"\"\n\n" +
                    "Return a JSON object with this exact structure (no markdown, just JSON):\n" +
                    $"{jsonStructure}\n\n" +
                    "Return ONLY the JSON object, nothing else.";
@@ -144,27 +142,20 @@ namespace StudyStation.API.Services
 
         // ─── Concept Explanation ──────────────────────────────────────────────
 
-        public string BuildExplainPrompt(string concept, string level, string? material = null)
+        public string BuildExplainPrompt(string concept, string? material)
         {
-            var instruction = level switch
-            {
-                "eli5" => "Explain this as if talking to a 5-year-old. Use very simple words, everyday analogies, and a fun tone.",
-                "detailed" => "Provide a comprehensive, technically detailed explanation suitable for an advanced student. Include mechanisms, edge cases, and real-world applications.",
-                _ => "Explain this clearly and simply. Use an analogy, a real-world example, and keep it accessible for a university student."
-            };
+            var instruction = "Explain this clearly and simply. Use an analogy, a real-world example, and keep it accessible for a university student.";
 
             if (!string.IsNullOrWhiteSpace(material))
             {
-                // Material-based explanation: explain the supplied content, using concept as a title
                 return $"{instruction}\n\n" +
-                       $"The topic is: \"{concept}\"\n\n" +
-                       $"Study Material:\n\"\"\"\n{TruncateText(material, 8000)}\n\"\"\"\n\n" +
-                       "Explain the content above clearly and in detail. " +
+                       $"Topic: {concept}\n\n" +
+                       $"Study Material:\n\"\"\"\n{TruncateText(material, 4000)}\n\"\"\"\n\n" +
+                       "Explain the content above clearly. " +
                        "Cover the main concepts, use examples or analogies where helpful, " +
                        "and structure your explanation with clear headings.";
             }
 
-            // Concept-only explanation (no material provided)
             return $"{instruction}\n\nConcept: {concept}";
         }
 
@@ -174,7 +165,7 @@ namespace StudyStation.API.Services
         {
             return $"Extract the 8-12 most important key concepts from the following content.\n" +
                    "Format as a numbered list with the concept name bolded, followed by a brief explanation.\n\n" +
-                   $"Content:\n\"\"\"\n{TruncateText(content, 8000)}\n\"\"\"";
+                   $"Content:\n\"\"\"\n{TruncateText(content, 4000)}\n\"\"\"";
         }
 
         // ─── Recommendations ──────────────────────────────────────────────────
@@ -214,7 +205,7 @@ namespace StudyStation.API.Services
         {
             return "Answer the following question based ONLY on the provided study material.\n" +
                    "If the answer cannot be found in the material, say so clearly and provide a general answer from your knowledge.\n\n" +
-                   $"Study Material:\n\"\"\"\n{TruncateText(material, 8000)}\n\"\"\"\n\n" +
+                   $"Study Material:\n\"\"\"\n{TruncateText(material, 4000)}\n\"\"\"\n\n" +
                    $"Question: {question}\n\n" +
                    "Provide a clear, accurate, and educational answer.";
         }

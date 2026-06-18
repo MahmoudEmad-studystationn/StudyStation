@@ -21,6 +21,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Scalar.AspNetCore" Version="2.12.46" />
+		<PackageReference Include="Tesseract" Version="5.2.0" />
 
 		<!-- AI Services -->
 		<PackageReference Include="UglyToad.PdfPig" Version="0.1.9-alpha001-patch1" />

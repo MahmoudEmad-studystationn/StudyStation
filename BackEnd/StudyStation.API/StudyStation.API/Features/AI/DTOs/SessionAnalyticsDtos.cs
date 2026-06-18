@@ -29,21 +29,6 @@ namespace StudyStation.API.Features.AI.DTOs
         public string Definition { get; set; } = string.Empty;
     }
 
-    // ─── Group Session Analytics ──────────────────────────────────────────────
-
-    public class GroupSessionAnalyticsDto
-    {
-        public int RoomId { get; set; }
-        public string GroupSummary { get; set; } = string.Empty;
-        public string MeetingNotes { get; set; } = string.Empty;
-        public List<string> KeyTakeaways { get; set; } = new();
-        public List<string> MainDiscussionPoints { get; set; } = new();
-        public List<string> SuggestedFollowUpTopics { get; set; } = new();
-        public AiFlashcardSetDto? Flashcards { get; set; }
-        public AiQuizDto? TeamQuiz { get; set; }
-        public DateTime GeneratedAt { get; set; }
-    }
-
     // ─── Request DTOs ──────────────────────────────────────────────────────────
 
     public class AnalyzeSessionRequestDto
@@ -54,10 +39,5 @@ namespace StudyStation.API.Features.AI.DTOs
         /// <summary>Id of an uploaded PDF/text file to use as material.</summary>
         public int? UploadedFileId { get; set; }
     }
-
-    public class AnalyzeGroupSessionRequestDto
-    {
-        /// <summary>End time of the session — defaults to UtcNow if null.</summary>
-        public DateTime? SessionEndedAt { get; set; }
-    }
 }
+

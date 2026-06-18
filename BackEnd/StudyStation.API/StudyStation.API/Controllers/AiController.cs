@@ -103,32 +103,16 @@ namespace StudyStation.API.Controllers
             if (file is null || file.Length == 0)
                 return BadRequest(new { message = "No file provided." });
 
-            var allowedExtensions = new[] { ".pdf", ".txt", ".md" };
+            var allowedExtensions = new[] { ".pdf", ".txt", ".md", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(extension))
-                return BadRequest(new { message = "Only PDF, TXT, and MD files are supported." });
+                return BadRequest(new { message = "Only PDF, TXT, MD, and image files (JPG, PNG, GIF, BMP, WEBP) are supported." });
 
             var result = await _mediator.Send(new UploadStudyMaterialCommand(CurrentUserId, file), ct);
             return Ok(result);
         }
 
         // ─── Generation Endpoints ─────────────────────────────────────────────
-
-        /// <summary>Generate a summary from a topic, pasted content, or uploaded file.</summary>
-        [HttpPost("summarize")]
-        public async Task<IActionResult> Summarize(
-            [FromBody] AiSummarizeRequestDto request,
-            CancellationToken ct = default)
-        {
-            var result = await _mediator.Send(new GenerateSummaryCommand(
-                UserId: CurrentUserId,
-                Topic: request.Topic,
-                Content: request.Content,
-                UploadedFileId: request.UploadedFileId,
-                SourceContext: "Hub",
-                SourceEntityId: null), ct);
-            return Ok(result);
-        }
 
         /// <summary>Generate a quiz from a topic, content, or uploaded file.</summary>
         [HttpPost("quiz")]
@@ -152,7 +136,7 @@ namespace StudyStation.API.Controllers
         /// <summary>Generate flashcards from a topic, content, or uploaded file.</summary>
         [HttpPost("flashcards")]
         public async Task<IActionResult> GenerateFlashcards(
-            [FromBody] AiGenerateRequestDto request,
+            [FromBody] AiFlashcardRequestDto request,
             CancellationToken ct = default)
         {
             var result = await _mediator.Send(new GenerateFlashcardsCommand(
@@ -166,18 +150,40 @@ namespace StudyStation.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>Explain a concept or uploaded file content at a given detail level (simple | detailed | eli5).</summary>
+        /// <summary>Explain a concept in simple terms (optionally grounded in uploaded material).</summary>
         [HttpPost("explain")]
         public async Task<IActionResult> Explain(
             [FromBody] AiExplainRequestDto request,
             CancellationToken ct = default)
         {
-            var result = await _mediator.Send(new ExplainCommand(
+            if (string.IsNullOrWhiteSpace(request.Concept))
+                return BadRequest(new { message = "Concept is required." });
+
+            var result = await _mediator.Send(new ExplainConceptCommand(
                 UserId: CurrentUserId,
                 Concept: request.Concept,
-                Level: request.Level,
                 UploadedFileId: request.UploadedFileId,
-                Content: request.Content), ct);
+                Content: request.Content,
+                SourceContext: "Hub",
+                SourceEntityId: null), ct);
+            return Ok(result);
+        }
+
+        /// <summary>Summarize a sentence/paragraph or an uploaded PDF/text/image file.</summary>
+        [HttpPost("summarize")]
+        public async Task<IActionResult> Summarize(
+            [FromBody] AiSummarizeRequestDto request,
+            CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(request.Content) && !request.UploadedFileId.HasValue)
+                return BadRequest(new { message = "Provide 'content' or an 'uploadedFileId' to summarize." });
+
+            var result = await _mediator.Send(new SummarizeContentCommand(
+                UserId: CurrentUserId,
+                Content: request.Content,
+                UploadedFileId: request.UploadedFileId,
+                SourceContext: "Hub",
+                SourceEntityId: null), ct);
             return Ok(result);
         }
 

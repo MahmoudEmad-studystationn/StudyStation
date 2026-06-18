@@ -10,7 +10,7 @@ namespace StudyStation.API.Controllers
 {
     /// <summary>
     /// AI integration for Solo Study Room sessions.
-    /// Handles in-session AI chat and post-session analytics.
+    /// Handles post-session analytics and quiz generation.
     /// </summary>
     [ApiController]
     [Route("api/AI/sessions")]
@@ -24,23 +24,6 @@ namespace StudyStation.API.Controllers
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new UnauthorizedAccessException());
-
-        /// <summary>Chat with the AI in the context of an active study session.</summary>
-        [HttpPost("{sessionId:int}/chat")]
-        public async Task<IActionResult> ChatInSession(
-            int sessionId,
-            [FromBody] AiChatRequestDto request,
-            CancellationToken ct = default)
-        {
-            var result = await _mediator.Send(new SendAiMessageCommand(
-                UserId: CurrentUserId,
-                Message: request.Message,
-                ConversationId: request.ConversationId,
-                Context: "SoloRoom",
-                ContextEntityId: sessionId,
-                UploadedFileId: request.UploadedFileId), ct);
-            return Ok(result);
-        }
 
         /// <summary>
         /// Trigger comprehensive AI analysis of a completed study session.
@@ -94,24 +77,6 @@ namespace StudyStation.API.Controllers
                 Count: request.Count,
                 Difficulty: request.Difficulty,
                 QuestionType: request.QuestionType,
-                UploadedFileId: request.UploadedFileId,
-                Content: request.Content,
-                SourceContext: "Session",
-                SourceEntityId: sessionId), ct);
-            return Ok(result);
-        }
-
-        /// <summary>Generate flashcards for the study session's topic.</summary>
-        [HttpPost("{sessionId:int}/flashcards")]
-        public async Task<IActionResult> GenerateSessionFlashcards(
-            int sessionId,
-            [FromBody] AiGenerateRequestDto request,
-            CancellationToken ct = default)
-        {
-            var result = await _mediator.Send(new GenerateFlashcardsCommand(
-                UserId: CurrentUserId,
-                Topic: request.Topic,
-                Count: request.Count,
                 UploadedFileId: request.UploadedFileId,
                 Content: request.Content,
                 SourceContext: "Session",

@@ -13,11 +13,6 @@ namespace StudyStation.API.Features.AI.Queries
         int StudySessionId
     ) : IRequest<SessionAnalyticsDto?>;
 
-    public record GetGroupAnalyticsQuery(
-        int UserId,
-        int RoomId
-    ) : IRequest<GroupSessionAnalyticsDto?>;
-
     // ─── Handlers ─────────────────────────────────────────────────────────────
 
     public class GetSessionAnalyticsHandler : IRequestHandler<GetSessionAnalyticsQuery, SessionAnalyticsDto?>
@@ -43,36 +38,6 @@ namespace StudyStation.API.Features.AI.Queries
                 var analytics = JsonSerializer.Deserialize<SessionAnalyticsDto>(content.ContentJson,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 return analytics;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-    }
-
-    public class GetGroupAnalyticsHandler : IRequestHandler<GetGroupAnalyticsQuery, GroupSessionAnalyticsDto?>
-    {
-        private readonly DatabaseContext _db;
-        public GetGroupAnalyticsHandler(DatabaseContext db) => _db = db;
-
-        public async Task<GroupSessionAnalyticsDto?> Handle(GetGroupAnalyticsQuery req, CancellationToken ct)
-        {
-            var content = await _db.AiGeneratedContent
-                .Where(c =>
-                    c.UserId == req.UserId &&
-                    c.ContentType == "GroupSummary" &&
-                    c.SourceContext == "Room" &&
-                    c.SourceEntityId == req.RoomId)
-                .OrderByDescending(c => c.CreatedAt)
-                .FirstOrDefaultAsync(ct);
-
-            if (content is null) return null;
-
-            try
-            {
-                return JsonSerializer.Deserialize<GroupSessionAnalyticsDto>(content.ContentJson,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             catch
             {

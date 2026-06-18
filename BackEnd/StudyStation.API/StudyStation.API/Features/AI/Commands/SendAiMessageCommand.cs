@@ -59,7 +59,7 @@ namespace StudyStation.API.Features.AI.Commands
                 await _db.SaveChangesAsync(ct);
             }
 
-            // 2. Build history for Gemini
+            // 2. Build history for the AI model
             var history = conversation.Messages
                 .OrderBy(m => m.SentAt)
                 .Select(m => new AiMessageDto { Id = m.Id, Role = m.Role, Content = m.Content, SentAt = m.SentAt })
@@ -71,8 +71,36 @@ namespace StudyStation.API.Features.AI.Commands
             {
                 var file = await _db.AiUploadedFiles
                     .FirstOrDefaultAsync(f => f.Id == cmd.UploadedFileId && f.UserId == cmd.UserId, ct);
-                if (file?.ExtractedText is not null)
-                    userMessage = $"[Study Material: {file.OriginalFileName}]\n\n{file.ExtractedText}\n\n---\n\nQuestion: {cmd.Message}";
+
+                if (file is not null && !string.IsNullOrWhiteSpace(file.ExtractedText))
+                {
+                    // Truncate so large PDFs / long text don't exceed the AI gateway's
+                    // input limit or trigger a timeout (the AI call would otherwise fail,
+                    // making it look like the assistant "can't read" the file).
+                    const int maxChars = 4000;
+                    var material = file.ExtractedText.Length <= maxChars
+                        ? file.ExtractedText
+                        : file.ExtractedText[..maxChars] + "\n\n[Content truncated for length...]";
+
+                    // Allow file-only messages (no typed question).
+                    var question = string.IsNullOrWhiteSpace(cmd.Message)
+                        ? "Please read the study material above and summarise its key points."
+                        : cmd.Message;
+
+                    userMessage = $"[Study Material: {file.OriginalFileName}]\n\n{material}\n\n---\n\nQuestion: {question}";
+                }
+                else if (file is not null)
+                {
+                    // File exists but no text could be extracted (e.g. scanned/image-only
+                    // PDF, or OCR failure). Tell the model so it can inform the user
+                    // instead of silently ignoring the attachment.
+                    userMessage =
+                        $"[Note: The user attached a file \"{file.OriginalFileName}\" but no readable text " +
+                        "could be extracted from it. Politely tell the user the file could not be read and " +
+                        "ask them to paste the text or upload a clearer file.]\n\n" +
+                        $"User message: {(string.IsNullOrWhiteSpace(cmd.Message) ? "(none)" : cmd.Message)}";
+                }
+                // If file is null (not found / not owned by user) fall back to the plain message.
             }
 
             // 4. Build system context
@@ -90,11 +118,14 @@ namespace StudyStation.API.Features.AI.Commands
 
             var systemContext = _prompts.BuildSystemContext(cmd.Context, subject);
 
-            // 5. Call Gemini
+            // 5. Call the AI service
             var aiResponse = await _ai.ChatAsync(userMessage, history, systemContext, ct);
 
-            // 6. Persist both messages
-            var userMsg = new AiMessage { ConversationId = conversation.Id, Role = "user", Content = cmd.Message, SentAt = DateTime.UtcNow };
+            // 6. Persist both messages (keep a readable record even for file-only messages)
+            var storedUserContent = !string.IsNullOrWhiteSpace(cmd.Message)
+                ? cmd.Message
+                : (cmd.UploadedFileId.HasValue ? "[Uploaded a file]" : cmd.Message);
+            var userMsg = new AiMessage { ConversationId = conversation.Id, Role = "user", Content = storedUserContent, SentAt = DateTime.UtcNow };
             var modelMsg = new AiMessage { ConversationId = conversation.Id, Role = "model", Content = aiResponse, SentAt = DateTime.UtcNow };
 
             _db.AiMessages.Add(userMsg);

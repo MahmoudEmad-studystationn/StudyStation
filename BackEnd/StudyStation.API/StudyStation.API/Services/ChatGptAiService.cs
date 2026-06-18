@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Tesseract;
 using UglyToad.PdfPig;
 
 namespace StudyStation.API.Services
@@ -18,6 +19,7 @@ namespace StudyStation.API.Services
         private readonly AiPromptBuilder _promptBuilder;
         private readonly ILogger<ChatGptAiService> _logger;
         private readonly HttpClient _httpClient;
+        private readonly IConfiguration _config;
         private readonly int _timeout;
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -41,6 +43,7 @@ namespace StudyStation.API.Services
             _promptBuilder = promptBuilder;
             _logger = logger;
             _httpClient = httpClient;
+            _config = config;
 
             var baseUrl = config["AI:ChatGptBaseUrl"]
                 ?? throw new InvalidOperationException("ChatGPT base URL not configured. Set AI:ChatGptBaseUrl in appsettings.json.");
@@ -97,13 +100,7 @@ namespace StudyStation.API.Services
             }
         }
 
-        // ─── Summary ───────────────────────────────────────────────────────────
 
-        public async Task<string> SummarizeAsync(string content, string topic, CancellationToken ct = default)
-        {
-            var prompt = _promptBuilder.BuildSummaryPrompt(topic, content);
-            return await GenerateSimpleResponseAsync(prompt, ct);
-        }
 
         // ─── Quiz Generation ──────────────────────────────────────────────────
 
@@ -139,7 +136,7 @@ namespace StudyStation.API.Services
         public async Task<List<AiFlashcardDto>> GenerateFlashcardsAsync(
             string topic, int count, string? sourceMaterial = null, CancellationToken ct = default)
         {
-            var prompt = _promptBuilder.BuildFlashcardsPrompt(topic, count, sourceMaterial);
+            var prompt = _promptBuilder.BuildFlashcardPrompt(topic, count, sourceMaterial);
             var json = await GenerateJsonResponseAsync(prompt, ct);
 
             try
@@ -233,78 +230,15 @@ namespace StudyStation.API.Services
             }
         }
 
-        // ─── Group Session Analysis ───────────────────────────────────────────
-
-        public async Task<GroupSessionAnalyticsDto> AnalyzeGroupSessionAsync(
-            string chatLog, string subject, CancellationToken ct = default)
-        {
-            var prompt = _promptBuilder.BuildGroupSessionAnalysisPrompt(chatLog, subject);
-            var json = await GenerateJsonResponseAsync(prompt, ct);
-
-            try
-            {
-                var raw = JsonSerializer.Deserialize<GroupSessionRaw>(json, _jsonOptions)
-                    ?? throw new InvalidOperationException("Null deserialization result");
-
-                return new GroupSessionAnalyticsDto
-                {
-                    GroupSummary = raw.GroupSummary ?? string.Empty,
-                    MeetingNotes = raw.MeetingNotes ?? string.Empty,
-                    KeyTakeaways = raw.KeyTakeaways ?? new(),
-                    MainDiscussionPoints = raw.MainDiscussionPoints ?? new(),
-                    SuggestedFollowUpTopics = raw.SuggestedFollowUpTopics ?? new(),
-                    Flashcards = raw.Flashcards?.Count > 0
-                        ? new AiFlashcardSetDto
-                        {
-                            Topic = subject,
-                            Title = $"Group Flashcards — {subject}",
-                            Flashcards = raw.Flashcards.Select(f => new AiFlashcardDto
-                            {
-                                Front = f.Front ?? string.Empty,
-                                Back = f.Back ?? string.Empty,
-                                Topic = subject
-                            }).ToList()
-                        }
-                        : null,
-                    TeamQuiz = raw.TeamQuiz?.Count > 0
-                        ? new AiQuizDto
-                        {
-                            Topic = subject,
-                            Title = $"Team Quiz — {subject}",
-                            Questions = raw.TeamQuiz.Select(q => new AiQuizQuestionDto
-                            {
-                                QuestionText = q.QuestionText ?? string.Empty,
-                                QuestionType = q.QuestionType ?? "MCQ",
-                                Options = q.Options,
-                                CorrectAnswer = q.CorrectAnswer ?? string.Empty,
-                                Explanation = q.Explanation ?? string.Empty,
-                                DifficultyLevel = q.DifficultyLevel ?? "Medium"
-                            }).ToList()
-                        }
-                        : null,
-                    GeneratedAt = DateTime.UtcNow
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to parse group session JSON: {Json}", json);
-                return new GroupSessionAnalyticsDto
-                {
-                    GroupSummary = "Analysis could not be parsed.",
-                    GeneratedAt = DateTime.UtcNow
-                };
-            }
-        }
-
         // ─── Explain ──────────────────────────────────────────────────────────
 
-        public Task<string> ExplainConceptAsync(string concept, string level = "simple", string? sourceMaterial = null, CancellationToken ct = default)
-            => GenerateSimpleResponseAsync(_promptBuilder.BuildExplainPrompt(concept, level, sourceMaterial), ct);
+        public Task<string> ExplainConceptAsync(string concept, string? sourceMaterial = null, CancellationToken ct = default)
+            => GenerateSimpleResponseAsync(_promptBuilder.BuildExplainPrompt(concept, sourceMaterial), ct);
 
-        // ─── Key Concepts ─────────────────────────────────────────────────────
+        // ─── Summarize ────────────────────────────────────────────────────────
 
-        public Task<string> ExtractKeyConceptsAsync(string content, CancellationToken ct = default)
-            => GenerateSimpleResponseAsync(_promptBuilder.BuildKeyConceptsPrompt(content), ct);
+        public Task<string> SummarizeAsync(string content, CancellationToken ct = default)
+            => GenerateSimpleResponseAsync(_promptBuilder.BuildSummarizePrompt(content), ct);
 
         // ─── Recommendations ──────────────────────────────────────────────────
 
@@ -316,11 +250,6 @@ namespace StudyStation.API.Services
             var prompt = _promptBuilder.BuildRecommendationsPrompt(weak, strong, subjects, memory.LastStudiedAt);
             return GenerateSimpleResponseAsync(prompt, ct);
         }
-
-        // ─── Material Q&A ─────────────────────────────────────────────────────
-
-        public Task<string> AnswerFromMaterialAsync(string question, string material, CancellationToken ct = default)
-            => GenerateSimpleResponseAsync(_promptBuilder.BuildMaterialQaPrompt(question, material), ct);
 
         // ─── PDF Extraction ───────────────────────────────────────────────────
 
@@ -355,6 +284,49 @@ namespace StudyStation.API.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to extract text from PDF: {Message}", ex.Message);
+                return Task.FromResult(string.Empty);
+            }
+        }
+
+        // ─── Image OCR Extraction ─────────────────────────────────────────────
+
+        public Task<string> ExtractTextFromImageAsync(Stream imageStream, CancellationToken ct = default)
+        {
+            try
+            {
+                if (imageStream.CanSeek) imageStream.Seek(0, SeekOrigin.Begin);
+
+                var tessdataPath = _config["AI:TessdataPath"] ?? "tessdata";
+
+                // Try English + Arabic; fall back to English only
+                var language = "eng";
+                var araPath = Path.Combine(tessdataPath, "ara.traineddata");
+                if (File.Exists(araPath))
+                    language = "eng+ara";
+
+                using var engine = new TesseractEngine(tessdataPath, language, EngineMode.Default);
+
+                // Read image bytes into a Pix
+                using var ms = new MemoryStream();
+                imageStream.CopyTo(ms);
+                var imageBytes = ms.ToArray();
+
+                using var pix = Pix.LoadFromMemory(imageBytes);
+                using var page = engine.Process(pix);
+
+                var text = page.GetText()?.Trim() ?? string.Empty;
+                var confidence = page.GetMeanConfidence();
+
+                if (string.IsNullOrWhiteSpace(text))
+                    _logger.LogWarning("OCR returned empty text — image may not contain readable text.");
+                else
+                    _logger.LogInformation("OCR extracted {CharCount} chars with {Confidence:P0} confidence.", text.Length, confidence);
+
+                return Task.FromResult(text);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to extract text from image via OCR: {Message}", ex.Message);
                 return Task.FromResult(string.Empty);
             }
         }
@@ -473,15 +445,6 @@ namespace StudyStation.API.Services
             public List<QuizQuestionRaw>? QuizQuestions { get; set; }
         }
 
-        private class GroupSessionRaw
-        {
-            public string? GroupSummary { get; set; }
-            public string? MeetingNotes { get; set; }
-            public List<string>? KeyTakeaways { get; set; }
-            public List<string>? MainDiscussionPoints { get; set; }
-            public List<string>? SuggestedFollowUpTopics { get; set; }
-            public List<FlashcardRaw>? Flashcards { get; set; }
-            public List<QuizQuestionRaw>? TeamQuiz { get; set; }
-        }
+
     }
 }

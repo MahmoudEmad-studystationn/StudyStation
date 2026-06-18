@@ -1,12 +1,12 @@
 namespace StudyStation.API.Features.AI.DTOs
 {
-    // ─── Shared request used by quiz, flashcard, and summary generators ────────
+    // ─── Shared request used by quiz generator ──────────────────────────────────
 
     public class AiGenerateRequestDto
     {
         public string Topic { get; set; } = string.Empty;
 
-        /// <summary>Number of items to generate (questions / flashcards).</summary>
+        /// <summary>Number of items to generate (questions).</summary>
         public int Count { get; set; } = 10;
 
         /// <summary>"Easy" | "Medium" | "Hard" | "Mixed"</summary>
@@ -22,33 +22,37 @@ namespace StudyStation.API.Features.AI.DTOs
         public string? Content { get; set; }
     }
 
-    public class AiSummarizeRequestDto
-    {
-        public string Topic { get; set; } = string.Empty;
-        public string? Content { get; set; }
-        public int? UploadedFileId { get; set; }
-    }
-
-    public class AiExplainRequestDto
-    {
-        public string Concept { get; set; } = string.Empty;
-
-        /// <summary>"simple" | "detailed" | "eli5"</summary>
-        public string Level { get; set; } = "simple";
-
-        /// <summary>Id of an already-uploaded file whose content will be explained.</summary>
-        public int? UploadedFileId { get; set; }
-
-        /// <summary>Raw text content provided directly by the caller to be explained.</summary>
-        public string? Content { get; set; }
-    }
-
     // ─── Generic AI text response ──────────────────────────────────────────────
 
     public class AiTextResponseDto
     {
         public string Result { get; set; } = string.Empty;
         public int? SavedContentId { get; set; }
+    }
+
+    // ─── Explain a concept request ──────────────────────────────────────────────
+
+    public class AiExplainRequestDto
+    {
+        /// <summary>The concept/term to explain.</summary>
+        public string Concept { get; set; } = string.Empty;
+
+        /// <summary>Id of an already-uploaded file to ground the explanation in (optional).</summary>
+        public int? UploadedFileId { get; set; }
+
+        /// <summary>Raw text content to ground the explanation in (optional).</summary>
+        public string? Content { get; set; }
+    }
+
+    // ─── Summarize request ──────────────────────────────────────────────────────
+
+    public class AiSummarizeRequestDto
+    {
+        /// <summary>Text/sentence to summarize. Provide this or UploadedFileId.</summary>
+        public string? Content { get; set; }
+
+        /// <summary>Id of an already-uploaded file (PDF/text/image) to summarize.</summary>
+        public int? UploadedFileId { get; set; }
     }
 
     // ─── Generated-content list item ──────────────────────────────────────────
