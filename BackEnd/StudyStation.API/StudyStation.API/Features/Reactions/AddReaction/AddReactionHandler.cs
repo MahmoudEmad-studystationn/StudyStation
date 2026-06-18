@@ -1,6 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using StudyStation.API.Data;
+using StudyStation.API.Features.Notifications.Commands;
+using StudyStation.API.Features.Notifications.Models;
 using StudyStation.API.Models;
 using System.Security.Claims;
 
@@ -10,11 +12,19 @@ namespace StudyStation.API.Features.Reactions.AddReaction
     {
         private readonly DatabaseContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMediator _mediator;
+        private readonly ILogger<AddReactionHandler> _logger;
 
-        public AddReactionHandler(DatabaseContext context, IHttpContextAccessor httpContextAccessor)
+        public AddReactionHandler(
+            DatabaseContext context,
+            IHttpContextAccessor httpContextAccessor,
+            IMediator mediator,
+            ILogger<AddReactionHandler> logger)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _mediator = mediator;
+            _logger = logger;
         }
 
         public async Task<AddReactionResponse> Handle(AddReactionCommand request, CancellationToken cancellationToken)
@@ -88,8 +98,65 @@ namespace StudyStation.API.Features.Reactions.AddReaction
             _context.Reactions.Add(reaction);
             await _context.SaveChangesAsync(cancellationToken);
 
-            // 6. إرجاع الرد
+            // 6. إرسال إشعار للمالك (بوست أو كومنت) — فقط عند إضافة تفاعل جديد
+            await TrySendLikeNotificationAsync(request, currentUserId, reaction.Id, cancellationToken);
+
+            // 7. إرجاع الرد
             return new AddReactionResponse { ReactionId = reaction.Id };
+        }
+
+        private async Task TrySendLikeNotificationAsync(
+            AddReactionCommand request,
+            int senderId,
+            int reactionId,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                int recipientId;
+                string targetTitle;
+
+                if (request.PostId.HasValue)
+                {
+                    var post = await _context.Posts
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(p => p.Id == request.PostId.Value, cancellationToken);
+
+                    if (post == null) return;
+                    recipientId = post.UserId;
+                    targetTitle = post.Title;
+                }
+                else if (request.CommentId.HasValue)
+                {
+                    var comment = await _context.Comments
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(c => c.Id == request.CommentId.Value, cancellationToken);
+
+                    if (comment == null) return;
+                    recipientId = comment.UserId;
+                    targetTitle = comment.Content.Length > 50
+                        ? comment.Content[..50] + "..."
+                        : comment.Content;
+                }
+                else
+                {
+                    return;
+                }
+
+                await _mediator.Send(new CreateNotificationCommand
+                {
+                    RecipientId = recipientId,
+                    SenderId = senderId,
+                    Type = NotificationType.Like,
+                    TargetTitle = targetTitle,
+                    ReferenceId = reactionId
+                }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                // Notification failure should never break the main flow
+                _logger.LogWarning(ex, "Failed to send like notification for reaction by user {SenderId}.", senderId);
+            }
         }
     }
 }

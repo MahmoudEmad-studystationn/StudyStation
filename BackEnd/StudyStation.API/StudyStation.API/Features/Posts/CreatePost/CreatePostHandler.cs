@@ -1,5 +1,8 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using StudyStation.API.Data;
+using StudyStation.API.Features.Notifications.Commands;
+using StudyStation.API.Features.Notifications.Models;
 using StudyStation.API.Models;
 using System.Security.Claims;
 
@@ -9,17 +12,24 @@ namespace StudyStation.API.Features.Posts.CreatePost
     {
         private readonly DatabaseContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMediator _mediator;
+        private readonly ILogger<CreatePostHandler> _logger;
 
-        public CreatePostHandler(DatabaseContext context, IHttpContextAccessor httpContextAccessor)
+        public CreatePostHandler(
+            DatabaseContext context,
+            IHttpContextAccessor httpContextAccessor,
+            IMediator mediator,
+            ILogger<CreatePostHandler> logger)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _mediator = mediator;
+            _logger = logger;
         }
 
         public async Task<CreatePostResponse> Handle(CreatePostCommand request, CancellationToken cancellationToken)
         {
             // 1. الحصول على هوية المستخدم من الـ Token
-            // الكود الجديد
             var userIdString = _httpContextAccessor.HttpContext?.User.Claims
                                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -33,8 +43,21 @@ namespace StudyStation.API.Features.Posts.CreatePost
                 throw new Exception("Invalid User ID format in token.");
             }
 
+            // 2. التحقق من وجود البوست الأصلي عند إعادة النشر
+            Post? parentPost = null;
+            if (request.ParentPostId.HasValue)
+            {
+                parentPost = await _context.Posts
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.Id == request.ParentPostId.Value, cancellationToken);
 
-            // 2. إنشاء كائن المنشور الجديد
+                if (parentPost == null)
+                {
+                    throw new KeyNotFoundException("The original post you are sharing does not exist.");
+                }
+            }
+
+            // 3. إنشاء كائن المنشور الجديد
             var post = new Post
             {
                 Title = request.Title,
@@ -46,15 +69,45 @@ namespace StudyStation.API.Features.Posts.CreatePost
                 UpdatedAt = DateTime.UtcNow
             };
 
-            // 3. إضافة المنشور إلى قاعدة البيانات وحفظ التغييرات
+            // 4. إضافة المنشور إلى قاعدة البيانات وحفظ التغييرات
             _context.Posts.Add(post);
             await _context.SaveChangesAsync(cancellationToken);
 
-            // 4. إرجاع الرد
+            // 5. إرسال إشعار لصاحب البوست الأصلي عند إعادة النشر (Share)
+            if (parentPost != null)
+            {
+                await TrySendShareNotificationAsync(userId, post.Id, parentPost, cancellationToken);
+            }
+
+            // 6. إرجاع الرد
             return new CreatePostResponse
             {
                 PostId = post.Id
             };
+        }
+
+        private async Task TrySendShareNotificationAsync(
+            int senderId,
+            int newPostId,
+            Post originalPost,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _mediator.Send(new CreateNotificationCommand
+                {
+                    RecipientId = originalPost.UserId,
+                    SenderId = senderId,
+                    Type = NotificationType.System,
+                    TargetTitle = originalPost.Title,
+                    ReferenceId = newPostId
+                }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                // Notification failure should never break the main flow
+                _logger.LogWarning(ex, "Failed to send share notification by user {SenderId} for original post {OriginalPostId}.", senderId, originalPost.Id);
+            }
         }
     }
 }
