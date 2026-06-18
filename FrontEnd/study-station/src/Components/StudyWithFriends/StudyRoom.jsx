@@ -15,7 +15,6 @@ import {
     getTasks,
     getRoomMembers,
 } from "../Services/studyWithFriendsService";
-import MembersPanel from "./MembersPanel";
 
 const AV_PALETTE = [
     { background: "linear-gradient(135deg,#2C3E50,#3D718D)" },
@@ -346,7 +345,6 @@ export default function StudyRoom() {
 
                 <div style={{ borderRight: `1px solid ${border}`, background: surface, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
                     <TimerStudyRoom roomId={roomId} sharedTimer={sharedTimer} onStart={handleStart} onStop={handleStop} />
-                    <MembersPanel members={members} onlineCount={onlineCount} />
                     <ToDoStudyRoom
                         tasks={tasks}
                         onAdd={handleAddTask}
