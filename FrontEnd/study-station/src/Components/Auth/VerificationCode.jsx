@@ -136,7 +136,9 @@ export default function VerificationCode() {
             });
 
             setTimeout(() => {
-                navigate(`/reset-password?email=${encodeURIComponent(email)}&code=${verificationCode}`);
+                navigate("/reset-password", {
+                    state: { email: email, code: verificationCode }
+                });
             }, 2200);
         } else {
             toast.error(result.message || "Invalid verification code", {

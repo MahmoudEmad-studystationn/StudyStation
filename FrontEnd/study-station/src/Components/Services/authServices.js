@@ -18,18 +18,27 @@ export async function signUpApi(formData) {
         return { success: true, data };
 
     } catch (error) {
+        console.log("SignUp Error Response:", error.response?.data); // ← لتشوف إيه اللي بييجي
+
         const errData = error.response?.data;
         let errMsg = "Registration failed.";
 
-        if (errData?.errors) {
-            if (Array.isArray(errData.errors) && errData.errors.length > 0) {
-                errMsg = errData.errors[0];
-            } else if (typeof errData.errors === 'object') {
-                const firstKey = Object.keys(errData.errors)[0];
-                errMsg = errData.errors[firstKey][0];
+        if (errData) {
+            if (typeof errData === 'string') {
+                errMsg = errData;
+            } else if (errData.errors) {
+                if (Array.isArray(errData.errors) && errData.errors.length > 0) {
+                    errMsg = errData.errors[0];
+                } else if (typeof errData.errors === 'object') {
+                    const firstKey = Object.keys(errData.errors)[0];
+                    const firstVal = errData.errors[firstKey];
+                    errMsg = Array.isArray(firstVal) ? firstVal[0] : firstVal;
+                }
+            } else if (errData.message) {
+                errMsg = errData.message;
+            } else if (errData.title) {
+                errMsg = errData.title;
             }
-        } else if (errData?.message) {
-            errMsg = errData.message;
         }
 
         return { success: false, message: errMsg };
@@ -84,13 +93,14 @@ export async function resetPasswordApi({ email, token, password }) {
             code: token,
             newPassword: password
         };
-
         const { data } = await axios.post(`${baseUrl}users/reset-password`, payload);
         return { success: true, data, message: data.message || "Password reset successfully!" };
     } catch (error) {
+        let errorMessage = "Failed to reset password";
+
         if (error.response?.data?.errors) {
             const errors = error.response.data.errors;
-            if (typeof errors === 'object') {
+            if (typeof errors === 'object' && !Array.isArray(errors)) {
                 const firstKey = Object.keys(errors)[0];
                 errorMessage = errors[firstKey][0] || errors[firstKey];
             } else if (Array.isArray(errors)) {

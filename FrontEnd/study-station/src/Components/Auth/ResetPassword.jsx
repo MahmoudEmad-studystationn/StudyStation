@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { resetPasswordApi } from "../Services/authServices";
@@ -67,26 +67,19 @@ export default function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
 
-    const code = searchParams.get("code");
-    const email = searchParams.get("email");
+    const location = useLocation();
+    const { email, code } = location.state || {};
 
-    // Debug: اطبع الـ code والـ email
     useEffect(() => {
-        console.log("Code from URL:", code);
-        console.log("Email from URL:", email);
-        
         if (!code || !email) {
-            console.warn("Missing code or email in URL parameters");
-        } else {
-            console.log("Code and email are present - ready to reset");
+            console.warn("Missing code or email");
         }
     }, [code, email]);
 
     const handleSubmit = async () => {
         if (!code || !email) {
-            toast.error("Missing reset information. Please use the link from your email.");
+            toast.error("Missing reset information. Please try again.");
             return;
         }
 
@@ -98,7 +91,7 @@ export default function ResetPassword() {
         setIsLoading(true);
 
         const result = await resetPasswordApi({
-            email: decodeURIComponent(email),
+            email,
             token: code,
             password: newPassword
         });
@@ -109,9 +102,9 @@ export default function ResetPassword() {
             toast.success("Password changed successfully!");
             setTimeout(() => navigate("/login"), 2500);
         } else {
-            // اعرض الـ error فقط، بدون أي redirect
             toast.error(result.message || "Failed to reset password");
         }
+
         setButtonStyle(getBaseButtonStyle());
     };
 
@@ -133,7 +126,7 @@ export default function ResetPassword() {
                             Reset Password
                         </h1>
                         <p className="text-sm sm:text-base" style={{ color: isDark ? "#ffffff" : COLOR_TEXT }}>
-                            Enter your new password 
+                            Enter your new password
                         </p>
                     </div>
 
