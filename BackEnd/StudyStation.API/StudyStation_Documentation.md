@@ -1,7 +1,7 @@
 # 📚 StudyStation — Complete Project Documentation
 
 > **Repository**: `MahmoudEmad-studystationn/StudyStation`
-> **Generated**: June 16, 2026
+> **Generated**: June 18, 2026
 > **Stack**: ASP.NET Core 9 (Backend) + React 18 / Vite (Frontend)
 
 ---
@@ -28,6 +28,7 @@
 | Email | SMTP via Gmail (`studystation835@gmail.com`) |
 | AI Service | ChatGPT Integration (`gpt-api.metaphilia.com`) |
 | PDF Parsing | UglyToad.PdfPig |
+| OCR Engine | Tesseract 5.2.0 (English + Arabic support) |
 
 ### Frontend (`FrontEnd/study-station/`)
 | Layer | Technology |
@@ -61,19 +62,23 @@ StudyStation/
 │           ├── appsettings.json        # Config (DB, JWT, Email, AI)
 │           ├── Controllers/            # API Controllers
 │           │   ├── AdminController.cs
-│           │   ├── AiController.cs     # Standalone AI chat, uploads, generation
-│           │   ├── AiRoomController.cs # Room-level group AI chat & analytics
-│           │   ├── AiSessionController.cs # Solo session AI chat & analytics
-│           │   ├── AiTestController.cs # Testing endpoints for AI integration
+│           │   ├── AiController.cs     # Standalone AI chat, uploads, generation, OCR
+│           │   ├── AiSessionController.cs # Solo session AI analytics
 │           │   ├── CommentsController.cs
 │           │   ├── PostsController.cs
 │           │   ├── ProfileController.cs
+│           │   ├── ResendCodeController.cs
+│           │   ├── ResetPasswordController.cs
 │           │   ├── StudyRoomsController.cs
-│           │   └── UsersController.cs
+│           │   ├── UsersController.cs
+│           │   └── VerifyEmailController.cs
 │           ├── Data/                   # DatabaseContext (EF Core)
 │           ├── Features/               # CQRS feature modules
 │           │   ├── Admin/
 │           │   ├── AI/                 # AI assistant and memory logic
+│           │   │   ├── Commands/       # UploadStudyMaterial, ExplainConcept, SummarizeContent, etc.
+│           │   │   ├── Queries/        # GetSessionAnalytics, GetLearningMemory, etc.
+│           │   │   └── Models/
 │           │   ├── Comments/
 │           │   ├── Library/
 │           │   ├── Notifications/
@@ -83,9 +88,11 @@ StudyStation/
 │           │   ├── SavedItems/
 │           │   └── StudyWithFriends/
 │           ├── Hubs/                   # SignalR hubs (StudyHub, NotificationHub)
+│           ├── Middleware/             # ExceptionHandlingMiddleware
 │           ├── Migrations/             # EF Core migrations
 │           ├── Models/                 # Core domain models
-│           └── Services/              # Shared services (JWT, Email, AI)
+│           ├── Services/              # Shared services (JWT, Email, AI)
+│           └── tessdata/               # Arabic + English OCR language models
 └── FrontEnd/
     └── study-station/
         ├── package.json
@@ -100,6 +107,7 @@ StudyStation/
             │   └── WelcomePage/
             └── Pages/                 # LoadingScreen, WelcomePage
 ```
+
 
 ---
 
@@ -349,8 +357,8 @@ Id, ContentType ("Post"/"Resource"/"Room"), ContentId, ReporterId (FK), Reason, 
 | OriginalFileName | string | |
 | StoredFileName | string | GUID name on disk |
 | FilePath | string | Server path |
-| FileType | string | "PDF" \| "Text" \| "Other" |
-| ExtractedText | string? | Plain text extracted from document |
+| FileType | string | "PDF" \| "Text" \| "Image" \| "Other" |
+| ExtractedText | string? | Plain text extracted from document/image |
 | FileSizeBytes | long | |
 | UploadedAt | DateTime | |
 | IsProcessed | bool | |
@@ -512,9 +520,15 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/api/Profile` | ✅ | Get current user's profile |
+| GET | `/api/Profile` | ✅ | Get current user's profile with stats (study hours, tasks, sessions) |
 | PUT | `/api/Profile` | ✅ | Update profile (track, academicYear, dailyGoalHours) |
 | GET | `/api/Profile/dashboard` | ✅ | Get profile dashboard with stats |
+
+**Profile Data** (`ProfileDto`):
+- **Id / Email / FirstName / LastName / DateOfBirth / Gender**
+- **Track / AcademicYear**
+- **CurrentStreak**
+- **TotalStudyHours / TasksDone / TotalSessions / ThisWeekHours**
 
 **Dashboard Data** (`UserProfileDashboardDto`):
 - **UserDetails**: Name, Track, AcademicYear, CurrentStreak
@@ -579,51 +593,24 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | GET | `/api/Ai/conversations/{conversationId}/messages` | ✅ | Get all messages in a specific conversation |
 | DELETE | `/api/Ai/conversations/{conversationId}` | ✅ | Delete conversation + messages |
 | POST | `/api/Ai/chat` | ✅ | Send message to AI assistant (creates new conversation if `conversationId` is null) |
-| POST | `/api/Ai/upload` | ✅ | Upload study material file (PDF, TXT, MD) up to 20MB for AI context injection |
-| POST | `/api/Ai/summarize` | ✅ | Generate a summary from a topic, content, or uploaded file |
+| POST | `/api/Ai/upload` | ✅ | Upload study material file (PDF, TXT, MD, JPG, PNG, GIF, BMP, WEBP) up to 20MB for AI context injection and OCR text extraction |
+| POST | `/api/Ai/summarize` | ✅ | Generate a summary from direct content or uploaded study material |
 | POST | `/api/Ai/quiz` | ✅ | Generate quiz questions from topic, content, or uploaded file |
 | POST | `/api/Ai/flashcards` | ✅ | Generate flashcards from topic, content, or uploaded file |
-| POST | `/api/Ai/explain` | ✅ | Explain a concept at a given level (simple \| detailed \| eli5) |
+| POST | `/api/Ai/explain` | ✅ | Explain a concept in simple terms (optionally grounded in uploaded material or direct content) |
 | GET | `/api/Ai/generated-content` | ✅ | Get all generated content list (filtered by `contentType`, `sourceContext`) |
 | GET | `/api/Ai/generated-content/{contentId}` | ✅ | Get details of specific generated content |
 | GET | `/api/Ai/learning-memory` | ✅ | Get user's learning memory (aggregations, weak/strong topics, recommendations) |
 
 ---
 
-### 6.12 AI Assistant — Study Rooms (`/api/AI/rooms`)
+### 6.12 AI Assistant — Solo Sessions (`/api/AI/sessions`)
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| POST | `/api/AI/rooms/{roomId}/chat` | ✅ | Send message to shared room AI chat (broadcasts message/response to members) |
-| GET | `/api/AI/rooms/{roomId}/conversations` | ✅ | Get all shared AI conversations for a room |
-| GET | `/api/AI/rooms/{roomId}/conversations/{conversationId}/messages` | ✅ | Get all messages in a shared room AI conversation |
-| DELETE | `/api/AI/rooms/{roomId}/conversations/{conversationId}` | ✅ | Delete shared room AI conversation (room owner only) |
-| POST | `/api/AI/rooms/{roomId}/analyze` | ✅ | Analyze group session (notes, takeaways, flashcards, team quiz) |
-| GET | `/api/AI/rooms/{roomId}/analytics` | ✅ | Get most recent group session analytics |
-| POST | `/api/AI/rooms/{roomId}/flashcards` | ✅ | Generate room-specific flashcards |
-| POST | `/api/AI/rooms/{roomId}/quiz` | ✅ | Generate room-specific quiz |
-| GET | `/api/AI/rooms/{roomId}/generated-content` | ✅ | Get all generated content for room |
-
----
-
-### 6.13 AI Assistant — Solo Sessions (`/api/AI/sessions`)
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/AI/sessions/{sessionId}/chat` | ✅ | Chat with AI in context of active solo study session |
 | POST | `/api/AI/sessions/{sessionId}/analyze` | ✅ | Trigger AI analysis of solo session (generates summary, key concepts, recommendations) |
 | GET | `/api/AI/sessions/{sessionId}/analytics` | ✅ | Get solo session analytics |
 | POST | `/api/AI/sessions/{sessionId}/quiz` | ✅ | Generate solo session-specific quiz |
-| POST | `/api/AI/sessions/{sessionId}/flashcards` | ✅ | Generate solo session-specific flashcards |
-
----
-
-### 6.14 AI Assistant — Test Endpoints (`/api/AI/test`)
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/AI/test/chat` | ❌ | Test ChatGPT API with simple prompt (no auth) |
-| POST | `/api/AI/test/explain` | ❌ | Test explain concept (no auth) |
 
 ---
 
@@ -638,16 +625,14 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 
 ### AI Service (IAiService / ChatGptAiService)
 - `ChatAsync(message, history, systemContext)` → Multi-turn ChatGPT chat API call
-- `SummarizeAsync(content, topic)` → AI-generated topic summary
+- `SummarizeAsync(content)` → AI-generated summary from text/content
 - `GenerateQuizAsync(topic, count, difficulty, type, source)` → Generate quiz questions
 - `GenerateFlashcardsAsync(topic, count, source)` → Generate flashcards set
 - `AnalyzeSessionAsync(content, subject)` → Solo session analysis DTO
-- `AnalyzeGroupSessionAsync(chatLog, subject)` → Room session analysis DTO
-- `ExplainConceptAsync(concept, level)` → Explains concept (simple, detailed, ELI5)
-- `ExtractKeyConceptsAsync(content)` → Returns bullet-list of key concepts
+- `ExplainConceptAsync(concept, source)` → Explains concept in simple terms, optionally grounded in source material
 - `GenerateRecommendationsAsync(memory)` → Tailors tips based on student memory stats
-- `AnswerFromMaterialAsync(question, material)` → Answers questions grounded in PDF/TXT
 - `ExtractTextFromPdfAsync(stream)` → Extracts text from PDF stream using `PdfPig`
+- `ExtractTextFromImageAsync(stream)` → Extracts text from images using `Tesseract` OCR (English & Arabic support)
 
 ### AiPromptBuilder
 - centralizes prompt template structuring and JSON format instructions for ChatGPT.
@@ -663,8 +648,6 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 - `UserLeft(int userId, string name)` — User left room
 - `TaskCreated/Updated/Deleted(object/int)` — Task events
 - `FocusSessionStarted/Stopped(object/int)` — Focus session events
-- `AiMessageReceived(object message)` — Shared chat message sent by user to AI in room
-- `AiResponseReceived(object response)` — Response generated by AI in room
 
 **Server Methods**:
 - `JoinRoomGroup(string roomId)` — Join SignalR group
@@ -685,12 +668,13 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 3. HTTPS Redirection
 4. Routing
 5. CORS middleware
-6. Authentication (JWT Bearer)
-7. Authorization
-8. Map Controllers
-9. Map SignalR Hubs (NotificationHub, StudyHub)
-10. Seed Admin Account
-11. Run
+6. Exception Handling Middleware
+7. Authentication (JWT Bearer)
+8. Authorization
+9. Map Controllers
+10. Map SignalR Hubs (NotificationHub, StudyHub)
+11. Seed Admin Account
+12. Run
 ```
 
 **CORS Origins**: `localhost:5173`, `localhost:5174`, `localhost:5177`, `localhost:7152`, `study-station.runasp.net`, `study-station-alpha.vercel.app`, `study-station-51en40xbc-mariams-projects-2d4c7ff0.vercel.app`
@@ -763,6 +747,14 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | 2026-06-14 | SwitchToChatGptProvider | Switched AI provider to ChatGPT (gpt-api.metaphilia.com) |
 | 2026-06-14 | AddSharedRoomAiChat | Add AI chat inside shared study rooms |
 | 2026-06-14 | editFocusSession | Focus session entity edit (timer fixes, added EndTime) |
+| 2026-06-16 | editChatbot | Chatbot model configuration adjustments |
+| 2026-06-16 | editChatbot2 | Further chatbot model improvements |
+| 2026-06-16 | UpdateAiModels | AI database schema updates |
+| 2026-06-16 | AddImageOcrSupport | Added support for image uploads and Tesseract OCR text extraction |
+| 2026-06-16 | AutoMigration | Auto-generated database schema changes |
+| 2026-06-17 | repairChatbot | Repaired and simplified chatbot tables and configurations |
+| 2026-06-17 | RemoveUnusedChatbotFeatures | Removed unused/deleted room chatbot endpoints and command databases |
+| 2026-06-17 | UpdateDatabase | Database update sync |
 
 ---
 
@@ -779,6 +771,7 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | Microsoft.EntityFrameworkCore.SqlServer | 9.0.0 |
 | Microsoft.EntityFrameworkCore.Tools | 9.0.0 |
 | Scalar.AspNetCore | 2.12.46 |
+| Tesseract | 5.2.0 |
 | UglyToad.PdfPig | 0.1.9-alpha001-patch1 |
 
 ---
@@ -793,8 +786,8 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 6. **Admin seeding**: Automatic admin account creation on startup ensures admin access is always available.
 7. **Dual token auth**: Short-lived JWT (15 min) + long-lived refresh token (7 days) for security.
 8. **ChatGPT Integration**: Implemented via a central `IAiService` to allow provider swapping, utilizing system prompts and JSON schema formatting templates in `AiPromptBuilder`.
-9. **PDF Processing**: Integrated `UglyToad.PdfPig` to extract text from uploads dynamically, injecting context directly into ChatGPT prompts for document-level Q&A.
-10. **Context-Aware AI Chat & Memory**: Segregated general chat (standalone hub), solo session chat, and shared group room chat with automatic aggregation of topic proficiency in `UserLearningMemory`.
+9. **PDF & Image OCR Processing**: Integrated `UglyToad.PdfPig` to extract text from PDFs dynamically and `Tesseract` OCR to extract text from images (JPG, PNG, GIF, BMP, WEBP) in English and Arabic, injecting context directly into ChatGPT prompts for document-level Q&A.
+10. **Context-Aware AI Chat & Memory**: Segregated general chat (standalone hub) and solo session chat with automatic aggregation of topic proficiency in `UserLearningMemory`. Added central `ExceptionHandlingMiddleware` to handle errors globally and format consistent API responses.
 
 ---
 
