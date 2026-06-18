@@ -192,7 +192,7 @@ export default function TimerStudyRoom({ roomId, onStart, onStop, isActive, shar
     const modeLabel = mode === "focus" ? "Focus" : mode === "shortBreak" ? "Short Break" : "Long Break";
 
     return (
-        <div style={{ padding: "1.25rem", borderBottom: `1px solid ${border}` }}>
+        <div style={{ padding: "1.25rem", borderBottom: `1px solid ${border}`, flexShrink: 0, position: "relative", zIndex: 1 }}>
             {/* Section label */}
             <div style={{
                 fontSize: ".68rem", fontWeight: 800, letterSpacing: ".06em",

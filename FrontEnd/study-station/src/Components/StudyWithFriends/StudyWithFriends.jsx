@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../Theme/ThemeContext";
 import CreateRoomModal from "./CreateRoomModal";
-import { getAllRooms, getRoomById, joinRoom, deleteRoom } from "../Services/studyWithFriendsService";
+import { getAllRooms, getRoomById, joinRoom, deleteRoom, normalizeRoom, getMessages, normalizeMessage } from "../Services/studyWithFriendsService";
 
 const C = { navy: "#2C3E50", ocean: "#3D718D", teal: "#658FA5", sky: "#8FB7CC" };
 
@@ -52,36 +52,8 @@ function ConfirmModal({ isOpen, title, body, confirmLabel = "Confirm", danger = 
   );
 }
 
-function normalizeRoom(apiRoom, currentUserId) {
-  const currentCount = apiRoom.participantsCount
-    || apiRoom.members?.length
-    || apiRoom.participants?.length
-    || 0;
-  const maxCount = apiRoom.maxParticipants || null;
-  const fillPct = maxCount > 0 ? Math.round((currentCount / maxCount) * 100) : 0;
-  const members = apiRoom.members || apiRoom.participants || [];
-  const myId = currentUserId ? String(currentUserId) : null;
-  const isMember = !!(apiRoom.currentUserIsMember || apiRoom.isMember); const isOwner = myId && String(apiRoom.ownerId) === myId;
-
-  return {
-    id: apiRoom.id,
-    name: apiRoom.name,
-    subject: apiRoom.subject || "General",
-    desc: apiRoom.description || "No description available",
-    createdAt: apiRoom.createdAt || null,
-    isPublic: apiRoom.isPublic !== undefined ? apiRoom.isPublic : true,
-    roomCode: apiRoom.roomCode || null,
-    current: currentCount,
-    max: maxCount,
-    fill: fillPct,
-    full: maxCount ? currentCount >= maxCount : false,
-    members: members,
-    isMember: !!isMember,
-    isOwner: !!isOwner,
-  };
-}
-
 function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
+  const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const [joining, setJoining] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -111,7 +83,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
     setCodeError("");
     try {
       await joinRoom(room.id, !room.isPublic ? codeInput : undefined);
-      onJoin(room.name, room.id); // ← بس كده، مفيش showToast هنا
+      onJoin(room.name, room.id);
     } catch (err) {
       console.error("Join failed:", err);
       setCodeError(!room.isPublic ? "Invalid room code. Please try again." : (err.message || "Failed to join room."));
@@ -119,6 +91,7 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
       setJoining(false);
     }
   }
+
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -175,16 +148,22 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         }
       </div>
 
-      {/* Creation date*/}
+      {/* Member names preview */}
+      {room.members.length > 0 && (
+        <div style={{
+          fontSize: ".72rem", color: mutedColor, marginBottom: ".75rem",
+          lineHeight: 1.5, opacity: 0.85,
+        }}>
+          {room.members.slice(0, 4).map(m => m.userName || m.name).filter(Boolean).join(" · ")}
+          {room.members.length > 4 ? ` · +${room.members.length - 4} more` : ""}
+        </div>
+      )}
+
+      {/* Creation date */}
       {room.createdAt && (
         <div style={{
-          fontSize: ".72rem",
-          color: mutedColor,
-          marginBottom: ".9rem",
-          display: "flex",
-          alignItems: "center",
-          gap: 4,
-          opacity: 0.65
+          fontSize: ".72rem", color: mutedColor, marginBottom: ".9rem",
+          display: "flex", alignItems: "center", gap: 4, opacity: 0.65
         }}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
@@ -193,134 +172,103 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         </div>
       )}
 
-      {/* Members & Progress */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <div
-          style={{ display: "flex", alignItems: "center", position: 'relative' }}
-          onMouseEnter={() => room.current > 0 && setShowMembersTooltip(true)}
-          onMouseLeave={() => setShowMembersTooltip(false)}
-        >
-          {room.current > 0 ? (
-            <>
-              {/* عرض أول 4 members بأسمائهم */}
-              {(room.members.length > 0
-                ? room.members.slice(0, 4)
-                : Array.from({ length: Math.min(room.current, 4) }, (_, i) => ({ _placeholder: true, _index: i }))
-              ).map((member, i) => {
-                const isPlaceholder = !member || member._placeholder;
-                const name = isPlaceholder
-                  ? null
-                  : (member.userName || member.name || member.displayName || member.user?.userName || null);
-                const initials = name
-                  ? name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
-                  : null;  // لو مفيش اسم، خلي الـ div فاضي
+      {/* Members avatars */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", position: "relative" }}
+        onMouseEnter={() => room.current > 0 && setShowMembersTooltip(true)}
+        onMouseLeave={() => setShowMembersTooltip(false)}
+      >
+        {room.current > 0 ? (
+          <>
+            {(room.members.length > 0
+              ? room.members.slice(0, 4)
+              : Array.from({ length: Math.min(room.current, 4) }, (_, i) => ({ _placeholder: true, _index: i }))
+            ).map((member, i) => {
+              const isPlaceholder = !member || member._placeholder;
+              const name = isPlaceholder
+                ? null
+                : (member.userName || member.name || member.displayName || member.user?.userName || null);
+              const initials = name
+                ? name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
+                : null;
 
-                return (
-                  <div
-                    key={i}
-                    title={name || undefined}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      border: `3px solid ${cardBg}`,
-                      marginLeft: i === 0 ? 0 : -10,
-                      flexShrink: 0,
-                      background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
-                      zIndex: 5 - i,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: ".48rem",
-                      fontWeight: 800,
-                      color: "#fff",
-                    }}
-                  >
-                    {initials}
-                  </div>
-                );
-              })}
-
-              {/* لو في أكتر من 4 */}
-              {room.current > 4 && (
-                <div style={{
-                  width: 28, height: 28, borderRadius: "50%",
-                  border: `3px solid ${cardBg}`, marginLeft: -10, flexShrink: 0,
-                  background: isDarkMode ? "#2a2a2a" : "#e0e4e8",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: ".55rem", fontWeight: 700, color: mutedColor, zIndex: 0,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
-                }}>
-                  +{room.current - 4}
+              return (
+                <div
+                  key={i}
+                  title={name || undefined}
+                  style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    border: `3px solid ${cardBg}`, marginLeft: i === 0 ? 0 : -10,
+                    flexShrink: 0,
+                    background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
+                    zIndex: 5 - i,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: ".48rem", fontWeight: 800, color: "#fff",
+                  }}
+                >
+                  {initials}
                 </div>
-              )}
-            </>
-          ) : (
-            <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: "italic" }}>
-              No members yet
-            </span>
-          )}
+              );
+            })}
 
-          {/* Tooltip */}
-          {showMembersTooltip && room.current > 0 && (
-            <div style={{
-              position: "absolute", bottom: "35px", left: "50%",
-              transform: "translateX(-50%)",
-              background: isDarkMode ? "#2a2a2a" : "#fff",
-              padding: "8px 12px", borderRadius: "8px",
-              border: `1px solid ${isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-              fontSize: ".7rem", color: isDarkMode ? "#e0e0e0" : "#333",
-              whiteSpace: "nowrap", boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-              zIndex: 10, pointerEvents: "none",
-              display: "flex", flexDirection: "column", gap: 4,
-              minWidth: 120,
-            }}>
-              <div style={{ fontWeight: 700, marginBottom: 4, opacity: 0.6, fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".05em" }}>
-                {room.current} {room.current === 1 ? "member" : "members"}
-                {room.max ? ` / ${room.max} max` : ""}
+            {room.current > 4 && (
+              <div style={{
+                width: 28, height: 28, borderRadius: "50%",
+                border: `3px solid ${cardBg}`, marginLeft: -10, flexShrink: 0,
+                background: isDarkMode ? "#2a2a2a" : "#e0e4e8",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: ".55rem", fontWeight: 700, color: mutedColor, zIndex: 0,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+              }}>
+                +{room.current - 4}
               </div>
-              {room.members.slice(0, 6).map((m, i) => {
-                const name = m?.userName || m?.name || m?.displayName || m?.user?.userName || "Unknown";
-                return (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{
-                      width: 16, height: 16, borderRadius: "50%",
-                      background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
-                      flexShrink: 0, fontSize: ".45rem", fontWeight: 800, color: "#fff",
-                      display: "flex", alignItems: "center", justifyContent: "center"
-                    }}>
-                      {name[0]?.toUpperCase()}
-                    </div>
-                    <span>{name}</span>
-                  </div>
-                );
-              })}
-              {room.current > 6 && (
-                <div style={{ opacity: 0.5, fontSize: ".65rem" }}>+{room.current - 6} more</div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </>
+        ) : (
+          <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: "italic" }}>
+            No members yet
+          </span>
+        )}
 
-        {/* العداد والـ progress bar */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: ".72rem", fontWeight: 600, color: titleColor }}>
-            <IconUsers />
-            <span>{room.current}</span>
-            {room.max != null && (
-              <span>
-                <span style={{ opacity: 0.4 }}> / </span>
-                <span style={{ opacity: 0.7 }}>{room.max}</span>
-              </span>
+        {/* Tooltip */}
+        {showMembersTooltip && room.current > 0 && (
+          <div style={{
+            position: "absolute", bottom: "35px", left: "50%",
+            transform: "translateX(-50%)",
+            background: isDarkMode ? "#2a2a2a" : "#fff",
+            padding: "8px 12px", borderRadius: "8px",
+            border: `1px solid ${isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+            fontSize: ".7rem", color: isDarkMode ? "#e0e0e0" : "#333",
+            whiteSpace: "nowrap", boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            zIndex: 10, pointerEvents: "none",
+            display: "flex", flexDirection: "column", gap: 4,
+            minWidth: 120,
+          }}>
+            <div style={{ fontWeight: 700, marginBottom: 4, opacity: 0.6, fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".05em" }}>
+              {room.current} {room.current === 1 ? "member" : "members"}
+              {room.max ? ` / ${room.max} max` : ""}
+            </div>
+            {room.members.slice(0, 6).map((m, i) => {
+              const name = m?.userName || m?.name || m?.displayName || "Unknown";
+              return (
+                <div key={m.id ?? i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{
+                    width: 16, height: 16, borderRadius: "50%",
+                    background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
+                    flexShrink: 0, fontSize: ".45rem", fontWeight: 800, color: "#fff",
+                    display: "flex", alignItems: "center", justifyContent: "center"
+                  }}>
+                    {name[0]?.toUpperCase()}
+                  </div>
+                  <span>{name}</span>
+                </div>
+              );
+            })}
+            {room.current > 6 && (
+              <div style={{ opacity: 0.5, fontSize: ".65rem" }}>+{room.current - 6} more</div>
             )}
           </div>
-          {room.max != null && (
-            <div style={{ width: 50, height: 3, background: surface2, borderRadius: "999px", overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${room.fill}%`, background: accent }} />
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Room Code Input */}
@@ -332,17 +280,10 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
             value={codeInput}
             onChange={e => { setCodeInput(e.target.value); setCodeError(""); }}
             style={{
-              width: "100%",
-              padding: "7px 10px",
-              borderRadius: "8px",
-              marginBottom: "4px",
+              width: "100%", padding: "7px 10px", borderRadius: "8px", marginBottom: "4px",
               border: `1px solid ${codeError ? "#f87171" : accent + "55"}`,
-              background: surface2,
-              color: titleColor,
-              fontFamily: "inherit",
-              fontSize: ".8rem",
-              outline: "none",
-              boxSizing: "border-box"
+              background: surface2, color: titleColor, fontFamily: "inherit",
+              fontSize: ".8rem", outline: "none", boxSizing: "border-box"
             }}
             onKeyDown={e => e.key === "Enter" && handleJoin(e)}
             autoFocus
@@ -358,28 +299,20 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
 
       {/* Join Button */}
       <button
-        onClick={room.isMember ? () => { } : handleJoin}
-        disabled={room.full || joining || room.isMember}
+        onClick={room.isMember ? () => navigate(`/study-rooms/${room.id}`) : handleJoin}
+        disabled={room.full || joining}
         style={{
-          width: "100%",
-          padding: "8px",
-          borderRadius: "10px",
-          border: "none",
+          width: "100%", padding: "8px", borderRadius: "10px", border: "none",
           background: room.isMember ? "rgba(52,211,153,.12)" : room.full ? surface2 : (joining ? accent : C.navy),
           color: room.isMember ? "#34d399" : room.full ? mutedColor : "#fff",
-          fontFamily: "inherit",
-          fontSize: ".8rem",
-          fontWeight: 600,
-          cursor: (room.full || joining || room.isMember) ? "default" : "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "6px",
-          transition: "all .2s"
+          fontFamily: "inherit", fontSize: ".8rem", fontWeight: 600,
+          cursor: (room.full || joining) ? "default" : "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          gap: "6px", transition: "all .2s"
         }}
       >
         {room.isMember ? (
-          <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> Already Joined</>
+          <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg> Open Room</>
         ) : room.full ? (
           <><IconLock /> Full</>
         ) : joining ? (
@@ -406,9 +339,7 @@ function SkeletonCard({ isDarkMode }) {
       {[80, 55, 100, 40].map((w, i) => (
         <div key={i} style={{
           height: i === 0 ? 14 : i === 2 ? 50 : 12,
-          width: `${w}%`,
-          background: bg,
-          borderRadius: 6,
+          width: `${w}%`, background: bg, borderRadius: 6,
           marginBottom: i === 3 ? 0 : 12,
           animation: "pulse 1.5s ease-in-out infinite"
         }} />
@@ -429,7 +360,6 @@ export default function StudyWithFriends() {
   const [modalOpen, setModalOpen] = useState(false);
   const [toast, setToast] = useState({ visible: false, msg: "", type: "success" });
   const [confirm, setConfirm] = useState({ open: false, roomId: null, roomName: "" });
-  const [currentUserName, setCurrentUserName] = useState("");
 
   const currentUserId = (() => {
     try {
@@ -441,23 +371,6 @@ export default function StudyWithFriends() {
       return null;
     }
   })();
-
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-    fetch("https://study-station.runasp.net/api/Profile", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(r => r.json())
-      .then(data => {
-        const first = data.firstName || "";
-        const last = data.lastName || "";
-        const initials = (first[0] || "") + (last[0] || "");
-        setCurrentUserName(initials.toUpperCase());
-      })
-      .catch(() => { });
-  }, []);
-
 
   const bg = isDarkMode ? "#171717" : "#F3F4F6";
   const surface = isDarkMode ? "#1e1e1e" : "#fff";
@@ -478,6 +391,7 @@ export default function StudyWithFriends() {
     try {
       const data = await getAllRooms();
       const list = Array.isArray(data) ? data : data?.rooms ?? [];
+
       const detailed = await Promise.all(
         list.map(async (r) => {
           try {
@@ -488,7 +402,45 @@ export default function StudyWithFriends() {
           }
         })
       );
-      setRooms(detailed.map(r => normalizeRoom(r, currentUserId)));
+
+      const withMembers = await Promise.all(
+        detailed.map(async (r) => {
+          const normalized = normalizeRoom(r, currentUserId);
+
+          // لو الـ members مش بيجوا من الـ API، نجيب أسمائهم من الـ messages
+          const hasRealMembers = normalized.members.some(
+            m => m.userName && !m.userName.startsWith("Member ")
+          );
+
+          if (!hasRealMembers && normalized.current > 0) {
+            try {
+              const msgs = await getMessages(r.id);
+              const msgList = Array.isArray(msgs) ? msgs : (msgs?.messages ?? []);
+              const seenNames = new Set();
+              const namesFromMsgs = [];
+              for (const msg of msgList) {
+                const nm = normalizeMessage(msg);
+                if (nm.senderName && nm.senderName !== "Unknown" && !seenNames.has(nm.senderName)) {
+                  seenNames.add(nm.senderName);
+                  namesFromMsgs.push(nm.senderName);
+                }
+              }
+              if (namesFromMsgs.length > 0) {
+                normalized.members = Array.from({ length: normalized.current }, (_, i) => ({
+                  id: `msg-member-${i}`,
+                  userId: null,
+                  userName: namesFromMsgs[i] ?? `Member ${i + 1}`,
+                  name: namesFromMsgs[i] ?? `Member ${i + 1}`,
+                }));
+              }
+            } catch { /* يفضل زي ما هو */ }
+          }
+
+          return normalized;
+        })
+      );
+
+      setRooms(withMembers);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -554,18 +506,13 @@ export default function StudyWithFriends() {
   return (
     <div style={{ background: bg, minHeight: "100vh" }}>
       <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "2.5rem 2rem 6rem" }}>
+
         {/* Hero Section */}
         <div style={{
           background: `linear-gradient(135deg,${C.navy} 0%,${C.ocean} 60%,${C.teal} 100%)`,
-          borderRadius: "26px",
-          padding: "2.5rem 3rem",
-          marginBottom: "2rem",
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "2rem"
+          borderRadius: "26px", padding: "2.5rem 3rem", marginBottom: "2rem",
+          position: "relative", overflow: "hidden",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem"
         }}>
           <div style={{ position: "absolute", top: -80, right: 120, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle,rgba(143,183,204,.2) 0%,transparent 70%)", pointerEvents: "none" }} />
           <div style={{ position: "absolute", bottom: -60, right: -40, width: 220, height: 220, borderRadius: "50%", border: "40px solid rgba(255,255,255,.05)", pointerEvents: "none" }} />
@@ -576,58 +523,31 @@ export default function StudyWithFriends() {
             <h1 style={{ fontSize: "clamp(1.6rem,3.5vw,2.4rem)", fontWeight: 800, letterSpacing: "-.03em", color: "#fff", lineHeight: 1.1, marginBottom: ".65rem" }}>Study With Friends</h1>
             <p style={{ fontSize: ".9rem", color: "rgba(255,255,255,.6)", lineHeight: 1.6, maxWidth: "420px" }}>Join a virtual study room or create your own — study smarter, together.</p>
             <div style={{ marginTop: "1.25rem", display: "flex", alignItems: "center", gap: ".85rem" }}>
-              {[
-                { icon: <IconUsers />, label: `${rooms.reduce((a, r) => a + r.current, 0)} students online` },
-                { icon: <IconGrid />, label: `${rooms.length} active rooms` }
-              ].map((chip, i) => (
-                <span key={i} style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "5px 13px",
-                  borderRadius: "999px",
-                  background: "rgba(255,255,255,.12)",
-                  border: "1px solid rgba(255,255,255,.15)",
-                  fontSize: ".75rem",
-                  fontWeight: 500,
-                  color: "rgba(255,255,255,.85)"
-                }}>
-                  {chip.icon}{chip.label}
-                </span>
-              ))}
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                padding: "5px 13px", borderRadius: "999px",
+                background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.15)",
+                fontSize: ".75rem", fontWeight: 500, color: "rgba(255,255,255,.85)"
+              }}>
+                <IconGrid />{rooms.length} active rooms
+              </span>
             </div>
           </div>
           <button
             onClick={() => setModalOpen(true)}
             style={{
-              position: "relative",
-              zIndex: 1,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "9px",
-              padding: "12px 22px",
-              borderRadius: "14px",
-              background: "#fff",
-              color: C.ocean,
-              fontFamily: "inherit",
-              fontSize: ".9rem",
-              fontWeight: 700,
-              border: "none",
-              cursor: "pointer",
+              position: "relative", zIndex: 1,
+              display: "inline-flex", alignItems: "center", gap: "9px",
+              padding: "12px 22px", borderRadius: "14px",
+              background: "#fff", color: C.ocean,
+              fontFamily: "inherit", fontSize: ".9rem", fontWeight: 700,
+              border: "none", cursor: "pointer",
               boxShadow: "0 4px 16px rgba(0,0,0,.2)",
               transition: "transform .2s,box-shadow .2s",
-              whiteSpace: "nowrap",
-              letterSpacing: "-.01em",
-              flexShrink: 0
+              whiteSpace: "nowrap", letterSpacing: "-.01em", flexShrink: 0
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.25)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = "";
-              e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,.2)";
-            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,.25)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,.2)"; }}
           >
             <IconPlus /> Create Room
           </button>
@@ -645,17 +565,11 @@ export default function StudyWithFriends() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by room name or subject…"
               style={{
-                width: "100%",
-                padding: "9px 13px 9px 38px",
-                background: surface,
-                border: `1px solid ${border}`,
-                borderRadius: "14px",
-                fontFamily: "inherit",
-                fontSize: ".875rem",
-                color: text,
-                outline: "none",
-                boxShadow: "0 1px 3px rgba(44,62,80,0.06)",
-                transition: "border .2s"
+                width: "100%", padding: "9px 13px 9px 38px",
+                background: surface, border: `1px solid ${border}`,
+                borderRadius: "14px", fontFamily: "inherit",
+                fontSize: ".875rem", color: text, outline: "none",
+                boxShadow: "0 1px 3px rgba(44,62,80,0.06)", transition: "border .2s"
               }}
               onFocus={e => { e.currentTarget.style.borderColor = C.sky; }}
               onBlur={e => { e.currentTarget.style.borderColor = border; }}
@@ -669,17 +583,12 @@ export default function StudyWithFriends() {
                   key={f.key}
                   onClick={() => setFilter(f.key)}
                   style={{
-                    padding: "7px 15px",
-                    borderRadius: "999px",
-                    fontSize: ".78rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
+                    padding: "7px 15px", borderRadius: "999px",
+                    fontSize: ".78rem", fontWeight: 600, cursor: "pointer",
                     border: `1px solid ${active ? (isDarkMode ? C.ocean : C.navy) : border}`,
                     background: active ? (isDarkMode ? C.ocean : C.navy) : surface,
                     color: active ? "#fff" : text2,
-                    fontFamily: "inherit",
-                    transition: "all .2s",
-                    whiteSpace: "nowrap"
+                    fontFamily: "inherit", transition: "all .2s", whiteSpace: "nowrap"
                   }}
                 >
                   {f.label}
@@ -689,19 +598,11 @@ export default function StudyWithFriends() {
             <button
               onClick={fetchRooms}
               style={{
-                padding: "7px 12px",
-                borderRadius: "999px",
-                fontSize: ".78rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                border: `1px solid ${border}`,
-                background: surface,
-                color: text2,
-                fontFamily: "inherit",
-                transition: "all .2s",
-                display: "flex",
-                alignItems: "center",
-                gap: 5
+                padding: "7px 12px", borderRadius: "999px",
+                fontSize: ".78rem", fontWeight: 600, cursor: "pointer",
+                border: `1px solid ${border}`, background: surface, color: text2,
+                fontFamily: "inherit", transition: "all .2s",
+                display: "flex", alignItems: "center", gap: 5
               }}
             >
               <IconRefresh /> Refresh
@@ -721,18 +622,10 @@ export default function StudyWithFriends() {
             <button
               onClick={fetchRooms}
               style={{
-                padding: "8px 20px",
-                borderRadius: "10px",
-                border: "none",
-                background: C.navy,
-                color: "#fff",
-                fontFamily: "inherit",
-                fontSize: ".85rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6
+                padding: "8px 20px", borderRadius: "10px", border: "none",
+                background: C.navy, color: "#fff", fontFamily: "inherit",
+                fontSize: ".85rem", fontWeight: 600, cursor: "pointer",
+                display: "inline-flex", alignItems: "center", gap: 6
               }}
             >
               <IconRefresh /> Try Again

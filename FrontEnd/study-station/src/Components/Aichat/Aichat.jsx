@@ -11,7 +11,6 @@ import ChatWelcome from "./ChatWelcome";
 import ChatInputArea from "./ChatInputArea";
 import QuizView from "./QuizView";
 import FlashcardsView from "./FlashcardsView";
-import ExplainView from "./ExplainView";
 import { Toast, TypingDots, MessageBubble } from "./ChatComponents";
 import {
     MODE_CONFIG, createEmptyModeState, createInitialContextStates,
@@ -36,21 +35,23 @@ export default function AiChat() {
     const navigate = useNavigate();
     const isDark = isDarkMode;
 
-    const bgColor       = isDark ? "#171717" : "#F3F4F6";
-    const cardBg        = isDark ? "#2A2A2A" : "white";
-    const sidebarBg     = isDark ? "#1f1f1f" : "#ffffff";
-    const textPrimary   = isDark ? "#E0E0E0" : "#2f3b48";
+    const bgColor = isDark ? "#171717" : "#F3F4F6";
+    const cardBg = isDark ? "#2A2A2A" : "white";
+    const sidebarBg = isDark ? "#1f1f1f" : "#ffffff";
+    const textPrimary = isDark ? "#E0E0E0" : "#2f3b48";
     const textSecondary = isDark ? "#B0B0B0" : "#6b6f76";
-    const borderColor   = isDark ? "#404040" : "#d1d5db";
-    const iconBg        = isDark ? "#363636" : "#eef1f4";
-    const inputBg       = isDark ? "#363636" : "#ffffff";
-    const muted         = isDark ? "#6B7A86" : "#8A9BAA";
-    const border2       = isDark ? "#505050" : "#c4cdd6";
-    const cardShadow    = isDark ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)";
+    const borderColor = isDark ? "#404040" : "#d1d5db";
+    const iconBg = isDark ? "#363636" : "#eef1f4";
+    const inputBg = isDark ? "#363636" : "#ffffff";
+    const muted = isDark ? "#6B7A86" : "#8A9BAA";
+    const border2 = isDark ? "#505050" : "#c4cdd6";
+    const cardShadow = isDark ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.07)";
 
     const [context, setContext] = useState("general");
-    const [contextStates, setContextStates] = useState(createInitialContextStates);
-    const [isTyping, setIsTyping] = useState(false);
+    const [contextStates, setContextStates] = useState(() => {
+        const initial = createInitialContextStates();
+        return initial;
+    }); const [isTyping, setIsTyping] = useState(false);
     const [conversations, setConversations] = useState([]);
     const [uploadedFileId, setUploadedFileId] = useState(null);
     const [uploadedFileName, setUploadedFileName] = useState(null);
@@ -58,8 +59,16 @@ export default function AiChat() {
     const [toast, setToast] = useState({ visible: false, msg: "", type: "success" });
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [lastFailedPrompt, setLastFailedPrompt] = useState(null);
+    const [quizCount, setQuizCount] = useState(5);
 
-    const { messages, conversationId, structuredResult, inputVal } = contextStates[context];
+    const uploadedFileIdRef = useRef(null);
+    const uploadedFileNameRef = useRef(null);
+
+    // sync state → ref
+    useEffect(() => { uploadedFileIdRef.current = uploadedFileId; }, [uploadedFileId]);
+    useEffect(() => { uploadedFileNameRef.current = uploadedFileName; }, [uploadedFileName]);
+
+    const { messages, conversationId, structuredResult, inputVal } = contextStates[context] ?? createEmptyModeState();
 
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -68,7 +77,7 @@ export default function AiChat() {
     const patchContext = useCallback((ctx, patch) => {
         setContextStates(prev => ({
             ...prev,
-            [ctx]: { ...prev[ctx], ...patch },
+            [ctx]: { ...(prev[ctx] ?? createEmptyModeState()), ...patch },
         }));
     }, []);
 
@@ -95,6 +104,8 @@ export default function AiChat() {
         patchContext(context, createEmptyModeState());
         setUploadedFileId(null);
         setUploadedFileName(null);
+        uploadedFileIdRef.current = null;
+        uploadedFileNameRef.current = null;
         setLastFailedPrompt(null);
         inputRef.current?.focus();
     }, [context, patchContext]);
@@ -104,8 +115,13 @@ export default function AiChat() {
         const text = (overrideText ?? contextStates[activeContext].inputVal).trim();
         if (!text || isTyping) return;
 
-        const fileIdToSend = uploadedFileId;
-        const fileNameToSend = uploadedFileName;
+        const fileIdToSend = uploadedFileIdRef.current;
+        const fileNameToSend = uploadedFileNameRef.current;
+
+        uploadedFileIdRef.current = null;
+        uploadedFileNameRef.current = null;
+        setUploadedFileId(null);
+        setUploadedFileName(null);
 
         const userMsg = {
             id: nextMsgId(), role: "user", text,
@@ -126,13 +142,11 @@ export default function AiChat() {
             };
         });
 
-        setUploadedFileId(null);
-        setUploadedFileName(null);
         setLastFailedPrompt(null);
         setIsTyping(true);
 
         try {
-            const data = await dispatchByContext(activeContext, text, convIdForRequest, fileIdToSend);
+            const data = await dispatchByContext(activeContext, text, convIdForRequest, fileIdToSend, quizCount);
 
             if (data?.conversationId) {
                 setContextStates(prev => ({
@@ -222,7 +236,9 @@ export default function AiChat() {
             setIsTyping(false);
             inputRef.current?.focus();
         }
-    }, [context, contextStates, isTyping, uploadedFileId, uploadedFileName]);
+    }, [context, contextStates, isTyping]);
+    // ✅ FIX: شيلنا uploadedFileId و uploadedFileName من dependency array
+    //    لأننا بنقرأهم من الـ ref دلوقتي
 
     async function handleSelectConversation(id) {
         try {
@@ -256,6 +272,9 @@ export default function AiChat() {
         try {
             const data = await uploadFile(file);
             const id = data?.fileId ?? data?.id ?? data?.uploadedFileId;
+            // ✅ حدّث الـ ref فورًا قبل ما يحصل أي re-render
+            uploadedFileIdRef.current = id;
+            uploadedFileNameRef.current = file.name;
             setUploadedFileId(id);
             setUploadedFileName(file.name);
             showToast(`"${file.name}" uploaded`);
@@ -320,7 +339,7 @@ export default function AiChat() {
         }}>
             <ChatHeader
                 context={context}
-                onBack={() => navigate("/home")}
+                onBack={() => navigate(-1)}
                 onToggleSidebar={() => setSidebarOpen(o => !o)}
                 onNewChat={startNewChat}
                 textPrimary={textPrimary}
@@ -415,17 +434,38 @@ export default function AiChat() {
                             />
                         )}
 
-                        {structuredResult?.type === "explain" && (
-                            <ExplainView
-                                data={structuredResult.payload}
-                                topic={structuredResult.topic}
-                                {...themeProps}
-                                onCopy={handleCopy}
-                            />
-                        )}
-
                         <div ref={messagesEndRef} />
                     </div>
+
+                    {context === "quiz" && (
+                        <div style={{
+                            display: "flex", alignItems: "center", gap: 10,
+                            padding: "8px 22px",
+                            borderTop: `1px solid ${borderColor}`,
+                            background: cardBg,
+                        }}>
+                            <span style={{ fontSize: "13px", color: textSecondary, fontWeight: 600 }}>
+                                Number of questions:
+                            </span>
+                            {[5, 10, 15, 20].map(n => (
+                                <button
+                                    key={n}
+                                    onClick={() => setQuizCount(n)}
+                                    style={{
+                                        padding: "5px 14px", borderRadius: 8,
+                                        border: `1.5px solid ${quizCount === n ? "#4e87a8" : borderColor}`,
+                                        background: quizCount === n ? "rgba(78,135,168,0.12)" : "transparent",
+                                        color: quizCount === n ? "#4e87a8" : textSecondary,
+                                        fontSize: "13px", fontWeight: quizCount === n ? 700 : 400,
+                                        cursor: "pointer", fontFamily: "inherit",
+                                        transition: "all 0.15s",
+                                    }}
+                                >
+                                    {n}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     <ChatInputArea
                         context={context}
@@ -440,7 +480,12 @@ export default function AiChat() {
                         onKeyDown={handleKeyDown}
                         onSend={handleSend}
                         onFileChange={handleFileChange}
-                        onClearFile={() => { setUploadedFileId(null); setUploadedFileName(null); }}
+                        onClearFile={() => {
+                            uploadedFileIdRef.current = null;
+                            uploadedFileNameRef.current = null;
+                            setUploadedFileId(null);
+                            setUploadedFileName(null);
+                        }}
                         textPrimary={textPrimary}
                         muted={muted}
                         inputBg={inputBg}

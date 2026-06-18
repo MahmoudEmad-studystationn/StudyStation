@@ -60,13 +60,10 @@ export default function Dashboard() {
                 }
             `}</style>
                 <main style={{ marginLeft: 230, marginTop: 60, height: "calc(100vh - 60px)", overflowY: "auto", padding: "1.75rem", background: bgColor }}>
-                    {/* Heading */}
                     <div style={{ marginBottom: "1.5rem" }}>
                         <div style={{ ...sk, width: 120, height: 20, marginBottom: 8 }} />
                         <div style={{ ...sk, width: 200, height: 13 }} />
                     </div>
-
-                    {/* 4 stat cards */}
                     <div className="db-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1rem", marginBottom: "1.75rem" }}>
                         {[1, 2, 3, 4].map(i => (
                             <div key={i} style={{ ...card, minHeight: 140 }}>
@@ -78,35 +75,13 @@ export default function Dashboard() {
                             </div>
                         ))}
                     </div>
-
-                    {/* Bottom grid */}
-                    <div className="db-dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "1rem" }}>
-                        {/* Recent Activity skeleton */}
-                        <div style={{ ...card, padding: 0 }}>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: `1px solid ${borderFaint}` }}>
-                                <div style={{ ...sk, width: 120, height: 14 }} />
-                                <div style={{ ...sk, width: 48, height: 22, borderRadius: 999 }} />
-                            </div>
-                            <div style={{ padding: "0.5rem 0" }}>
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "0.65rem 1.25rem" }}>
-                                        <div style={{ ...sk, width: 8, height: 8, borderRadius: "50%", flexShrink: 0 }} />
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ ...sk, width: `${55 + i * 7}%`, height: 12, marginBottom: 5 }} />
-                                            <div style={{ ...sk, width: `${25 + i * 4}%`, height: 10 }} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Quick Stats skeleton */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
                         <div style={{ ...card, padding: 0 }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: `1px solid ${borderFaint}` }}>
                                 <div style={{ ...sk, width: 90, height: 14 }} />
                                 <div style={{ ...sk, width: 60, height: 22, borderRadius: 999 }} />
                             </div>
-                            <div style={{ padding: "0.75rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            <div style={{ padding: "0.75rem", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.5rem" }}>
                                 {[1, 2, 3, 4, 5, 6].map(i => (
                                     <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", background: surface3, borderRadius: 10, border: `1px solid ${borderFaint}` }}>
                                         <div style={{ ...sk, width: 100, height: 12 }} />
@@ -180,7 +155,7 @@ export default function Dashboard() {
             <style>{cssVars}</style>
             <SidebarDashboard />
             <TopbarDashboard />
-            <main style={{ marginLeft: 230, marginTop: 60, height: "calc(100vh - 60px)", overflowY: "auto", padding: "1.75rem", background: bgColor, }}>
+            <main style={{ marginLeft: 230, marginTop: 60, height: "calc(100vh - 60px)", overflowY: "auto", padding: "1.75rem", background: bgColor }}>
 
                 <div style={{ marginBottom: "1.5rem" }}>
                     <div style={{ fontSize: "1.3rem", fontWeight: 700, color: textPrimary, letterSpacing: "-0.02em" }}>Dashboard</div>
@@ -197,7 +172,7 @@ export default function Dashboard() {
                             </div>
                             <div style={{ fontSize: "2rem", fontWeight: 700, color: textPrimary, letterSpacing: "-0.04em", lineHeight: 1 }}>{s.number}</div>
                             <div style={{ fontSize: "0.73rem", fontWeight: 600, color: textMuted, marginTop: "0.3rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</div>
-                            <div style={{ marginTop: "0.65rem", display: "flex", alignItems: "center", gap: 4, fontSize: "0.72rem", fontWeight: 700, color: s.trend === "up" ? "#658FA5" : "#658FA5" }}>
+                            <div style={{ marginTop: "0.65rem", display: "flex", alignItems: "center", gap: 4, fontSize: "0.72rem", fontWeight: 700, color: "#658FA5" }}>
                                 {s.trend === "up" ? <TrendUpIcon /> : <TrendFlatIcon />}
                                 {s.trendText}
                             </div>
@@ -205,56 +180,25 @@ export default function Dashboard() {
                     ))}
                 </div>
 
-                {/* Dashboard Grid */}
-                <div className="db-dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "1rem" }}>
-
-                    {/* Recent Activity */}
-                    <div style={{ background: cardBg, border: `1px solid ${borderFaint}`, borderRadius: 14, boxShadow: cardShadow, overflow: "hidden" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: `1px solid ${borderFaint}` }}>
-                            <div style={{ fontSize: "0.88rem", fontWeight: 700, color: textPrimary }}>Recent Activity</div>
-                            <span style={{ fontSize: "0.68rem", fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: surface3, color: textMuted }}>Today</span>
-                        </div>
-                        <div style={{ padding: "0.5rem 0" }}>
-                            {dashData?.recentActivities?.length > 0 ? (
-                                dashData.recentActivities.map((a, i) => (
-                                    <div key={i} className="db-activity-item" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.65rem 1.25rem" }}
-                                        onMouseEnter={e => e.currentTarget.style.background = surface3}
-                                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                                        <div style={{ width: 8, height: 8, borderRadius: "50%", flexShrink: 0, background: "#3D718D" }} />
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: textPrimary }}>{a.description ?? a.text ?? JSON.stringify(a)}</div>
-                                            <div style={{ fontSize: "0.7rem", color: textMuted, marginTop: 1 }}>{a.time ?? a.createdAt ?? ""}</div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div style={{ padding: "2rem", textAlign: "center", color: textMuted, fontSize: "0.8rem" }}>
-                                    No recent activity.
-                                </div>
-                            )}
-                        </div>
+                {/* Quick Stats */}
+                <div style={{ background: cardBg, border: `1px solid ${borderFaint}`, borderRadius: 14, boxShadow: cardShadow, overflow: "hidden" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: `1px solid ${borderFaint}` }}>
+                        <div style={{ fontSize: "0.88rem", fontWeight: 700, color: textPrimary }}>Quick Stats</div>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: surface3, color: textMuted }}>Overview</span>
                     </div>
-
-                    {/* Quick Stats */}
-                    <div style={{ background: cardBg, border: `1px solid ${borderFaint}`, borderRadius: 14, boxShadow: cardShadow, overflow: "hidden" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: `1px solid ${borderFaint}` }}>
-                            <div style={{ fontSize: "0.88rem", fontWeight: 700, color: textPrimary }}>Quick Stats</div>
-                            <span style={{ fontSize: "0.68rem", fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: surface3, color: textMuted }}>Overview</span>
-                        </div>
-                        <div style={{ padding: "0.75rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                            {QUICK_STATS.map((q) => (
-                                <div key={q.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.65rem 0.75rem", background: surface3, borderRadius: 10, border: `1px solid ${borderFaint}` }}>
-                                    <span style={{ fontSize: "0.78rem", fontWeight: 600, color: textMuted, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                        <span style={{ width: 14, height: 14, color: "#658FA5" }}>{q.icon}</span>
-                                        {q.label}
-                                    </span>
-                                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: textPrimary }}>{q.value}</span>
-                                </div>
-                            ))}
-                        </div>
+                    <div style={{ padding: "0.75rem", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
+                        {QUICK_STATS.map((q) => (
+                            <div key={q.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.65rem 0.75rem", background: surface3, borderRadius: 10, border: `1px solid ${borderFaint}` }}>
+                                <span style={{ fontSize: "0.78rem", fontWeight: 600, color: textMuted, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                    <span style={{ width: 14, height: 14, color: "#658FA5" }}>{q.icon}</span>
+                                    {q.label}
+                                </span>
+                                <span style={{ fontSize: "0.88rem", fontWeight: 700, color: textPrimary }}>{q.value}</span>
+                            </div>
+                        ))}
                     </div>
-
                 </div>
+
             </main>
         </>
     );

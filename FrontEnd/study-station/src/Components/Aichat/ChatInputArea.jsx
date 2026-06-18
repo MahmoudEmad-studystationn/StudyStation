@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPaperclip, faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { ContextHint } from "./ContextToolbar";
 import { C, FONT } from "./constants";
 
 const PLACEHOLDERS = {
@@ -24,7 +23,6 @@ export default function ChatInputArea({
             padding: "14px 18px", background: cardBg,
             borderTop: `1px solid ${borderColor}`, flexShrink: 0,
         }}>
-            {showHint && <ContextHint context={context} />}
 
             {uploadedFileName && (
                 <div style={{
@@ -47,7 +45,7 @@ export default function ChatInputArea({
             <div style={{
                 display: "flex", alignItems: "flex-end", gap: 10,
                 background: inputBg, border: `1.5px solid ${border2}`,
-                borderRadius: 16, padding: "10px 12px 10px 16px",
+                borderRadius: 16, padding: "6px 8px 6px 12px",
             }}>
                 <input type="file" ref={fileInputRef} onChange={onFileChange} style={{ display: "none" }} />
                 <button
@@ -75,7 +73,7 @@ export default function ChatInputArea({
                         flex: 1, border: "none", outline: "none",
                         background: "transparent", color: textPrimary,
                         fontSize: FONT.base, fontFamily: "inherit",
-                        resize: "none", minHeight: 24, maxHeight: 120,
+                        resize: "none", minHeight: 20, maxHeight: 80,
                         lineHeight: 1.55, padding: "2px 0",
                     }}
                 />
@@ -84,7 +82,7 @@ export default function ChatInputArea({
                     onClick={() => onSend()}
                     disabled={!inputVal.trim() || isTyping}
                     style={{
-                        width: 38, height: 38, borderRadius: 12,
+                        width: 32, height: 32, borderRadius: 12,
                         border: "none", flexShrink: 0,
                         background: !inputVal.trim() || isTyping
                             ? (isDark ? "#363636" : "#e8eaed") : C.navy,

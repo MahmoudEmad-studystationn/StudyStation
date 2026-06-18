@@ -46,7 +46,7 @@ export default function ToDoStudyRoom({ tasks = [], onAdd, onToggle, onDelete, o
     const total = tasks.length;
 
     return (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", padding: "1.25rem" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", padding: "1.25rem", minHeight: 0 }}>
 
             {/* Header */}
             <div style={{

@@ -64,17 +64,6 @@ export async function uploadFile(file) {
     return handleResponse(res);
 }
 
-// ─── Summarize ────────────────────────────────────────────────────
-
-export async function summarize({ topic, content = null, uploadedFileId = null }) {
-    const res = await fetch(`${BASE_URL}/summarize`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ topic, content, uploadedFileId }),
-    });
-    return handleResponse(res);
-}
-
 // ─── Quiz ─────────────────────────────────────────────────────────
 
 export async function generateQuiz({ topic, count = 5, difficulty = "medium", questionType = "multiple-choice", content = null, uploadedFileId = null }) {
@@ -82,28 +71,6 @@ export async function generateQuiz({ topic, count = 5, difficulty = "medium", qu
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({ topic, count, difficulty, questionType, content, uploadedFileId }),
-    });
-    return handleResponse(res);
-}
-
-// ─── Flashcards ───────────────────────────────────────────────────
-
-export async function generateFlashcards({ topic, count = 10, difficulty = "medium", questionType = "term-definition", content = null, uploadedFileId = null }) {
-    const res = await fetch(`${BASE_URL}/flashcards`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ topic, count, difficulty, questionType, content, uploadedFileId }),
-    });
-    return handleResponse(res);
-}
-
-// ─── Explain ──────────────────────────────────────────────────────
-
-export async function explainConcept({ concept, level = "beginner" }) {
-    const res = await fetch(`${BASE_URL}/explain`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ concept, level }),
     });
     return handleResponse(res);
 }
@@ -130,6 +97,15 @@ export async function getGeneratedContentById(contentId) {
 export async function getLearningMemory() {
     const res = await fetch(`${BASE_URL}/learning-memory`, {
         headers: getHeaders(),
+    });
+    return handleResponse(res);
+}
+
+export async function generateFlashcards({ topic, count = 10, content = null, uploadedFileId = null }) {
+    const res = await fetch(`${BASE_URL}/flashcards`, {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ topic, count, content, uploadedFileId }),
     });
     return handleResponse(res);
 }

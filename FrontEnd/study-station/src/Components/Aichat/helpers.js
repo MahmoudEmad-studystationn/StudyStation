@@ -1,6 +1,5 @@
 import {
-    sendChat, summarize, generateQuiz, generateFlashcards, explainConcept,
-    getGeneratedContentById,
+    sendChat, generateQuiz, generateFlashcards, getGeneratedContentById,
 } from "../Services/AiServices";
 
 export function nowTime() {
@@ -17,7 +16,7 @@ export function extractReply(data) {
 
     const direct =
         data.message ?? data.response ?? data.content ?? data.reply
-        ?? data.summary ?? data.explanation ?? data.text ?? data.answer;
+        ?? data.text ?? data.answer ?? data.result;
 
     if (typeof direct === "string" && direct.trim()) return direct;
 
@@ -99,29 +98,12 @@ export function normalizeQuizQuestions(raw) {
     }).filter(q => q.question || q.options.length > 0);
 }
 
-function normalizeFlashcards(raw) {
-    const list = Array.isArray(raw) ? raw : raw?.flashcards ?? raw?.cards ?? raw?.items ?? [];
-    if (!Array.isArray(list)) return [];
-
-    return list.map(item => {
-        if (typeof item === "string") {
-            return { front: item, back: "" };
-        }
-        const front = pickString(item, ["term", "front", "question", "word", "title", "Term", "Front"]);
-        const back = pickString(item, [
-            "definition", "back", "answer", "meaning", "description",
-            "Definition", "Back", "Answer",
-        ]);
-        return { ...item, front, back };
-    }).filter(c => c.front || c.back);
-}
-
 export function extractStructured(data, context) {
     if (!data) return null;
 
     const root = data.data ?? data.result ?? data.payload ?? data.content ?? data;
 
-    if (context === "quiz" || !context) {
+    if (context === "quiz") {
         const quizRaw =
             root.questions ?? root.quiz?.questions ?? root.quiz
             ?? (Array.isArray(root) && root[0]?.question ? root : null)
@@ -133,21 +115,16 @@ export function extractStructured(data, context) {
             if (questions.length) return { type: "quiz", payload: questions };
         }
     }
-
-    if (context === "flashcards" || !context) {
-        const cardsRaw =
-            root.flashcards ?? root.cards ?? root.flashCards
-            ?? (Array.isArray(root) && (root[0]?.term || root[0]?.front || root[0]?.definition) ? root : null);
-
-        if (cardsRaw !== undefined && cardsRaw !== null) {
-            const cards = normalizeFlashcards(cardsRaw);
+    if (context === "flashcards") {
+        const raw = root.flashcards ?? root.cards ?? root.items
+            ?? (Array.isArray(root) ? root : null);
+        if (raw) {
+            const cards = (Array.isArray(raw) ? raw : []).map(c => ({
+                front: c.front ?? c.term ?? c.question ?? "",
+                back: c.back ?? c.definition ?? c.answer ?? "",
+            })).filter(c => c.front || c.back);
             if (cards.length) return { type: "flashcards", payload: cards };
         }
-    }
-
-    if (context === "explain" || !context) {
-        const explanation = pickString(root, ["explanation", "content", "text", "message"]);
-        if (explanation) return { type: "explain", payload: explanation };
     }
 
     return null;
@@ -186,30 +163,37 @@ export async function resolveGeneratedContent(data, context) {
 
 export function getEmptyContentMessage(context, topic) {
     const messages = {
-        quiz: `Couldn't generate quiz questions for "${topic}". The server returned an empty quiz — try again or pick a more specific topic like "HTML semantic tags".`,
-        flashcards: `Couldn't create flashcards for "${topic}". Try again with a clearer topic like "React hooks".`,
-        explain: `Couldn't get an explanation for "${topic}". Please try again.`,
+        quiz: `Couldn't generate quiz questions for "${topic}". Try again...`,
+        flashcards: `Couldn't generate flashcards for "${topic}". Try a more specific topic.`,
     };
     return messages[context] || "No content was generated. Please try again.";
 }
 
-export async function dispatchByContext(context, message, conversationId, uploadedFileId) {
+export async function dispatchByContext(context, message, conversationId, uploadedFileId, quizCount = 5) {
     switch (context) {
-        case "summarize":
-            return summarize({ topic: message, uploadedFileId });
         case "quiz":
             return generateQuiz({
-                topic: message, count: 5, difficulty: "medium",
-                questionType: "multiple-choice", uploadedFileId,
+                topic: message,
+                count: quizCount,
+                difficulty: "medium",
+                questionType: "multiple-choice",
+                uploadedFileId,
             });
+
         case "flashcards":
             return generateFlashcards({
-                topic: message, count: 8, difficulty: "medium", uploadedFileId,
+                topic: message,      
+                count: 10,
+                uploadedFileId,      
             });
-        case "explain":
-            return explainConcept({ concept: message, level: "beginner" });
+
         default:
-            return sendChat({ message, context: "general", conversationId, uploadedFileId });
+            return sendChat({
+                message,
+                context: "general",
+                conversationId,
+                uploadedFileId,
+            });
     }
 }
 

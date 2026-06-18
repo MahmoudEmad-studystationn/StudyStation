@@ -1,5 +1,5 @@
 import {
-    faCommentDots, faFileLines, faCircleCheck, faClone, faLightbulb,
+    faCommentDots, faCircleCheck, faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const C = {
@@ -27,8 +27,7 @@ export const FONT = {
     xxl: "26px",
 };
 
-export const CONTEXT_KEYS = ["general", "summarize", "quiz", "flashcards", "explain"];
-
+export const CONTEXT_KEYS = ["general", "quiz", "flashcards"];
 export const MODE_CONFIG = {
     general: {
         key: "general",
@@ -43,21 +42,6 @@ export const MODE_CONFIG = {
             { label: "What is REST API?", prompt: "Explain REST API in simple terms with examples" },
             { label: "React hooks", prompt: "Explain useState and useEffect in React" },
             { label: "Frontend vs Backend", prompt: "What's the difference between frontend and backend development?" },
-        ],
-    },
-    summarize: {
-        key: "summarize",
-        label: "Summarize",
-        shortLabel: "Summarize",
-        icon: faFileLines,
-        color: C.ocean,
-        description: "Summarize notes or topics — great for lectures, docs, or study material.",
-        loadingText: "Summarizing…",
-        showConversations: true,
-        examples: [
-            { label: "HTTP methods", prompt: "Summarize HTTP methods (GET, POST, PUT, DELETE)" },
-            { label: "SQL basics", prompt: "Summarize SQL joins and when to use each type" },
-            { label: "React lifecycle", prompt: "Summarize React component lifecycle and hooks" },
         ],
     },
     quiz: {
@@ -80,30 +64,16 @@ export const MODE_CONFIG = {
         key: "flashcards",
         label: "Flashcards",
         shortLabel: "Flashcards",
-        icon: faClone,
-        color: C.teal,
-        description: "Create flip cards to memorize terms, concepts, and definitions.",
-        loadingText: "Creating flashcards…",
+        icon: faLayerGroup,
+        color: C.ocean,
+        description: "Generate flashcards on any topic to help you memorize faster.",
+        loadingText: "Generating flashcards…",
         showConversations: false,
         examples: [
-            { label: "HTML tags", prompt: "Common HTML tags and their purpose" },
-            { label: "Git commands", prompt: "Essential Git commands for developers" },
-            { label: "API terms", prompt: "REST API and HTTP status codes" },
-        ],
-    },
-    explain: {
-        key: "explain",
-        label: "Explain",
-        shortLabel: "Explain",
-        icon: faLightbulb,
-        color: "#fbbf24",
-        description: "Get a clear, beginner-friendly explanation of any concept.",
-        loadingText: "Preparing explanation…",
-        showConversations: false,
-        examples: [
-            { label: "What is JWT?", prompt: "JWT authentication" },
-            { label: "Async/Await", prompt: "JavaScript async/await" },
-            { label: "Database indexing", prompt: "Database indexing in SQL" },
+            { label: "React hooks", prompt: "React hooks" },
+            { label: "HTTP methods", prompt: "HTTP methods and status codes" },
+            { label: "CSS properties", prompt: "CSS flexbox properties" },
+            { label: "C# basics", prompt: "C# OOP concepts" },
         ],
     },
 };
