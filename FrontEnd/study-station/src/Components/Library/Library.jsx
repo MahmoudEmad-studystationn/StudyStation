@@ -146,8 +146,9 @@ export default function Library() {
     setError(null);
     try {
       const data = await libraryApi.getAll();
-      setResources(Array.isArray(data) ? data : data.data ?? data.resources ?? []);
-    } catch (err) {
+const all = Array.isArray(data) ? data : data.data ?? data.resources ?? [];
+setResources(all.filter(r => r.isApproved === true));
+} catch (err) {
       setError(err.message || "Unknown error");
     } finally {
       setLoading(false);
