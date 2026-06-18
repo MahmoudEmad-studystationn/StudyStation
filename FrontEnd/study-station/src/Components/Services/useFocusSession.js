@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { startFocusSession, stopFocusSession } from "./studyWithFriendsService";
+import { startFocusSession, stopFocusSession } from "../Services/studyWithFriendsService";
 
 /**
  * useFocusSession
