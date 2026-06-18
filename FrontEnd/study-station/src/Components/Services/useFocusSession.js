@@ -37,12 +37,9 @@ export function useFocusSession(roomId) {
         async function poll() {
             try {
                 const data = await getCurrentFocusSession(roomId);
-
-                // status 1 = Active
                 const isRunning = data?.status === 1;
 
                 if (!data || !isRunning) {
-                    // مفيش session شغالة
                     if (tickRef.current) { clearInterval(tickRef.current); tickRef.current = null; }
                     sessionIdRef.current = null;
                     setSharedTimer(null);
@@ -60,12 +57,7 @@ export function useFocusSession(roomId) {
                     return;
                 }
 
-                // لو الـ session اتغيرت (sessionId جديد)، نعيد الـ tick
-                if (sessionIdRef.current !== data.id) {
-                    sessionIdRef.current = data.id;
-                    startTick(startTime, durationMinutes);
-                }
-
+                // ✅ دايمًا حدّث الـ sharedTimer من الـ server
                 setSharedTimer({
                     isRunning: true,
                     remaining,
@@ -73,11 +65,16 @@ export function useFocusSession(roomId) {
                     durationMinutes,
                     sessionId: data.id,
                 });
+
+                // ✅ ابدأ tick بس لو session جديدة أو التك وقف
+                if (sessionIdRef.current !== data.id || !tickRef.current) {
+                    sessionIdRef.current = data.id;
+                    startTick(startTime, durationMinutes);
+                }
+
             } catch {
-                // 404 = مفيش session — مش error حقيقي
-                if (tickRef.current) { clearInterval(tickRef.current); tickRef.current = null; }
-                sessionIdRef.current = null;
-                setSharedTimer(null);
+                // ❌ مش بنعمل setSharedTimer(null) هنا عشان network error مؤقت
+                // التايمر يفضل شغال عند الـ client لحد ما يجي poll ناجح
             }
         }
 
