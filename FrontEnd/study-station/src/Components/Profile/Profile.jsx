@@ -72,8 +72,7 @@ const DAY_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const DAY_ORDER = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const BAR_DAYS  = ["M","T","W","T","F","S","S"];
 const LS_KEY    = "study_planner_days";
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
+const LS_SESSION_KEY = "study_session";
 
 function getInitials(firstName, lastName) {
   const f = (firstName || "").trim()[0] || "";
@@ -101,6 +100,23 @@ function saveDaysToStorage(days) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(days)); } catch {}
 }
 
+function loadSessionSeconds() {
+  try {
+    const today = new Date().toDateString();
+    const saved = JSON.parse(localStorage.getItem(LS_SESSION_KEY) || "{}");
+    return saved.date === today ? (saved.seconds || 0) : 0;
+  } catch { return 0; }
+}
+
+function saveSessionSeconds(seconds) {
+  try {
+    localStorage.setItem(LS_SESSION_KEY, JSON.stringify({
+      date: new Date().toDateString(),
+      seconds,
+    }));
+  } catch {}
+}
+
 function buildDaysFromAPI(plannerTasks) {
   const days = DAY_SHORT.map(name => ({ name, tasks: [] }));
   if (!Array.isArray(plannerTasks) || plannerTasks.length === 0) return days;
@@ -122,6 +138,19 @@ function buildDaysFromAPI(plannerTasks) {
     }
   });
   return days;
+}
+
+function firstNumber(...values) {
+  for (const value of values) {
+    if (value === null || value === undefined || value === "" || value === "—") continue;
+    const n = Number(value);
+    if (!Number.isNaN(n)) return n;
+  }
+  return 0;
+}
+
+function formatHours(value) {
+  return Number(value).toFixed(1);
 }
 
 function buildBarHeights(weeklyHours) {
@@ -174,8 +203,6 @@ function formatActivity(activityLogs, accent) {
   });
 }
 
-// ─── Modals ───────────────────────────────────────────────────────────────────
-
 function EditProfileModal({ t, accent, profile, onSave, onClose }) {
   const [form, setForm] = useState({
     firstName:   profile.firstName   || "",
@@ -201,7 +228,16 @@ function EditProfileModal({ t, accent, profile, onSave, onClose }) {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
-      onSave(body); onClose();
+
+      // GET بعد الـ PUT عشان ناخد الـ profile كامل مع id و email
+      const updatedRes = await fetch(`${API_BASE}/Profile`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!updatedRes.ok) throw new Error(`Fetch error: ${updatedRes.status}`);
+      const updatedProfile = await updatedRes.json();
+
+      onSave(updatedProfile);
+      onClose();
     } catch (e) { setError(e.message); }
     finally { setSaving(false); }
   };
@@ -242,21 +278,35 @@ function EditProfileModal({ t, accent, profile, onSave, onClose }) {
   );
 }
 
-function AddTaskModal({ t, accent, dayName, onAdd, onClose }) {
+function AddTaskModal({ t, accent, days, initialDayIdx, onAdd, onClose }) {
   const [text, setText] = useState("");
+  const [dayIdx, setDayIdx] = useState(initialDayIdx);
   const inputRef = useRef(null);
   useEffect(() => { inputRef.current?.focus(); }, []);
-  const handleAdd = () => { if (!text.trim()) return; onAdd(text.trim()); onClose(); };
+  const handleAdd = () => { if (!text.trim()) return; onAdd(dayIdx, text.trim()); onClose(); };
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div onClick={e => e.stopPropagation()} style={{ background: t["--surface"], border: `1px solid ${t["--border"]}`, borderRadius: 20, boxShadow: t["--sh-lg"], padding: "1.75rem", width: 320, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
         <div style={{ fontSize: "1rem", fontWeight: 800, color: t["--text"], marginBottom: ".25rem" }}>Add Task</div>
-        <div style={{ fontSize: ".75rem", color: t["--muted"], marginBottom: "1rem" }}>{dayName}</div>
+        <div style={{ fontSize: ".75rem", color: t["--muted"], marginBottom: "1rem" }}>Choose a day and write your task</div>
+
+        <label style={{ display: "block", fontSize: ".72rem", fontWeight: 700, color: t["--muted"], marginBottom: 5, letterSpacing: ".04em", textTransform: "uppercase" }}>Day</label>
+        <select
+          value={dayIdx}
+          onChange={e => setDayIdx(Number(e.target.value))}
+          style={{ width: "100%", boxSizing: "border-box", background: t["--surface2"], border: `1px solid ${t["--border"]}`, borderRadius: 10, padding: "10px 14px", fontSize: ".85rem", fontWeight: 600, color: t["--text"], outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: "1rem", cursor: "pointer" }}>
+          {days.map((d, i) => (
+            <option key={d.name + i} value={i}>{DAY_ORDER[i]}</option>
+          ))}
+        </select>
+
+        <label style={{ display: "block", fontSize: ".72rem", fontWeight: 700, color: t["--muted"], marginBottom: 5, letterSpacing: ".04em", textTransform: "uppercase" }}>Task</label>
         <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") handleAdd(); if (e.key === "Escape") onClose(); }}
           placeholder="Task name…"
           style={{ width: "100%", boxSizing: "border-box", background: t["--surface2"], border: `1px solid ${t["--border"]}`, borderRadius: 10, padding: "10px 14px", fontSize: ".85rem", fontWeight: 500, color: t["--text"], outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: "1rem" }} />
+
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <button onClick={onClose} style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${t["--border"]}`, background: t["--surface2"], color: t["--text-2"], fontSize: ".8rem", fontWeight: 700, cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Cancel</button>
           <button onClick={handleAdd} style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: accent, color: "#fff", fontSize: ".8rem", fontWeight: 700, cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", opacity: text.trim() ? 1 : 0.5 }}>Add</button>
@@ -265,8 +315,6 @@ function AddTaskModal({ t, accent, dayName, onAdd, onClose }) {
     </div>
   );
 }
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
   const { isDarkMode: dark } = useThemeContext();
@@ -279,6 +327,19 @@ export default function ProfilePage() {
   const [dashboard, setDashboard] = useState(null);
   const [loading,   setLoading]   = useState(true);
   const [apiError,  setApiError]  = useState(null);
+
+  const [sessionSeconds, setSessionSeconds] = useState(() => loadSessionSeconds());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSessionSeconds(prev => {
+        const next = prev + 1;
+        saveSessionSeconds(next);
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const todayIndex      = new Date().getDay();
   const normalizedToday = (todayIndex + 6) % 7;
@@ -341,7 +402,6 @@ export default function ProfilePage() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // ── Derived values ─────────────────────────────────────────────────────────
   const firstName = profile?.firstName || dashboard?.userDetails?.name?.split(" ")[0] || "";
   const lastName  = profile?.lastName  || dashboard?.userDetails?.name?.split(" ").slice(1).join(" ") || "";
   const fullName  = [firstName, lastName].filter(Boolean).join(" ") || dashboard?.userDetails?.name || "Student";
@@ -352,25 +412,48 @@ export default function ProfilePage() {
   const track  = (profile?.track) || (dashboard?.userDetails?.track) || "Frontend Track";
   const streak = (profile?.streak) || ((dashboard?.userDetails?.currentStreak) ?? 0);
 
-  const stats           = (dashboard?.stats) ?? {};
-  const totalStudyHours = stats.totalStudyHours ?? (dashboard?.totalStudyHours) ?? (dashboard?.totalHours)     ?? "—";
-  const tasksDone       = stats.tasksDone       ?? (dashboard?.tasksDone)       ?? (dashboard?.completedTasks) ?? "—";
-  const sessions        = stats.totalSessions   ?? (dashboard?.sessions)        ?? (dashboard?.totalSessions)  ?? "—";
+  const stats = dashboard?.stats ?? {};
 
-  // ── FIX: حساب tasksToday من الـ days state مباشرةً ────────────────────────
-  const tasksToday = days[normalizedToday]?.tasks?.length
-    ?? stats.tasksToday
-    ?? (dashboard?.tasksToday)
-    ?? (dashboard?.todayTasks)
-    ?? "—";
+  const weeklyHoursRaw = dashboard?.weeklyHours ?? [];
+  const weeklyHoursFromArray = Array.isArray(weeklyHoursRaw) && weeklyHoursRaw.length > 0
+    ? weeklyHoursRaw.reduce((sum, d) => sum + (d.hours ?? 0), 0)
+    : null;
 
-  const focusRooms      = (stats.activeStudyRooms) ?? stats.focusRooms          ?? (dashboard?.focusRooms)     ?? (dashboard?.activeRooms) ?? "—";
-  const resources       = stats.resources       ?? (dashboard?.resources)       ?? (dashboard?.totalResources) ?? "—";
+  const weeklyHoursTotalNum = firstNumber(
+    weeklyHoursFromArray,
+    stats.thisWeekHours,
+    dashboard?.thisWeekHours,
+    stats.totalStudyHours,
+    dashboard?.totalStudyHours,
+    dashboard?.totalHours,
+  );
+  const weeklyHoursTotal = formatHours(weeklyHoursTotalNum);
 
-  const weeklyHoursRaw   = (dashboard?.weeklyHours) ?? [];
-  const weeklyHoursTotal = Array.isArray(weeklyHoursRaw) && weeklyHoursRaw.length > 0
-    ? weeklyHoursRaw.reduce((sum, d) => sum + (d.hours ?? 0), 0).toFixed(1)
-    : (stats.thisWeekHours ?? (dashboard?.thisWeekHours) ?? "—");
+  // ✅ التعديل: Tasks Today يعتمد على days array أولاً عشان يتحدث فوراً مع كل toggle
+  const doneTodayCount = days[normalizedToday]?.tasks?.filter(tk => tk.done).length ?? 0;
+  const totalTodayCount = days[normalizedToday]?.tasks?.length ?? 0;
+
+  const tasksToday = firstNumber(
+    stats.tasksToday > 0 ? stats.tasksToday : null,
+    dashboard?.tasksToday > 0 ? dashboard.tasksToday : null,
+    dashboard?.todayTasks > 0 ? dashboard.todayTasks : null,
+    doneTodayCount,
+  );
+
+  const focusRooms = firstNumber(
+    stats.activeStudyRooms,
+    stats.focusRooms,
+    dashboard?.focusRooms,
+    dashboard?.activeRooms,
+  );
+
+  const resources = firstNumber(
+    stats.resources,
+    dashboard?.resources,
+    dashboard?.totalResources,
+  );
+
+  const totalStudyHours = weeklyHoursTotal;
 
   const BAR_HEIGHTS = Array.isArray(weeklyHoursRaw) && weeklyHoursRaw.length > 0
     ? buildBarHeights(weeklyHoursRaw)
@@ -381,13 +464,16 @@ export default function ProfilePage() {
   const activityLogs  = (dashboard?.activityLogs) ?? [];
   const activityItems = formatActivity(activityLogs, accent);
 
-  const todayStudied   = stats.todayStudyHours ?? 0;
-  const dailyGoal      = (profile?.dailyGoalHours) ?? (dashboard?.dailyGoalHours) ?? 6;
-  const progressPct    = dailyGoal > 0 ? Math.min(Math.round((todayStudied / dailyGoal) * 100), 100) : 0;
+  const todayStudiedFromAPI = stats.todayStudyHours ?? 0;
+  const sessionHours        = sessionSeconds / 3600;
+  const totalTodayHours     = parseFloat(todayStudiedFromAPI) + sessionHours;
+  const totalTodayDisplay   = totalTodayHours.toFixed(1);
+
+  const dailyGoal    = (profile?.dailyGoalHours) ?? (dashboard?.dailyGoalHours) ?? 6;
+  const progressPct  = dailyGoal > 0 ? Math.min(Math.round((totalTodayHours / dailyGoal) * 100), 100) : 0;
   const progressCircle = 2 * Math.PI * 20;
   const progressDash   = progressCircle * (progressPct / 100);
 
-  // ── Local task mutations ───────────────────────────────────────────────────
   const toggleTask = (dayIdx, taskId) =>
     setDays(prev => prev.map((d, i) =>
       i !== dayIdx ? d : { ...d, tasks: d.tasks.map(tk => tk.id === taskId ? { ...tk, done: !tk.done } : tk) }
@@ -403,7 +489,6 @@ export default function ProfilePage() {
       i !== dayIdx ? d : { ...d, tasks: [...d.tasks, { id: Date.now(), text, done: false, priority: false }] }
     ));
 
-  // ── Shared styles ──────────────────────────────────────────────────────────
   const card = {
     background: t["--surface"], border: `1px solid ${t["--border"]}`,
     borderRadius: 22, boxShadow: t["--sh-md"], transition: "box-shadow .25s, transform .25s",
@@ -413,7 +498,6 @@ export default function ProfilePage() {
     <div style={{ width: w, height: h, borderRadius: r, background: t["--surface2"], animation: "pulse 1.5s ease-in-out infinite" }} />
   );
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`
@@ -450,8 +534,8 @@ export default function ProfilePage() {
       `}</style>
 
       {modal && (
-        <AddTaskModal t={t} accent={accent} dayName={modal.dayName}
-          onAdd={text => addTask(modal.dayIdx, text)} onClose={() => setModal(null)} />
+        <AddTaskModal t={t} accent={accent} days={days} initialDayIdx={modal.dayIdx}
+          onAdd={(dayIdx, text) => addTask(dayIdx, text)} onClose={() => setModal(null)} />
       )}
       {editOpen && profile && (
         <EditProfileModal t={t} accent={accent} profile={profile}
@@ -468,7 +552,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* ── PROFILE HEADER ───────────────────────────────────────────────── */}
+        {/* PROFILE HEADER */}
         <div className="fade-up card-hover" style={{ ...card, padding: 0, overflow: "hidden", display: "grid", gridTemplateColumns: "1fr auto" }}>
           <div style={{ padding: "2rem", display: "flex", alignItems: "center", gap: "1.75rem" }}>
             <div style={{ position: "relative", flexShrink: 0 }}>
@@ -520,8 +604,8 @@ export default function ProfilePage() {
               <>
                 {[
                   { val: totalStudyHours, unit: "h", label: "Total Study" },
-                  { val: tasksDone,       unit: "",  label: "Tasks Done"  },
-                  { val: sessions,        unit: "",  label: "Sessions"    },
+                  { val: tasksToday,      unit: "",  label: "Tasks Done"  },
+                  { val: focusRooms,      unit: "",  label: "Sessions"    },
                 ].map(s => (
                   <div key={s.label} style={{ textAlign: "right" }}>
                     <div style={{ fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-.03em", color: t["--text"], lineHeight: 1 }}>
@@ -541,7 +625,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* ── STAT STRIP ───────────────────────────────────────────────────── */}
+        {/* STAT STRIP */}
         <div className="fade-up stat-strip-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1rem" }}>
           {[
             { grad:"#2C3E50,#3D718D", trend:"↑ 14%", up:true,  icon:<Icon circles={[{cx:12,cy:12,r:10}]} points="12 6 12 12 16 14"/>, val: String(weeklyHoursTotal), sup:"h", label:"This Week"   },
@@ -567,7 +651,7 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        {/* ── MAIN GRID ────────────────────────────────────────────────────── */}
+        {/* MAIN GRID */}
         <div className="fade-up main-grid-el" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: "1.5rem" }}>
 
           {/* PLANNER */}
@@ -577,7 +661,7 @@ export default function ProfilePage() {
                 <span style={{ color: accent }}><Icon paths={["M3 4h18v18H3z","M16 2v4","M8 2v4","M3 10h18"]} size={17} /></span>
                 Study Planner
               </div>
-              <button className="card-action-el" onClick={() => setModal({ dayIdx: normalizedToday, dayName: days[normalizedToday]?.name ?? "Today" })}
+              <button className="card-action-el" onClick={() => setModal({ dayIdx: normalizedToday })}
                 style={{ fontSize: ".75rem", fontWeight: 700, color: accent, background: t["--accent-soft"], border: "none", padding: "5px 12px", borderRadius: 999, cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "opacity .2s", letterSpacing: ".02em" }}>
                 + Add Task
               </button>
@@ -612,7 +696,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
                   ))}
-                  <button className="add-chip-el" onClick={() => setModal({ dayIdx, dayName: day.name })}
+                  <button className="add-chip-el" onClick={() => setModal({ dayIdx })}
                     style={{ background: "transparent", borderRadius: 8, padding: "7px 8px", fontSize: ".67rem", fontWeight: 700, color: t["--muted"], lineHeight: 1.3, cursor: "pointer", transition: "background .15s, color .15s", border: `1px dashed ${t["--border"]}`, display: "flex", alignItems: "center", gap: 5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width={11} height={11}>
                       <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -679,7 +763,7 @@ export default function ProfilePage() {
                 </svg>
                 <div>
                   <div style={{ fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-.03em", color: t["--text"], lineHeight: 1 }}>
-                    {loading ? "—" : `${todayStudied}h`}
+                    {loading ? "—" : `${totalTodayDisplay}h`}
                   </div>
                   <div style={{ fontSize: ".7rem", fontWeight: 600, color: t["--muted"], marginTop: 3, textTransform: "uppercase", letterSpacing: ".06em" }}>Time Today</div>
                   <div style={{ fontSize: ".72rem", color: t["--text-2"], marginTop: 4 }}>
@@ -721,3 +805,4 @@ export default function ProfilePage() {
     </>
   );
 }
+
