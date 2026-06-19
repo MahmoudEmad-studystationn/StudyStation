@@ -14,6 +14,7 @@ import {
     deleteTask,
     getTasks,
     getRoomMembers,
+    getActiveMembers,
 } from "../Services/studyWithFriendsService";
 
 const AV_PALETTE = [
@@ -125,22 +126,22 @@ export default function StudyRoom() {
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
     }
 
-    // ── Fetch members من /api/StudyRooms/{id}/members ────────────────────
-    // ده المصدر الوحيد والموثوق لأسماء الأعضاء. لو الريسبونس جه فاضي
-    // (تأخير شبكة مؤقت مثلاً) منمسحش القايمة القديمة، نسيبها زي ما هي
-    // لحد ما يجي ريسبونس فيه بيانات، عشان مفيش "فلاش" أو اختفاء مؤقت للأسماء.
     const fetchMembers = useCallback(async () => {
         if (!roomId) return;
         try {
-            const list = await getRoomMembers(roomId);
+            let list;
+            try {
+                list = await getActiveMembers(roomId);
+            } catch {
+                list = await getRoomMembers(roomId);
+            }
+
             if (Array.isArray(list) && list.length > 0) {
                 setMembers(list);
             } else if (Array.isArray(list) && list.length === 0) {
-                // ريسبونس فاضي حقيقي (مفيش أعضاء أصلاً) - نفرغ القايمة
                 setMembers([]);
             }
         } catch {
-            // فشل الطلب - نسيب آخر قايمة معروفة كما هي، من غير ما نمسحها
         }
     }, [roomId]);
 

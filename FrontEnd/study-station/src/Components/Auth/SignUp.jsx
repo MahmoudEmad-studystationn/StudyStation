@@ -202,7 +202,7 @@ export default function SignUp({ switchToLogin }) {
                 confirmPassword: "", dateOfBirth: "", gender: ""
             });
             setErrors({});
-            setTimeout(() => navigate(`/verification-code?email=${formData.email}`), 1500);
+            setTimeout(() => navigate(`/verification-code?email=${encodeURIComponent(formData.email)}&type=register`), 1500);
         } else {
             toast.error(apiResponse.message);
             setMessage(`${apiResponse.message}`);

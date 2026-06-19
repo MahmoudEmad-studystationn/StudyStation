@@ -63,6 +63,7 @@ export default function VerificationCode() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const email = searchParams.get("email");
+    const type = searchParams.get("type"); // ✅ جديد: "register" أو "forgot-password"
 
     useEffect(() => {
         if (!email) {
@@ -72,14 +73,12 @@ export default function VerificationCode() {
     }, [email, navigate]);
 
     const handleChange = (index, value) => {
-        // Only allow numbers
         if (value && !/^\d$/.test(value)) return;
 
         const newCode = [...code];
         newCode[index] = value;
         setCode(newCode);
 
-        // Auto-focus next input
         if (value && index < 5) {
             const nextInput = document.getElementById(`code-input-${index + 1}`);
             if (nextInput) nextInput.focus();
@@ -87,7 +86,6 @@ export default function VerificationCode() {
     };
 
     const handleKeyDown = (index, e) => {
-        // Handle backspace
         if (e.key === "Backspace" && !code[index] && index > 0) {
             const prevInput = document.getElementById(`code-input-${index - 1}`);
             if (prevInput) prevInput.focus();
@@ -136,9 +134,15 @@ export default function VerificationCode() {
             });
 
             setTimeout(() => {
-                navigate("/reset-password", {
-                    state: { email: email, code: verificationCode }
-                });
+                // ✅ التعديل الأساسي: بنشوف جيت منين
+                if (type === "forgot-password") {
+                    navigate("/reset-password", {
+                        state: { email: email, code: verificationCode }
+                    });
+                } else {
+                    // register أو أي حالة تانية
+                    navigate("/login");
+                }
             }, 2200);
         } else {
             toast.error(result.message || "Invalid verification code", {

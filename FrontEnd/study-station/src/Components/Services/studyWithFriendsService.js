@@ -236,3 +236,10 @@ export const getTasks = (id) =>
         const data = r.data;
         return Array.isArray(data) ? data : (data?.tasks ?? data?.items ?? []);
     });
+    
+export const getActiveMembers = (id) =>
+    axiosInstance.get(`${BASE}/${id}/active-members`).then(r => {
+        const data = r.data;
+        if (Array.isArray(data)) return data;
+        return data?.members ?? data?.participants ?? data?.items ?? data ?? [];
+    });

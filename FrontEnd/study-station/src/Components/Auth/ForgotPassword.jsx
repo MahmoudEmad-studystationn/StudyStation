@@ -78,13 +78,13 @@ export default function ForgetPassword() {
 
         const payload = {
             email,
-            clientURI: `${window.location.origin}/reset-password` 
+            clientURI: `${window.location.origin}/reset-password`
         }; const result = await forgetPasswordApi(payload);
         setIsLoading(false);
 
         if (result.success) {
             toast.success("Check your email for reset instructions!", { position: "top-center", autoClose: 3000 });
-            setTimeout(() => navigate(`/verification-code?email=${encodeURIComponent(email)}`), 2000);
+            setTimeout(() => navigate(`/verification-code?email=${encodeURIComponent(email)}&type=forgot-password`), 2000);
         } else {
             toast.error(result.message || "Failed to send reset email", { position: "top-center", autoClose: 3000 });
         }

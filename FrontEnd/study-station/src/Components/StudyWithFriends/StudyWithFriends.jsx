@@ -15,7 +15,6 @@ const AVATAR_GRADIENTS = [
 
 const IconPlus = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>;
 const IconSearch = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 15, height: 15 }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
-const IconUsers = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 13, height: 13 }}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>;
 const IconGrid = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 12, height: 12 }}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>;
 const IconLogin = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /></svg>;
 const IconLock = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>;
@@ -148,17 +147,6 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         }
       </div>
 
-      {/* Member names preview */}
-      {room.members.length > 0 && (
-        <div style={{
-          fontSize: ".72rem", color: mutedColor, marginBottom: ".75rem",
-          lineHeight: 1.5, opacity: 0.85,
-        }}>
-          {room.members.slice(0, 4).map(m => m.userName || m.name).filter(Boolean).join(" · ")}
-          {room.members.length > 4 ? ` · +${room.members.length - 4} more` : ""}
-        </div>
-      )}
-
       {/* Creation date */}
       {room.createdAt && (
         <div style={{
@@ -172,61 +160,79 @@ function RoomCard({ room, isDarkMode, onJoin, onDelete }) {
         </div>
       )}
 
-      {/* Members avatars */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", position: "relative" }}
+      {/* Members avatars + count */}
+      <div
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", position: "relative" }}
         onMouseEnter={() => room.current > 0 && setShowMembersTooltip(true)}
         onMouseLeave={() => setShowMembersTooltip(false)}
       >
-        {room.current > 0 ? (
-          <>
-            {(room.members.length > 0
-              ? room.members.slice(0, 4)
-              : Array.from({ length: Math.min(room.current, 4) }, (_, i) => ({ _placeholder: true, _index: i }))
-            ).map((member, i) => {
-              const isPlaceholder = !member || member._placeholder;
-              const name = isPlaceholder
-                ? null
-                : (member.userName || member.name || member.displayName || member.user?.userName || null);
-              const initials = name
-                ? name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
-                : null;
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {room.current > 0 ? (
+            <>
+              {(room.members.length > 0
+                ? room.members.slice(0, 4)
+                : Array.from({ length: Math.min(room.current, 4) }, (_, i) => ({ _placeholder: true, _index: i }))
+              ).map((member, i) => {
+                const isPlaceholder = !member || member._placeholder;
+                const name = isPlaceholder
+                  ? null
+                  : (member.userName || member.name || member.displayName || member.user?.userName || null);
+                const initials = name
+                  ? name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
+                  : null;
 
-              return (
-                <div
-                  key={i}
-                  title={name || undefined}
-                  style={{
-                    width: 28, height: 28, borderRadius: "50%",
-                    border: `3px solid ${cardBg}`, marginLeft: i === 0 ? 0 : -10,
-                    flexShrink: 0,
-                    background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
-                    zIndex: 5 - i,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: ".48rem", fontWeight: 800, color: "#fff",
-                  }}
-                >
-                  {initials}
+                return (
+                  <div
+                    key={i}
+                    title={name || undefined}
+                    style={{
+                      width: 28, height: 28, borderRadius: "50%",
+                      border: `3px solid ${cardBg}`, marginLeft: i === 0 ? 0 : -10,
+                      flexShrink: 0,
+                      background: AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length],
+                      zIndex: 5 - i,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: ".48rem", fontWeight: 800, color: "#fff",
+                    }}
+                  >
+                    {initials}
+                  </div>
+                );
+              })}
+
+              {room.current > 4 && (
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  border: `3px solid ${cardBg}`, marginLeft: -10, flexShrink: 0,
+                  background: isDarkMode ? "#2a2a2a" : "#e0e4e8",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: ".55rem", fontWeight: 700, color: mutedColor, zIndex: 0,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                }}>
+                  +{room.current - 4}
                 </div>
-              );
-            })}
+              )}
+            </>
+          ) : (
+            <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: "italic" }}>
+              No members yet
+            </span>
+          )}
+        </div>
 
-            {room.current > 4 && (
-              <div style={{
-                width: 28, height: 28, borderRadius: "50%",
-                border: `3px solid ${cardBg}`, marginLeft: -10, flexShrink: 0,
-                background: isDarkMode ? "#2a2a2a" : "#e0e4e8",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: ".55rem", fontWeight: 700, color: mutedColor, zIndex: 0,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
-              }}>
-                +{room.current - 4}
-              </div>
-            )}
-          </>
-        ) : (
-          <span style={{ fontSize: ".75rem", color: mutedColor, fontStyle: "italic" }}>
-            No members yet
+        {/* Member count text — e.g. "3 / 8 members" */}
+        {room.current > 0 && (
+          <span style={{
+            fontSize: ".72rem", fontWeight: 600,
+            color: mutedColor, whiteSpace: "nowrap",
+            display: "flex", alignItems: "center", gap: 4
+          }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            {room.current}{room.max ? ` / ${room.max}` : ""} members
           </span>
         )}
 
@@ -407,7 +413,6 @@ export default function StudyWithFriends() {
         detailed.map(async (r) => {
           const normalized = normalizeRoom(r, currentUserId);
 
-          // لو الـ members مش بيجوا من الـ API، نجيب أسمائهم من الـ messages
           const hasRealMembers = normalized.members.some(
             m => m.userName && !m.userName.startsWith("Member ")
           );
