@@ -8,7 +8,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { FaFilePen } from "react-icons/fa6";
-import { IoBookSharp } from "react-icons/io5";
+import logo from "../../assets/images/StudyStationLogo.png";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -16,7 +16,7 @@ const API_BASE = "https://study-station.runasp.net/api";
 
 function getInitials(firstName, lastName) {
   const f = (firstName || "").trim()[0] || "";
-  const l = (lastName  || "").trim()[0] || "";
+  const l = (lastName || "").trim()[0] || "";
   return (f + l).toUpperCase() || "??";
 }
 
@@ -46,7 +46,7 @@ export default function Sidebar() {
     })
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setProfile(data); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const items = [
@@ -64,10 +64,10 @@ export default function Sidebar() {
   };
 
   const firstName = profile?.firstName || "";
-  const lastName  = profile?.lastName  || "";
-  const fullName  = [firstName, lastName].filter(Boolean).join(" ") || "Student";
-  const initials  = getInitials(firstName, lastName);
-  const track     = profile?.track || "Student";
+  const lastName = profile?.lastName || "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Student";
+  const initials = getInitials(firstName, lastName);
+  const track = profile?.track || "Student";
 
   return (
     <>
@@ -517,7 +517,10 @@ export default function Sidebar() {
               }}
             >
               <div className="brand-icon-wrap">
-                <IoBookSharp />
+                <img
+                  src={logo}
+                  style={{ width: "26px", height: "26px", objectFit: "contain" }}
+                />
               </div>
               <div
                 className="brand-text"
