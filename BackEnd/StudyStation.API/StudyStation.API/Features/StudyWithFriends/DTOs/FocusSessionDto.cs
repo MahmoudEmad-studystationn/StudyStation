@@ -10,4 +10,6 @@ public class FocusSessionDto
     public int DurationMinutes { get; set; }
     public FocusSessionStatus Status { get; set; }
     public int StartedById { get; set; }
+    public DateTime EndTime { get; set; }
+
 }
