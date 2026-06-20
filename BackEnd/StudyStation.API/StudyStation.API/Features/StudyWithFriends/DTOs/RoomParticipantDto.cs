@@ -8,4 +8,6 @@ public class RoomParticipantDto
     public string FullName { get; set; } = string.Empty;
     public RoomRole Role { get; set; }
     public DateTime JoinedAt { get; set; }
+    public bool IsOnline { get; set; }
+    public DateTime? LastActiveAt { get; set; }
 }

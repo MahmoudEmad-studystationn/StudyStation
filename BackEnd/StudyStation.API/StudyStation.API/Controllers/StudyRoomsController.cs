@@ -76,6 +76,15 @@ public class StudyRoomsController : ControllerBase
         return Ok(new { message = "Left successfully" });
     }
 
+    [HttpGet("{id}/tasks")]
+    public async Task<IActionResult> GetTasks(int id)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _mediator.Send(new GetRoomTasksQuery(id, userId));
+        if (result == null) return Forbid();
+        return Ok(result);
+    }
+
     [HttpPost("{id}/tasks")]
     public async Task<IActionResult> CreateTask(int id, [FromBody] string title)
     {
@@ -106,6 +115,14 @@ public class StudyRoomsController : ControllerBase
         var success = await _mediator.Send(new DeleteTaskCommand(taskId, id));
         if (!success) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("{id}/focus/current")]
+    public async Task<IActionResult> GetCurrentFocusSession(int id)
+    {
+        var result = await _mediator.Send(new GetCurrentFocusSessionQuery(id));
+        if (result == null) return NotFound(new { message = "No active focus session" });
+        return Ok(result);
     }
 
     [HttpPost("{id}/focus/start")]
@@ -139,6 +156,24 @@ public class StudyRoomsController : ControllerBase
     {
         var userId = GetCurrentUserId();
         var result = await _mediator.Send(new GetRoomMessagesQuery(id, userId));
+        if (result == null) return Forbid();
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/members")]
+    public async Task<IActionResult> GetMembers(int id)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _mediator.Send(new GetActiveRoomMembersQuery(id, userId));
+        if (result == null) return Forbid();
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/active-members")]
+    public async Task<IActionResult> GetActiveMembers(int id)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _mediator.Send(new GetActiveRoomMembersQuery(id, userId));
         if (result == null) return Forbid();
         return Ok(result);
     }
