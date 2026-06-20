@@ -93,7 +93,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // AI Services
-builder.Services.AddHttpClient<IAiService, ChatGptAiService>();
+builder.Services.AddHttpClient<IAiService, GroqAiService>();
 builder.Services.AddScoped<AiPromptBuilder>();
 
 // Configure file upload size limit (20 MB)

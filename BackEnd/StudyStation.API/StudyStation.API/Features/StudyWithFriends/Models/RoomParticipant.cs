@@ -13,4 +13,7 @@ public class RoomParticipant
     public RoomRole Role { get; set; } = RoomRole.Member;
     
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+
+    public bool IsOnline { get; set; } = false;
+    public DateTime? LastActiveAt { get; set; }
 }
