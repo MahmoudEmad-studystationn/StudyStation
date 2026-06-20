@@ -1,14 +1,15 @@
 # 📚 StudyStation — Complete Project Documentation
 
 > **Repository**: `MahmoudEmad-studystationn/StudyStation`
-> **Generated**: June 18, 2026
+> **Generated**: June 21, 2026
 > **Stack**: ASP.NET Core 9 (Backend) + React 18 / Vite (Frontend)
+> **Website**:https://study-station-alpha.vercel.app/
 
 ---
 
 ## 1. Project Overview
 
-**StudyStation** is a full-stack educational platform that helps students collaborate, share resources, manage study sessions, and engage through a community feed. It features real-time communication via SignalR, JWT-based authentication with OTP email verification, a resource library, study rooms with focus session timers, user profiles with dashboards, an admin panel, and a ChatGPT-powered AI Assistant Hub for personalized learning, chat, summaries, flashcard/quiz generation, document analysis, and study recommendations.
+**StudyStation** is a full-stack educational platform that helps students collaborate, share resources, manage study sessions, and engage through a community feed. It features real-time communication via SignalR, JWT-based authentication with OTP email verification, a resource library, study rooms with focus session timers and online presence tracking, user profiles with dashboards, an admin panel, and a Groq-powered AI Assistant Hub (LLaMA 3.3 70B) for personalized learning, chat, summaries, flashcard/quiz generation, document analysis, and study recommendations.
 
 ---
 
@@ -25,8 +26,8 @@
 | Real-Time | SignalR (StudyHub, NotificationHub) |
 | Validation | FluentValidation 11 |
 | API Docs | OpenAPI + Scalar UI (`/scalar/v1`) |
-| Email | SMTP via Gmail (`studystation835@gmail.com`) |
-| AI Service | ChatGPT Integration (`gpt-api.metaphilia.com`) |
+| Email | Configurable SMTP (SenderEmail, SmtpServer, Port via `EmailSettings`) |
+| AI Service | Groq Cloud API (`api.groq.com`) — Model: `llama-3.3-70b-versatile` |
 | PDF Parsing | UglyToad.PdfPig |
 | OCR Engine | Tesseract 5.2.0 (English + Arabic support) |
 
@@ -214,7 +215,14 @@ Id, Name (e.g., Video, Article, Book)
 **Navigation**: Owner, Participants, Tasks, Messages, FocusSessions
 
 #### `RoomParticipant` (Composite PK: RoomId + UserId)
-RoomId, UserId, Role (enum: Owner/Member), JoinedAt
+| Property | Type | Notes |
+|---|---|---|
+| RoomId | int (PK) | Part of composite key |
+| UserId | int (PK) | Part of composite key |
+| Role | RoomRole enum | Owner / Member |
+| JoinedAt | DateTime | Default: UTC now |
+| IsOnline | bool | Real-time presence flag (default: false) |
+| LastActiveAt | DateTime? | Last activity timestamp |
 
 #### `StudyTask` (Room-level)
 Id, RoomId, Title, IsCompleted, CreatedById, CreatedAt
@@ -502,6 +510,7 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | POST | `/api/StudyRooms/{id}/join` | ✅ | Join room (roomCode for private) |
 | POST | `/api/StudyRooms/{id}/leave` | ✅ | Leave room |
 | DELETE | `/api/StudyRooms/{id}` | ✅ | Delete room (owner only) |
+| GET | `/api/StudyRooms/{id}/tasks` | ✅ | Get all tasks in a room (participant only) |
 | POST | `/api/StudyRooms/{id}/tasks` | ✅ | Create task in room |
 | PATCH | `/api/StudyRooms/{id}/tasks/{taskId}/toggle` | ✅ | Toggle task completion |
 | PUT | `/api/StudyRooms/{id}/tasks/{taskId}` | ✅ | Update task |
@@ -511,8 +520,11 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | GET | `/api/StudyRooms/{id}/focus/current` | ✅ | Get the current active focus session in the room |
 | POST | `/api/StudyRooms/{id}/messages` | ✅ | Send chat message |
 | GET | `/api/StudyRooms/{id}/messages` | ✅ | Get room messages |
+| GET | `/api/StudyRooms/{id}/members` | ✅ | Get all room members with presence info (participant only) |
+| GET | `/api/StudyRooms/{id}/active-members` | ✅ | Get active room members with online status (participant only) |
 
 **CQRS Commands**: CreateRoom, JoinRoom, LeaveRoom, DeleteRoom, CreateTask, ToggleTask, UpdateTask, DeleteTask, StartFocusSession, StopFocusSession, GetCurrentFocusSession, SendMessage
+**CQRS Queries**: GetRooms, GetRoomDetails, GetRoomTasks, GetRoomMessages, GetActiveRoomMembers, GetCurrentFocusSession
 
 ---
 
@@ -621,21 +633,29 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 - `GenerateRefreshToken(userId)` → Base64 GUID token, 7-day expiry
 
 ### EmailService (IEmailService)
-- `SendEmailAsync(toEmail, subject, body)` → HTML email via Gmail SMTP (port 587, SSL)
+- `SendEmailAsync(toEmail, subject, body)` → HTML email via configurable SMTP (reads `EmailSettings:SenderEmail`, `SenderName`, `SmtpServer`, `Port`, `SenderPassword` from config)
+- Supports any SMTP provider (Gmail, Outlook, custom)
 
-### AI Service (IAiService / ChatGptAiService)
-- `ChatAsync(message, history, systemContext)` → Multi-turn ChatGPT chat API call
+### AI Service (IAiService / GroqAiService)
+- **Provider**: Groq Cloud (`api.groq.com/openai/v1/chat/completions`) — OpenAI-compatible API
+- **Model**: `llama-3.3-70b-versatile` (configurable via `AI:GroqModel`)
+- **Config**: `AI:GroqApiKey` (required), `AI:GroqBaseUrl` (default: `https://api.groq.com`), `AI:GroqModel`
+- `ChatAsync(message, history, systemContext)` → Multi-turn chat via Groq API
 - `SummarizeAsync(content)` → AI-generated summary from text/content
 - `GenerateQuizAsync(topic, count, difficulty, type, source)` → Generate quiz questions
 - `GenerateFlashcardsAsync(topic, count, source)` → Generate flashcards set
-- `AnalyzeSessionAsync(content, subject)` → Solo session analysis DTO
+- `AnalyzeSessionAsync(content, subject)` → Solo session analysis DTO with structured JSON parsing
 - `ExplainConceptAsync(concept, source)` → Explains concept in simple terms, optionally grounded in source material
 - `GenerateRecommendationsAsync(memory)` → Tailors tips based on student memory stats
 - `ExtractTextFromPdfAsync(stream)` → Extracts text from PDF stream using `PdfPig`
 - `ExtractTextFromImageAsync(stream)` → Extracts text from images using `Tesseract` OCR (English & Arabic support)
 
+> **Note**: The previous `ChatGptAiService` implementation (`gpt-api.metaphilia.com`) is retained in the codebase but is no longer registered in DI. The `GroqAiService` is the active provider.
+
 ### AiPromptBuilder
-- centralizes prompt template structuring and JSON format instructions for ChatGPT.
+- Centralizes prompt template structuring and JSON format instructions for the LLM provider.
+- **Methods**: `BuildSystemContext`, `BuildQuizPrompt`, `BuildFlashcardPrompt`, `BuildSummarizePrompt`, `BuildSessionAnalysisPrompt`, `BuildGroupSessionAnalysisPrompt`, `BuildExplainPrompt`, `BuildKeyConceptsPrompt`, `BuildRecommendationsPrompt`, `BuildMaterialQaPrompt`
+- Uses `TruncateText(text, 4000)` to ensure prompts stay within context window limits.
 
 ---
 
@@ -648,10 +668,18 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 - `UserLeft(int userId, string name)` — User left room
 - `TaskCreated/Updated/Deleted(object/int)` — Task events
 - `FocusSessionStarted/Stopped(object/int)` — Focus session events
+- `UserOnline(int userId)` — User came online in a room *(new)*
+- `UserOffline(int userId)` — User went offline in a room *(new)*
 
 **Server Methods**:
-- `JoinRoomGroup(string roomId)` — Join SignalR group
-- `LeaveRoomGroup(string roomId)` — Leave SignalR group
+- `JoinRoomGroup(string roomId)` — Join SignalR group + update `IsOnline` in DB + broadcast `UserOnline`
+- `LeaveRoomGroup(string roomId)` — Leave SignalR group + update `IsOnline` in DB + broadcast `UserOffline` (only if no other connections)
+- `OnDisconnectedAsync()` — Auto-cleanup on disconnect: marks user offline if no remaining connections to the room
+
+**Presence Tracking**:
+- Uses a static `ConcurrentDictionary<string, (int UserId, int RoomId)>` to map each SignalR `ConnectionId` to a user/room pair
+- Supports multi-tab connections: a user is only marked offline when *all* connections to a room are closed
+- Updates `RoomParticipant.IsOnline` and `LastActiveAt` in the database on join/leave/disconnect
 
 ### NotificationHub (`/Hubs/NotificationHub`)
 - Pushes real-time notifications to users
@@ -755,6 +783,11 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 | 2026-06-17 | repairChatbot | Repaired and simplified chatbot tables and configurations |
 | 2026-06-17 | RemoveUnusedChatbotFeatures | Removed unused/deleted room chatbot endpoints and command databases |
 | 2026-06-17 | UpdateDatabase | Database update sync |
+| 2026-06-18 | AddGetRoomTasksEndpoint | Added GET endpoint for room tasks retrieval |
+| 2026-06-18 | AddOnlinePresenceTracking | Added `IsOnline` (bool) and `LastActiveAt` (DateTime?) to RoomParticipants |
+| 2026-06-18 | AddGetMembersEndpoint | Added GET endpoint for room members listing |
+| 2026-06-18 | AddGetCurrentFocusSessionEndpoint | Added GET endpoint for current focus session |
+| 2026-06-20 | SwitchToGroqAI | Switched AI provider from ChatGPT to Groq Cloud (LLaMA 3.3 70B) |
 
 ---
 
@@ -785,9 +818,10 @@ Reactions can be added to both posts and comments. The `Reaction` model uses nul
 5. **OTP via email**: Registration requires email verification before login (configurable).
 6. **Admin seeding**: Automatic admin account creation on startup ensures admin access is always available.
 7. **Dual token auth**: Short-lived JWT (15 min) + long-lived refresh token (7 days) for security.
-8. **ChatGPT Integration**: Implemented via a central `IAiService` to allow provider swapping, utilizing system prompts and JSON schema formatting templates in `AiPromptBuilder`.
-9. **PDF & Image OCR Processing**: Integrated `UglyToad.PdfPig` to extract text from PDFs dynamically and `Tesseract` OCR to extract text from images (JPG, PNG, GIF, BMP, WEBP) in English and Arabic, injecting context directly into ChatGPT prompts for document-level Q&A.
+8. **Groq AI Integration**: Implemented via a central `IAiService` interface to allow provider swapping. Currently uses Groq Cloud (`llama-3.3-70b-versatile`) via the OpenAI-compatible API. Previous ChatGPT implementation (`ChatGptAiService`) retained for fallback. System prompts and JSON schema formatting are centralized in `AiPromptBuilder`.
+9. **PDF & Image OCR Processing**: Integrated `UglyToad.PdfPig` to extract text from PDFs dynamically and `Tesseract` OCR to extract text from images (JPG, PNG, GIF, BMP, WEBP) in English and Arabic, injecting context directly into LLM prompts for document-level Q&A.
 10. **Context-Aware AI Chat & Memory**: Segregated general chat (standalone hub) and solo session chat with automatic aggregation of topic proficiency in `UserLearningMemory`. Added central `ExceptionHandlingMiddleware` to handle errors globally and format consistent API responses.
+11. **Online Presence Tracking**: `RoomParticipant` extended with `IsOnline` and `LastActiveAt` fields. `StudyHub` manages presence via a `ConcurrentDictionary` connection tracker, handling multi-tab scenarios and auto-cleanup on disconnect.
 
 ---
 
