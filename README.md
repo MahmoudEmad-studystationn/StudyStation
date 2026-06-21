@@ -1,6 +1,6 @@
 # 📚 StudyStation — Complete Project Documentation
 
-> **Repository**: `MahmoudEmad-studystationn/StudyStation`
+> **Repository**: `MahmoudEmad-dev/StudyStation`
 > **Generated**: June 21, 2026
 > **Stack**: ASP.NET Core 9 (Backend) + React 18 / Vite (Frontend)
 > **Website**:https://study-station-alpha.vercel.app/
